@@ -4,7 +4,7 @@ import { W, H } from './config.js';
 const config = {
   type: Phaser.AUTO,
   parent: 'game',
-  backgroundColor: '#87ceeb',
+  backgroundColor: '#14241a',
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -13,10 +13,9 @@ const config = {
   },
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 0 }, debug: false },
+    arcade: { gravity: { y: 1100 }, debug: false },
   },
   scene: [Level1Scene],
 };
 
-// eslint-disable-next-line no-new
 new Phaser.Game(config);

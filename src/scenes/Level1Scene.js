@@ -4,1612 +4,798 @@ import { audioManager } from '../systems/audio.js';
 
 export class Level1Scene extends Phaser.Scene {
   constructor() {
-    super('Level1Scene');
-
-    // Player state
-    this.player       = null;
-    this.heroKey      = 'fire';
-    this.hp           = 3;
-    this.maxHp        = 3;
-    this.dmgMult      = 1;
-    this.atkCooldown  = 0;
-    this.invincible   = false;
-    this.dead         = false;
-    this.grounded     = false;
-    this.onUpper      = false;
-    this.grappling    = false;
-    this.grappleAnchor= null;
-    this.grappleRope  = null;
-    this.grappleAngle = 0;
-    this.grappleLen   = 0;
-    this.pack         = false;       // has apple pack
-    this.saves        = 3;          // checkpoint saves remaining
-    this.checkpointIdx= 0;
-    this.checkpoints  = [];
-    this.lastCheckpoint= null;
-    this.elapsed      = 0;
-    this.timerActive  = false;
-    this.won          = false;
-    this.menuOpen     = false;
-
-    // Groups / pools
-    this.platforms    = null;
-    this.upperPlatforms = null;
-    this.enemies      = [];
-    this.shots        = null;
-    this.pickups      = null;
-    this.gates        = [];
-    this.chests       = [];
-    this.boss         = null;
-    this.bossBar      = null;
-    this.bossHp       = 0;
-    this.bossMaxHp    = 0;
-    this.bossPhase    = 0;
-    this.bossShots    = null;
-    this.bossActive   = false;
-    this.bossDefeated = false;
-
-    // HUD elements
-    this.heartSprites = [];
-    this.barBg        = null;
-    this.barFill      = null;
-    this.dmgText      = null;
-    this.timerText    = null;
-    this.hintText     = null;
-    this.savesText    = null;
-    this.heroLabel    = null;
-    this.menuPanel    = null;
-    this.menuItems    = [];
-    this.menuCursor   = 0;
-
-    // Parallax layers
-    this.bgLayers     = [];
-
-    // Input
-    this.cursors      = null;
-    this.keys         = null;
-
-    // Misc
-    this.regenTimer   = 0;
-    this.hintTimer    = 0;
-    this.currentHint  = '';
-    this.floatPool    = [];
+    super({ key: 'Level1Scene' });
   }
 
-  // ─── PHASER LIFECYCLE ─────────────────────────────────────────────────────
-
   preload() {
-    // All assets are drawn procedurally; nothing to load from disk for base game.
-    // Placeholder for future asset loading:
-    // this.load.image('bg1', 'assets/sprites/bg1.png');
+    const h = this.make.graphics({ add: false });
+    h.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 30, 42, 8);
+    h.generateTexture('hero', 30, 42);
+
+    const d = this.make.graphics({ add: false });
+    d.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 46, 32, 9);
+    d.generateTexture('dragon', 46, 32);
+
+    const b = this.make.graphics({ add: false });
+    b.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 90, 70, 16);
+    b.generateTexture('boss', 90, 70);
+
+    const p = this.make.graphics({ add: false });
+    p.fillStyle(0xffffff, 1).fillRect(0, 0, 1, 1);
+    p.generateTexture('px', 1, 1);
   }
 
   create() {
-    this.resetState();
-    this.buildParallax();
-    this.buildTerrain();
-    this.buildGates();
-    this.buildEnemies();
-    this.buildPickups();
-    this.buildBoss();
-    this.buildPlayer();
-    this.buildHUD();
-    this.bindInput();
+    this._resetState();
 
-    // Camera
+    this.physics.world.setBounds(0, 0, WORLD_W, H + 260);
     this.cameras.main.setBounds(0, 0, WORLD_W, H);
-    this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
-    // Physics world bounds
-    this.physics.world.setBounds(0, 0, WORLD_W, H);
+    this.enemies = this.physics.add.group();
+    this.shots   = this.physics.add.group();
 
-    this.buildMenu();
-    this.startGame();
+    this._buildParallax();
+    this._buildTerrain();
+    this._buildPlayer();   // must exist before any overlap/collider references it
+    this._buildGates();
+    this._buildEnemies();
+    this._buildPickups();
+    this._buildBoss();
+    this._buildHUD();
+    this._buildMenu();
+    this._bindInput();
+
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.player, this.gates.waterPool.solid, null, () => this.cur === 'water');
+    this.physics.add.collider(this.player, this.gates.acidPool.solid,  null, () => this.cur === 'poison');
+    this.physics.add.overlap(this.player, this.enemies, (pl, e) => { if (e.active) this._hurt(1, e.x); });
+    this.physics.add.overlap(this.shots,  this.enemies, (shot, e) => this._hitEnemy(shot, e));
+
+    this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
+    this.cameras.main.setDeadzone(240, 400);
+
+    this._showPanel('ELEMENTAL HEROES',
+      'LEVEL 1 — The Jungle\nReach the cave at the end.\nEvery obstacle has one hero that beats it.\n\nPress any key or tap to begin');
+    this.physics.pause();
   }
 
   update(time, delta) {
-    if (this.dead || this.won || this.menuOpen) return;
-
-    const dt = delta / 1000;
-    this.elapsed += dt;
-    this.updateTimer();
-
-    this.handleMovement(delta);
-    this.handleAttack(time);
-    this.handleGrapple(delta);
-    this.handlePickupOverlap();
-    this.tickEnemies(time, delta);
-    this.tickBossLogic(time, delta);
-    this.updateHint(delta);
-    this.tickRegen(delta);
-    this.updateBgLayers();
-  }
-
-  // ─── STATE ────────────────────────────────────────────────────────────────
-
-  resetState() {
-    this.hp           = 3;
-    this.maxHp        = 3;
-    this.dmgMult      = 1;
-    this.atkCooldown  = 0;
-    this.invincible   = false;
-    this.dead         = false;
-    this.grounded     = false;
-    this.onUpper      = false;
-    this.grappling    = false;
-    this.grappleAnchor= null;
-    this.pack         = false;
-    this.saves        = 3;
-    this.checkpointIdx= 0;
-    this.lastCheckpoint= null;
-    this.elapsed      = 0;
-    this.timerActive  = false;
-    this.won          = false;
-    this.menuOpen     = false;
-    this.bossActive   = false;
-    this.bossDefeated = false;
-    this.bossPhase    = 0;
-    this.enemies      = [];
-    this.gates        = [];
-    this.chests       = [];
-    this.bgLayers     = [];
-    this.heartSprites = [];
-    this.menuItems    = [];
-    this.floatPool    = [];
-    this.regenTimer   = 0;
-    this.hintTimer    = 0;
-    this.heroKey      = 'fire';
-  }
-
-  startGame() {
-    this.timerActive = true;
-    this.applyHero(this.heroKey);
-    this.drawHearts();
-    this.refreshBar();
-    this.refreshDmg();
-    this.refreshSaves();
-    this.updateHint(0);
-  }
-
-  // ─── PARALLAX ─────────────────────────────────────────────────────────────
-
-  buildParallax() {
-    const sky = this.add.rectangle(WORLD_W / 2, H / 2, WORLD_W, H, 0x87ceeb).setScrollFactor(0);
-    // Far mountains
-    for (let i = 0; i < 12; i++) {
-      const x = i * 450 + 225;
-      const mh = Phaser.Math.Between(80, 160);
-      const layer = this.add.triangle(x, H - 100, 0, 0, mh * 0.7, -mh, mh * 1.4, 0, 0x6b9e6b)
-        .setScrollFactor(0.2);
-      this.bgLayers.push({ obj: layer, factor: 0.2, baseX: x });
+    if (!this.started) {
+      if (this._anyKey() || this.input.activePointer.isDown) this._startGame();
+      return;
     }
-    // Mid hills
-    for (let i = 0; i < 8; i++) {
-      const x = i * 680 + 340;
-      const layer = this.add.ellipse(x, H - 80, 320, 160, 0x4a8a4a)
-        .setScrollFactor(0.5);
-      this.bgLayers.push({ obj: layer, factor: 0.5, baseX: x });
+    if (this.over) {
+      if (Phaser.Input.Keyboard.JustDown(this.keys.r)) this.scene.restart();
+      return;
     }
-    // Clouds
-    for (let i = 0; i < 10; i++) {
-      const x = Phaser.Math.Between(0, WORLD_W);
-      const y = Phaser.Math.Between(40, 180);
-      const layer = this.add.ellipse(x, y, Phaser.Math.Between(120, 240), 60, 0xffffff, 0.85)
-        .setScrollFactor(0.15);
-      this.bgLayers.push({ obj: layer, factor: 0.15, baseX: x });
-    }
-  }
 
-  updateBgLayers() {
-    // Parallax is handled by Phaser's scrollFactor; no manual update needed.
-  }
+    this.timeLeft -= delta / 1000;
+    if (this.timeLeft <= 0) { this.timeLeft = 0; this._updateTimer(); return this._loseHard('TIME UP'); }
+    this._updateTimer();
 
-  // ─── TERRAIN ──────────────────────────────────────────────────────────────
+    if (Phaser.Input.Keyboard.JustDown(this.keys.tab)) this._toggleMenu();
+    if (this.menuOpen) { this._menuKeys(); this.label.setPosition(this.player.x, this.player.y - 32); return; }
+    ORDER.forEach((k, i) => { if (Phaser.Input.Keyboard.JustDown(this.keys['n' + (i + 1)])) this._swap(k); });
 
-  buildTerrain() {
-    this.platforms      = this.physics.add.staticGroup();
-    this.upperPlatforms = this.physics.add.staticGroup();
+    if (this.gates.grapple.busy) { this.label.setPosition(this.player.x, this.player.y - 32); return; }
 
-    // Ground floor
-    this.ground(0, LOW, WORLD_W, 70);
+    // movement
+    const left  = this.cursors.left.isDown  || this.keys.a.isDown;
+    const right = this.cursors.right.isDown || this.keys.d.isDown;
+    if (left)       { this.player.setAccelerationX(-1900); this.player.facing = -1; }
+    else if (right) { this.player.setAccelerationX(1900);  this.player.facing =  1; }
+    else            { this.player.setAccelerationX(0); }
 
-    // Starting safe zone
-    this.block(300, LOW - 60, 120, 20, 0x8b7355);
-    this.block(500, LOW - 110, 100, 20, 0x8b7355);
+    // climbing (Earth on the ladder)
+    const onLadder = this.cur === 'earth' && this.physics.overlap(this.player, this.gates.climb.zone);
+    const up   = this.cursors.up.isDown   || this.keys.w.isDown;
+    const down = this.cursors.down.isDown || this.keys.s.isDown;
+    this.climbing = onLadder && (up || down || this.player.body.velocity.y > -50);
+    this.player.body.setAllowGravity(!this.climbing);
+    if (this.climbing) this.player.setVelocityY(up ? -170 : down ? 170 : 0);
 
-    // Section 1: basic platforms
-    this.block(700,  LOW - 80,  120, 20);
-    this.block(900,  LOW - 140, 100, 20);
-    this.block(1100, LOW - 80,  120, 20);
-    this.block(1300, LOW - 160, 80,  20);
+    // jump
+    const onGround = this.player.body.blocked.down || this.player.body.touching.down;
+    if (!this.climbing && (this._jp(this.cursors.up) || this._jp(this.keys.w) || this._jp(this.keys.space)) && onGround)
+      this.player.setVelocityY(-560);
 
-    // Upper path
-    this.upper(800,  HIGH, 150, 20);
-    this.upper(1000, HIGH - 40, 140, 20);
-    this.upper(1200, HIGH, 160, 20);
+    // attack & ability
+    if (this._jp(this.keys.j) && time > this.nextShot) { this.nextShot = time + HEROES[this.cur].cd; this._attack(); }
+    if (this._jp(this.keys.k)) this._ability();
 
-    // Checkpoint platform 1
-    this.checkpoints.push({ x: 1450, y: LOW - 20 });
-    this.block(1400, LOW - 20, 160, 20, 0x5a8a5a);
+    this.enemies.children.iterate(e => { if (e && e.active) this._tickEnemy(e); });
+    this._tickBoss(time, delta);
 
-    // Section 2: gap section
-    this.block(1700, LOW - 100, 100, 20);
-    this.block(1900, LOW - 60,  120, 20);
-    this.block(2100, LOW - 120, 90,  20);
-    this.block(2300, LOW - 80,  110, 20);
+    this.label.setPosition(this.player.x, this.player.y - 32);
+    this.player.setAlpha(this.time.now < this.invulnUntil ? (Math.floor(this.time.now / 80) % 2 ? 0.4 : 1) : 1);
 
-    // Upper platforms section 2
-    this.upper(1800, HIGH + 20, 130, 20);
-    this.upper(2000, HIGH - 20, 120, 20);
-    this.upper(2200, HIGH + 10, 140, 20);
-
-    // Checkpoint platform 2
-    this.checkpoints.push({ x: 2500, y: LOW - 20 });
-    this.block(2450, LOW - 20, 160, 20, 0x5a8a5a);
-
-    // Section 3: narrow hops
-    this.block(2700, LOW - 120, 80, 20);
-    this.block(2870, LOW - 80,  70, 20);
-    this.block(3040, LOW - 140, 80, 20);
-    this.block(3210, LOW - 100, 90, 20);
-
-    // Grapple zone upper hooks
-    this.upper(2800, HIGH, 40, 20);
-    this.upper(2950, HIGH - 30, 40, 20);
-    this.upper(3100, HIGH + 10, 40, 20);
-
-    // Checkpoint platform 3
-    this.checkpoints.push({ x: 3400, y: LOW - 20 });
-    this.block(3350, LOW - 20, 160, 20, 0x5a8a5a);
-
-    // Section 4: mixed
-    this.block(3600, LOW - 80,  120, 20);
-    this.block(3800, LOW - 140, 100, 20);
-    this.block(4000, LOW - 80,  120, 20);
-    this.block(4200, LOW - 160, 80,  20);
-    this.upper(3700, HIGH, 150, 20);
-    this.upper(3900, HIGH - 40, 140, 20);
-    this.upper(4100, HIGH, 120, 20);
-
-    // Checkpoint platform 4
-    this.checkpoints.push({ x: 4400, y: LOW - 20 });
-    this.block(4350, LOW - 20, 160, 20, 0x5a8a5a);
-
-    // Boss arena
-    this.block(4600, LOW - 20, 500, 20, 0x5a3c3c);
-    this.block(4580, LOW - 180, 20, 160, 0x5a3c3c); // left wall
-    this.block(5080, LOW - 180, 20, 160, 0x5a3c3c); // right wall
-
-    // Finish platform
-    this.block(5120, LOW - 20, 80, 20, 0xd4af37);
-
-    // Add visual checkpoint flags
-    this.checkpoints.forEach((cp, i) => {
-      const flag = this.add.rectangle(cp.x, cp.y - 30, 8, 40, 0x888888);
-      const banner = this.add.rectangle(cp.x + 14, cp.y - 50, 28, 20, 0x44bb44);
-      const txt = this.add.text(cp.x + 14, cp.y - 50, (i + 1).toString(), {
-        fontSize: '12px', color: '#ffffff', fontFamily: 'monospace'
-      }).setOrigin(0.5);
-      // checkpoint zone
-      const zone = this.add.zone(cp.x, cp.y - 10, 60, 40).setOrigin(0.5);
-      this.physics.world.enable(zone);
-      zone.body.setAllowGravity(false);
-      zone.checkpointIndex = i;
-      this.checkpoints[i].zone = zone;
-    });
-  }
-
-  ground(x, y, w, h) {
-    const g = this.add.rectangle(x + w / 2, y + h / 2, w, h, 0x4a7c3a);
-    this.physics.add.existing(g, true);
-    this.platforms.add(g);
-    return g;
-  }
-
-  upper(x, y, w, h) {
-    const u = this.add.rectangle(x + w / 2, y + h / 2, w, h, 0x8b7355);
-    this.physics.add.existing(u, true);
-    this.upperPlatforms.add(u);
-    this.platforms.add(u);
-    return u;
-  }
-
-  block(x, y, w, h, color = 0x8b7355) {
-    const b = this.add.rectangle(x + w / 2, y + h / 2, w, h, color);
-    this.physics.add.existing(b, true);
-    this.platforms.add(b);
-    return b;
-  }
-
-  zone(x, y, w, h) {
-    const z = this.add.zone(x, y, w, h).setOrigin(0.5);
-    this.physics.world.enable(z);
-    z.body.setAllowGravity(false);
-    return z;
-  }
-
-  // ─── GATES ────────────────────────────────────────────────────────────────
-
-  buildGates() {
-    // Gates are visual barriers that require specific hero to pass
-    const gateDefs = [
-      { x: 1380, heroNeeded: 'fire',  color: 0xff5a3c, label: 'F' },
-      { x: 2430, heroNeeded: 'water', color: 0x3aa0ff, label: 'W' },
-      { x: 3330, heroNeeded: 'earth', color: 0xc08a4e, label: 'E' },
-      { x: 4330, heroNeeded: 'stone', color: 0x9a8c7a, label: 'S' },
-    ];
-
-    gateDefs.forEach(def => {
-      const body = this.add.rectangle(def.x, LOW - 60, 24, 120, def.color, 0.85);
-      this.physics.add.existing(body, true);
-      const lbl = this.add.text(def.x, LOW - 60, def.label, {
-        fontSize: '20px', color: '#ffffff', fontFamily: 'monospace'
-      }).setOrigin(0.5);
-      const gateObj = { body, lbl, heroNeeded: def.heroNeeded, open: false };
-      this.gates.push(gateObj);
-      this.platforms.add(body); // gates block movement
-    });
-  }
-
-  openGate(gate) {
-    if (gate.open) return;
-    gate.open = true;
-    this.tweens.add({
-      targets: [gate.body, gate.lbl],
-      alpha: 0,
-      scaleY: 0,
-      duration: 400,
-      onComplete: () => {
-        gate.body.destroy();
-        gate.lbl.destroy();
-        this.platforms.remove(gate.body);
+    // advance checkpoint (forward only)
+    for (let i = this.cp + 1; i < this.checkpoints.length; i++) {
+      if (this.player.x > this.checkpoints[i].x) {
+        this.cp = i;
+        saveSystem.saveCheckpoint(i);
       }
-    });
-    this.floatText(gate.body.x, gate.body.y - 40, 'Gate Open!', 0x44ff44);
-    audioManager.play('gate_open');
+    }
+
+    if (this.player.y > H + 90 && !this.over) this._respawn(true);
+
+    this._updateHint();
   }
 
-  checkGates() {
-    this.gates.forEach(gate => {
-      if (!gate.open && this.heroKey === gate.heroNeeded) {
-        if (this.near(this.player, gate.body, 50)) {
-          this.openGate(gate);
-        }
-      }
-    });
+  // -------------------------------------------------------------------------
+  // Build helpers
+  // -------------------------------------------------------------------------
+
+  _buildParallax() {
+    this.add.rectangle(WORLD_W / 2, 150, WORLD_W, 320, 0x1d3a28).setScrollFactor(0.2).setDepth(-30);
+    for (let x = 0; x < WORLD_W; x += 170) {
+      const hh = 120 + ((x * 37) % 100);
+      this.add.rectangle(x, LOW - hh / 2, 64, hh, 0x244c34, 0.7).setScrollFactor(0.5).setDepth(-20);
+    }
   }
 
-  // ─── ENEMIES ──────────────────────────────────────────────────────────────
-
-  buildEnemies() {
-    this.shots     = this.physics.add.group();
-    this.bossShots = this.physics.add.group();
-
-    // Section 1
-    this.addEnemy(820,  LOW - 40, 'ice',    'patrol', 700,  950);
-    this.addEnemy(1050, LOW - 40, 'fireD',  'patrol', 950,  1200);
-    this.addEnemy(1250, LOW - 40, 'ice',    'patrol', 1150, 1380);
-
-    // Section 2
-    this.addEnemy(1750, LOW - 40, 'waterD', 'patrol', 1650, 1900);
-    this.addEnemy(1950, LOW - 40, 'poisonD','patrol', 1850, 2100);
-    this.addEnemy(2150, LOW - 40, 'fireD',  'patrol', 2050, 2350);
-    this.addEnemy(2350, LOW - 40, 'waterD', 'patrol', 2250, 2440);
-
-    // Section 3 - harder
-    this.addEnemy(2750, LOW - 40, 'acidD',  'patrol', 2680, 2860);
-    this.addEnemy(2900, LOW - 40, 'ice',    'chase',  2850, 3050);
-    this.addEnemy(3080, LOW - 40, 'poisonD','patrol', 3010, 3220);
-    this.addEnemy(3220, LOW - 40, 'acidD',  'patrol', 3130, 3340);
-
-    // Section 4 - gauntlet
-    this.addEnemy(3650, LOW - 40, 'fireD',  'patrol', 3570, 3780);
-    this.addEnemy(3820, LOW - 40, 'waterD', 'chase',  3750, 3960);
-    this.addEnemy(4050, LOW - 40, 'ice',    'patrol', 3960, 4160);
-    this.addEnemy(4230, LOW - 40, 'poisonD','patrol', 4150, 4340);
+  _buildTerrain() {
+    this._ground(0, 1950);
+    this._ground(2300, 2860);
+    this._ground(3100, 3150);
+    this._ground(3450, 3640);
+    this._upper(3650, 4950);
+    this._block(560,  LOW - 26, 46, 52, 0x6b5235);
+    this._block(1180, LOW - 92, 140, 18, 0x6b5235);
+    const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
+    this.physics.add.existing(net, true); this.platforms.push(net);
+    this.add.rectangle(4880, HIGH - 46, 120, 120, 0x0a140d).setDepth(1);
+    this.add.rectangle(4880, HIGH - 46, 80,  96,  0x050906).setDepth(2);
   }
 
-  addEnemy(x, y, type, behavior, minX, maxX) {
-    const tint  = ENEMY_TINT[type] || 0xffffff;
-    const speed = behavior === 'chase' ? 80 : 60;
+  _buildGates() {
+    // 1) CRACK
+    this._block(820, LOW - 86, 120, 70, 0x355640);
+    const rubble = this._zone(820, LOW - 25, 44, 56, 0x6e5a3c, 1);
+    this.gates.crack = { obj: rubble, x: 820, broken: false };
+    this.physics.add.collider(this.player, rubble, null, () => !this.gates.crack.broken);
 
-    const body = this.add.rectangle(x, y, 32, 36, tint);
-    this.physics.add.existing(body);
-    body.body.setCollideWorldBounds(true);
-    body.body.setGravityY(200);
+    // 2) FIRE WALL
+    const fw = this._zone(1520, LOW - 44, 44, 84, 0xff5a3c, 0.85);
+    fw.glow = this.add.rectangle(1520, LOW - 44, 56, 96, 0xffb14a, 0.25).setDepth(1);
+    this.gates.fireWall = { obj: fw, x: 1520, doused: false };
+    this.physics.add.collider(this.player, fw, null, () => !this.gates.fireWall.doused);
+    this.physics.add.overlap(this.player, fw, () => this._hurt(1, fw.x), () => !this.gates.fireWall.doused);
 
-    const letter = type.charAt(0).toUpperCase();
-    const lbl = this.add.text(x, y - 24, letter, {
-      fontSize: '14px', color: '#ffffff', fontFamily: 'monospace',
-      stroke: '#000000', strokeThickness: 2
-    }).setOrigin(0.5);
+    // 3) GRAPPLE CHASM (gap 1950–2300)
+    this._poolVisual(2125, LOW, 350, 0x140a12, 0x6b3a55);
+    for (let i = 0; i < 4; i++)
+      this.add.rectangle(2000 + i * 90, LOW + 70, 40, 26, 0xff6a4d, 0.8).setDepth(0);
+    this.add.star(2125, 250, 4, 5, 12, 0xffe27a).setDepth(3);
+    this.gates.grapple = { x1: 1860, x2: 1948, from: 2125, to: 2330, busy: false };
 
-    // HP
-    const hpMax = behavior === 'chase' ? 3 : 2;
-    const hpBar = this.add.rectangle(x, y - 38, 32, 4, 0x00ff00);
-    const hpBg  = this.add.rectangle(x, y - 38, 32, 4, 0x550000).setDepth(-1);
+    // 4) STONE CRUSH
+    this.gates.stoneSpot = { x: 2700, used: false };
 
-    const enemy = {
-      body, lbl, hpBar, hpBg,
-      type, behavior,
-      hp: hpMax, maxHp: hpMax,
-      speed, minX, maxX,
-      dir: 1,
-      shootCd: 0,
-      dead: false,
-      x, y,
+    // 5) ACID POOL (3150–3450)
+    const ax = (3150 + 3450) / 2, aw = 300;
+    this._poolVisual(ax, LOW, aw, 0x14331a, 0x7ad14a);
+    const acidSolid = this._zone(ax, LOW + 8,  aw, 16, 0, 0);
+    const acidWater = this._zone(ax, LOW + 34, aw, 70, 0, 0);
+    this.gates.acidPool = { solid: acidSolid, water: acidWater, x: ax };
+    this.physics.add.overlap(this.player, acidWater, () => this._hurt(1, this.player.x + 1, true), () => this.cur !== 'poison');
+
+    // 2b) WATER POOL (~2980)
+    const wx = 2980, ww = 240;
+    this._poolVisual(wx, LOW, ww, 0x123a55, 0x3aa0ff);
+    const waterSolid = this._zone(wx, LOW + 8,  ww, 16, 0, 0);
+    const waterWater = this._zone(wx, LOW + 34, ww, 70, 0, 0);
+    this.gates.waterPool = { solid: waterSolid, water: waterWater, x: wx };
+    this.physics.add.overlap(this.player, waterWater, () => this._hurt(1, this.player.x + 1, true), () => this.cur !== 'water');
+
+    // 6) EARTH CLIMB
+    this.add.rectangle(3655, 400, 60, 150, 0x3a5240).setDepth(-2);
+    this.gates.climb = { zone: this._zone(3655, 400, 56, 150, 0, 0), topY: HIGH };
+  }
+
+  _buildEnemies() {
+    this._addEnemy(1000, LOW - 20, 'ice',     'patrol',  940, 1120);
+    this._addEnemy(1740, LOW - 20, 'fireD',   'patrol', 1680, 1860);
+    this._addEnemy(2480, LOW - 20, 'waterD',  'patrol', 2400, 2560);
+    this._addEnemy(2860, LOW - 20, 'poisonD', 'patrol', 2800, 2930);
+    for (let i = 0; i < 4; i++) this._addEnemy(2640 + i * 40, LOW - 20, 'ice', 'advance', 2560, 2760);
+    this._addEnemy(3210, LOW - 20, 'acidD', 'patrol', 3170, 3280);
+    this._addEnemy(3390, LOW - 20, 'acidD', 'patrol', 3350, 3440);
+  }
+
+  _buildPickups() {
+    const chest = this._zone(250, LOW - 18, 30, 28, 0x7a4bd1, 1);
+    this.gates.chest = { obj: chest, opened: false };
+    this.physics.add.overlap(this.player, chest, () => this._openChest());
+
+    this.gates.apple = this.physics.add.sprite(1180, LOW - 114, 'px').setDisplaySize(20, 20).setTint(0xffd23f);
+    this.gates.apple.body.setAllowGravity(false);
+    this.gates.apple.disableBody(true, true);
+    this.physics.add.overlap(this.player, this.gates.apple, () => this._getApple());
+
+    [1290, 2380, 3520, 4180].forEach(x => this._addRegen(x, (x < 3700 ? LOW : HIGH) - 26));
+  }
+
+  _buildBoss() {
+    this.boss = this.physics.add.sprite(4380, HIGH - 90, 'boss').setTint(0x6b7280);
+    this.boss.body.setAllowGravity(false);
+    this.boss.setImmovable(true);
+    this.boss.hp = 5; this.boss.state = 'sleep'; this.boss.t = 0;
+    this.boss.homeX = 4380; this.boss.targetX = 4380;
+    this.boss.mace = this.add.rectangle(4380, HIGH - 40, 12, 46, 0xcfd6dd).setDepth(5);
+    this.bossText = this.add.text(4380, HIGH - 150, 'KNIGHT DRAGON',
+      { fontFamily: 'Trebuchet MS', fontSize: '13px', color: '#ffd2c2' })
+      .setOrigin(0.5).setDepth(6).setVisible(false);
+    this.physics.add.overlap(this.player, this.boss, () => { if (!this.bossDead) this._hurt(1, this.boss.x); });
+    this.physics.add.overlap(this.shots, this.boss, (shot) => this._hitBoss(shot));
+    this.gates.cave = {
+      x: 4760, open: false,
+      flame: this.add.rectangle(4760, HIGH - 40, 40, 84, 0xff5a3c, 0.85).setDepth(3),
     };
-
-    this.physics.add.collider(body, this.platforms);
-    this.enemies.push(enemy);
-    return enemy;
+    this.gates.cave.zone = this._zone(4760, HIGH - 40, 40, 84, 0, 0);
+    this.physics.add.overlap(this.player, this.gates.cave.zone,
+      () => { if (this.bossDead) this._win(); else this._hurt(1, 4760); });
   }
 
-  tickEnemies(time, delta) {
-    const dt = delta / 1000;
-    this.enemies.forEach(e => {
-      if (e.dead) return;
-      this.tickEnemy(e, dt, time);
+  _buildPlayer() {
+    this.player = this.physics.add.sprite(90, 400, 'hero');
+    this.player.setCollideWorldBounds(true).setMaxVelocity(270, 950).setDragX(1500);
+    this.player.body.setSize(28, 40).setOffset(1, 1);
+    this.player.facing = 1;
+    this._applyHero('fire');
+    this.label = this.add.text(0, 0, 'F',
+      { fontFamily: 'monospace', fontSize: '16px', color: '#0c1410', fontStyle: 'bold' })
+      .setOrigin(0.5).setDepth(7);
+  }
+
+  _buildHUD() {
+    this.hud.hearts = this.add.graphics().setScrollFactor(0).setDepth(40);
+    this.hud.timer  = this.add.text(W / 2, 16, '10:00',
+      { fontFamily: 'Trebuchet MS', fontSize: '18px', color: '#e8efe6' })
+      .setOrigin(0.5, 0).setScrollFactor(0).setDepth(40);
+    this.hud.saves = this.add.text(W / 2, 40, '',
+      { fontFamily: 'Trebuchet MS', fontSize: '12px', color: '#ffd23f' })
+      .setOrigin(0.5, 0).setScrollFactor(0).setDepth(40);
+    this.hud.dmg = this.add.text(W - 14, 14, '',
+      { fontFamily: 'Trebuchet MS', fontSize: '14px', color: '#ffd23f' })
+      .setOrigin(1, 0).setScrollFactor(0).setDepth(40);
+
+    this.hud.bar = [];
+    const bw = 150, gap = 6, total = bw * 6 + gap * 5, sx = W / 2 - total / 2, by = H - 34;
+    ORDER.forEach((k, i) => {
+      const x = sx + i * (bw + gap);
+      const box = this.add.rectangle(x + bw / 2, by + 14, bw, 26, 0x0c1812, 0.85)
+        .setStrokeStyle(2, HEROES[k].color).setScrollFactor(0).setDepth(40);
+      this.add.circle(x + 14, by + 14, 6, HEROES[k].color).setScrollFactor(0).setDepth(41);
+      const txt = this.add.text(x + 26, by + 14, `${i + 1} ${HEROES[k].name}`,
+        { fontFamily: 'Trebuchet MS', fontSize: '12px', color: '#e8efe6' })
+        .setOrigin(0, 0.5).setScrollFactor(0).setDepth(41);
+      this.hud.bar.push({ k, box, txt });
+    });
+
+    this.hud.hintBg = this.add.rectangle(W / 2, 66, 560, 28, 0x0c1812, 0.6)
+      .setScrollFactor(0).setDepth(40).setVisible(false);
+    this.hud.hint = this.add.text(W / 2, 66, '',
+      { fontFamily: 'Trebuchet MS', fontSize: '14px', color: '#cfe0d2' })
+      .setOrigin(0.5).setScrollFactor(0).setDepth(41);
+
+    this._drawHearts(); this._refreshBar(); this._refreshDmg(); this._refreshSaves();
+  }
+
+  _buildMenu() {
+    this.menu.dim   = this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.55)
+      .setScrollFactor(0).setDepth(60).setVisible(false);
+    this.menu.title = this.add.text(W / 2, 120, 'Choose your hero',
+      { fontFamily: 'Trebuchet MS', fontSize: '20px', color: '#fff' })
+      .setOrigin(0.5).setScrollFactor(0).setDepth(61).setVisible(false);
+    this.menu.cards = [];
+    const cw = 140, gap = 12, total = cw * 6 + gap * 5, sx = W / 2 - total / 2;
+    ORDER.forEach((k, i) => {
+      const x = sx + i * (cw + gap) + cw / 2, y = H / 2;
+      const card = this.add.rectangle(x, y, cw, 150, 0x132219, 0.98)
+        .setStrokeStyle(3, HEROES[k].color).setScrollFactor(0).setDepth(61)
+        .setInteractive({ useHandCursor: true }).setVisible(false);
+      const dot = this.add.circle(x, y - 34, 20, HEROES[k].color)
+        .setScrollFactor(0).setDepth(62).setVisible(false);
+      const nm  = this.add.text(x, y + 16, HEROES[k].name,
+        { fontFamily: 'Trebuchet MS', fontSize: '16px', color: '#fff' })
+        .setOrigin(0.5).setScrollFactor(0).setDepth(62).setVisible(false);
+      const ky  = this.add.text(x, y + 44, `press ${i + 1}`,
+        { fontFamily: 'Trebuchet MS', fontSize: '11px', color: '#8fa593' })
+        .setOrigin(0.5).setScrollFactor(0).setDepth(62).setVisible(false);
+      card.on('pointerdown', () => { this._swap(k); this._toggleMenu(); });
+      this.menu.cards.push({ k, card, dot, nm, ky });
     });
   }
 
-  tickEnemy(e, dt, time) {
-    const px = this.player.x;
-    const ex = e.body.x;
-
-    if (e.behavior === 'chase') {
-      const dist = px - ex;
-      e.dir = dist > 0 ? 1 : -1;
-      e.body.body.setVelocityX(e.dir * e.speed);
-    } else {
-      // Patrol
-      e.body.body.setVelocityX(e.dir * e.speed);
-      if (ex >= e.maxX) e.dir = -1;
-      if (ex <= e.minX) e.dir =  1;
-    }
-
-    // Ranged enemies shoot
-    const rangedTypes = ['ice', 'fireD', 'waterD', 'poisonD', 'acidD'];
-    if (rangedTypes.includes(e.type)) {
-      e.shootCd -= dt;
-      if (e.shootCd <= 0 && Math.abs(px - ex) < 400) {
-        e.shootCd = Phaser.Math.FloatBetween(1.5, 3.0);
-        this.enemyShoot(e);
-      }
-    }
-
-    // Sync visuals
-    e.lbl.setPosition(e.body.x, e.body.y - 28);
-    e.hpBg.setPosition(e.body.x, e.body.y - 42);
-    e.hpBar.setPosition(e.body.x, e.body.y - 42);
-    e.hpBar.setSize(32 * (e.hp / e.maxHp), 4);
-
-    // Check if player walks into enemy
-    if (!this.invincible && Phaser.Math.Distance.Between(this.player.x, this.player.y, e.body.x, e.body.y) < 28) {
-      this.hurt(1);
-    }
-  }
-
-  enemyShoot(e) {
-    const dx = this.player.x - e.body.x;
-    const dy = this.player.y - e.body.y;
-    const len = Math.sqrt(dx * dx + dy * dy);
-    const speed = 180;
-
-    const shot = this.add.circle(e.body.x, e.body.y, 6, ENEMY_TINT[e.type] || 0xffffff);
-    this.physics.add.existing(shot);
-    shot.body.setAllowGravity(false);
-    shot.body.setVelocity((dx / len) * speed, (dy / len) * speed);
-    shot.enemyType = e.type;
-
-    this.bossShots.add(shot);
-
-    // Destroy after 3 seconds
-    this.time.delayedCall(3000, () => { if (shot.active) shot.destroy(); });
-  }
-
-  hitEnemy(shot, e) {
-    if (e.dead) return;
-    shot.destroy();
-    this.resolveHit(e, HEROES[this.heroKey].kills);
-  }
-
-  resolveHit(e, killList) {
-    const isWeak = killList.includes(e.type);
-    const dmg = isWeak ? 2 : 1;
-    e.hp -= dmg;
-
-    this.floatText(e.body.x, e.body.y - 50, isWeak ? '💥 WEAK! -' + dmg : '-' + dmg, isWeak ? 0xff4400 : 0xffffff);
-    this.flash(e.body, isWeak ? 0xff0000 : 0xaaaaaa);
-
-    if (e.hp <= 0) {
-      this.killEnemy(e);
-    }
-  }
-
-  killEnemy(e) {
-    e.dead = true;
-    this.floatText(e.body.x, e.body.y - 40, 'KO!', 0xffff00);
-    this.tweens.add({
-      targets: [e.body, e.lbl, e.hpBar, e.hpBg],
-      alpha: 0, scaleX: 0, scaleY: 0,
-      duration: 300,
-      onComplete: () => {
-        e.body.destroy();
-        e.lbl.destroy();
-        e.hpBar.destroy();
-        e.hpBg.destroy();
-      }
-    });
-    audioManager.play('enemy_die');
-  }
-
-  // ─── PICKUPS ──────────────────────────────────────────────────────────────
-
-  buildPickups() {
-    this.pickups = this.physics.add.staticGroup();
-
-    // Apples
-    const applePositions = [
-      { x: 850, y: LOW - 100 },
-      { x: 1150, y: LOW - 100 },
-      { x: 1800, y: LOW - 100 },
-      { x: 2200, y: LOW - 140 },
-      { x: 2900, y: LOW - 100 },
-      { x: 3300, y: LOW - 100 },
-      { x: 3700, y: LOW - 100 },
-      { x: 4100, y: LOW - 100 },
-    ];
-
-    applePositions.forEach(pos => {
-      const apple = this.add.circle(pos.x, pos.y, 10, 0xff4444);
-      this.physics.add.existing(apple, true);
-      apple.pickupType = 'apple';
-      this.pickups.add(apple);
-      // Bobbing animation
-      this.tweens.add({
-        targets: apple,
-        y: pos.y - 8,
-        yoyo: true,
-        repeat: -1,
-        duration: 800,
-        ease: 'Sine.easeInOut'
-      });
-    });
-
-    // Chests (hero upgrades)
-    const chestDefs = [
-      { x: 1480, y: LOW - 50, hero: 'water' },
-      { x: 2480, y: LOW - 50, hero: 'earth' },
-      { x: 3480, y: LOW - 50, hero: 'stone' },
-      { x: 4430, y: LOW - 50, hero: 'poison' },
-    ];
-
-    chestDefs.forEach(def => {
-      const chest = this.add.rectangle(def.x, def.y, 28, 24, 0xd4af37);
-      this.physics.add.existing(chest, true);
-      chest.pickupType = 'chest';
-      chest.chestHero  = def.hero;
-      chest.opened     = false;
-      this.pickups.add(chest);
-      this.chests.push(chest);
-
-      const lbl = this.add.text(def.x, def.y - 22, '?', {
-        fontSize: '16px', color: '#ffffff', fontFamily: 'monospace'
-      }).setOrigin(0.5);
-      chest.label = lbl;
-    });
-
-    // Apple pack (pack that refills saves)
-    const pack = this.add.rectangle(3500, LOW - 50, 24, 20, 0x44aaff);
-    this.physics.add.existing(pack, true);
-    pack.pickupType = 'pack';
-    this.pickups.add(pack);
-    const packLbl = this.add.text(3500, LOW - 70, 'PACK', {
-      fontSize: '10px', color: '#ffffff', fontFamily: 'monospace'
-    }).setOrigin(0.5);
-  }
-
-  handlePickupOverlap() {
-    if (!this.player || !this.pickups) return;
-    this.pickups.getChildren().forEach(pickup => {
-      if (!pickup.active) return;
-      if (Phaser.Math.Distance.Between(this.player.x, this.player.y, pickup.x, pickup.y) < 28) {
-        if (pickup.pickupType === 'apple') {
-          this.getApple(pickup);
-        } else if (pickup.pickupType === 'chest' && !pickup.opened) {
-          this.openChest(pickup);
-        } else if (pickup.pickupType === 'pack') {
-          this.getPack(pickup);
-        }
-      }
-    });
-
-    // Checkpoint zones
-    this.checkpoints.forEach((cp, i) => {
-      if (!cp.zone || !cp.zone.active) return;
-      if (Phaser.Math.Distance.Between(this.player.x, this.player.y, cp.x, cp.y - 10) < 50) {
-        if (this.checkpointIdx < i + 1) {
-          this.checkpointIdx = i + 1;
-          this.lastCheckpoint = cp;
-          saveSystem.saveCheckpoint(i);
-          this.refreshSaves();
-          this.floatText(cp.x, cp.y - 60, 'Checkpoint!', 0x44ff44);
-          audioManager.play('checkpoint');
-          cp.zone.destroy();
-          cp.zone = null;
-        }
-      }
-    });
-
-    // Check gates
-    this.checkGates();
-
-    // Enemy shots hitting player
-    this.bossShots.getChildren().forEach(shot => {
-      if (!shot.active) return;
-      if (Phaser.Math.Distance.Between(this.player.x, this.player.y, shot.x, shot.y) < 20) {
-        shot.destroy();
-        this.hurt(1);
-      }
-    });
-
-    // Player shots hitting enemies
-    if (this.shots) {
-      this.shots.getChildren().forEach(shot => {
-        if (!shot.active) return;
-        this.enemies.forEach(e => {
-          if (e.dead) return;
-          if (Phaser.Math.Distance.Between(shot.x, shot.y, e.body.x, e.body.y) < 24) {
-            this.hitEnemy(shot, e);
-          }
-        });
-        // Hit boss
-        if (this.boss && this.bossActive && !this.bossDefeated) {
-          if (Phaser.Math.Distance.Between(shot.x, shot.y, this.boss.x, this.boss.y) < 50) {
-            shot.destroy();
-            this.hitBoss(this.boss);
-          }
-        }
-      });
-    }
-  }
-
-  getApple(apple) {
-    apple.destroy();
-    if (this.hp < this.maxHp) {
-      this.hp = Math.min(this.hp + 1, this.maxHp);
-      this.drawHearts();
-      this.floatText(this.player.x, this.player.y - 50, '+1 HP', 0xff4444);
-      audioManager.play('pickup');
-    } else {
-      this.floatText(this.player.x, this.player.y - 50, 'Full HP', 0xffaaaa);
-    }
-  }
-
-  openChest(chest) {
-    chest.opened = true;
-    if (chest.label) chest.label.destroy();
-    this.tweens.add({
-      targets: chest,
-      scaleY: 0,
-      duration: 200,
-      onComplete: () => {
-        chest.setFillStyle(0x888888);
-        this.tweens.add({ targets: chest, scaleY: 1, duration: 200 });
-      }
-    });
-    const newHero = chest.chestHero;
-    this.floatText(chest.x, chest.y - 50, newHero.toUpperCase() + ' unlocked!', 0xffdd00);
-    this.showPanel('Hero Unlocked: ' + HEROES[newHero].name + '!\nPress ' + ORDER.indexOf(newHero) + '+1 to switch.');
-    audioManager.play('chest_open');
-  }
-
-  getPack(pack) {
-    pack.destroy();
-    this.pack = true;
-    this.saves = 3;
-    this.refreshSaves();
-    this.floatText(this.player.x, this.player.y - 50, 'Pack! Saves restored', 0x44aaff);
-    audioManager.play('pickup');
-  }
-
-  // ─── BOSS ─────────────────────────────────────────────────────────────────
-
-  buildBoss() {
-    this.bossMaxHp = 20;
-    this.bossHp    = this.bossMaxHp;
-
-    // Boss is invisible/inactive until player enters arena
-    this.boss = this.add.rectangle(4830, LOW - 60, 64, 72, 0x990000);
-    this.physics.add.existing(this.boss);
-    this.boss.body.setCollideWorldBounds(true);
-    this.boss.body.setGravityY(200);
-    this.boss.setAlpha(0);
-
-    const bossLbl = this.add.text(4830, LOW - 100, 'BOSS', {
-      fontSize: '18px', color: '#ff0000', fontFamily: 'monospace',
-      stroke: '#000000', strokeThickness: 3
-    }).setOrigin(0.5).setAlpha(0);
-    this.boss.label = bossLbl;
-
-    // Boss HP bar (HUD)
-    this.bossBar = {
-      bg:   this.add.rectangle(W / 2, 30, 400, 18, 0x550000).setScrollFactor(0).setAlpha(0),
-      fill: this.add.rectangle(W / 2 - 200, 30, 400, 18, 0xff2222).setScrollFactor(0).setOrigin(0, 0.5).setAlpha(0),
-      txt:  this.add.text(W / 2, 30, 'BOSS', {
-        fontSize: '12px', color: '#ffffff', fontFamily: 'monospace'
-      }).setOrigin(0.5).setScrollFactor(0).setAlpha(0),
-    };
-
-    this.physics.add.collider(this.boss, this.platforms);
-  }
-
-  tickBossLogic(time, delta) {
-    // Activate boss when player enters arena
-    if (!this.bossActive && this.player && this.player.x > 4580) {
-      this.bossActive = true;
-      this.boss.setAlpha(1);
-      this.boss.label.setAlpha(1);
-      this.bossBar.bg.setAlpha(1);
-      this.bossBar.fill.setAlpha(1);
-      this.bossBar.txt.setAlpha(1);
-      audioManager.play('boss_music');
-      this.floatText(4830, LOW - 140, 'BOSS FIGHT!', 0xff0000);
-    }
-
-    if (!this.bossActive || this.bossDefeated) return;
-
-    this.tickBoss(time, delta);
-  }
-
-  tickBoss(time, delta) {
-    const dt     = delta / 1000;
-    const bx     = this.boss.x;
-    const px     = this.player.x;
-    const phase  = this.bossPhase;
-
-    // Chase player
-    const dir = px > bx ? 1 : -1;
-    const spd = 60 + phase * 30;
-    this.boss.body.setVelocityX(dir * spd);
-
-    // Boss attacks based on phase
-    this.bossShootCd = (this.bossShootCd || 0) - dt;
-    if (this.bossShootCd <= 0) {
-      const freq = Math.max(0.5, 2.0 - phase * 0.4);
-      this.bossShootCd = freq;
-      this.bossDoShoot(phase);
-    }
-
-    // Update boss label
-    this.boss.label.setPosition(this.boss.x, this.boss.y - 50);
-
-    // Melee damage
-    if (!this.invincible && Phaser.Math.Distance.Between(this.player.x, this.player.y, this.boss.x, this.boss.y) < 50) {
-      this.hurt(2);
-    }
-  }
-
-  bossDoShoot(phase) {
-    const bx = this.boss.x;
-    const by = this.boss.y;
-    const px = this.player.x;
-    const py = this.player.y;
-
-    if (phase < 1) {
-      // Single shot
-      this.spawnBossShot(bx, by, px, py, 0xff2222, 200);
-    } else if (phase < 2) {
-      // Spread
-      [-20, 0, 20].forEach(offset => {
-        this.spawnBossShot(bx, by, px + offset * 5, py, 0xff5500, 220);
-      });
-    } else {
-      // Circle burst
-      for (let a = 0; a < 8; a++) {
-        const angle = (a / 8) * Math.PI * 2;
-        const tx = bx + Math.cos(angle) * 200;
-        const ty = by + Math.sin(angle) * 200;
-        this.spawnBossShot(bx, by, tx, ty, 0xff0000, 180);
-      }
-    }
-  }
-
-  spawnBossShot(sx, sy, tx, ty, color, speed) {
-    const dx  = tx - sx;
-    const dy  = ty - sy;
-    const len = Math.sqrt(dx * dx + dy * dy) || 1;
-    const s   = this.add.circle(sx, sy, 8, color);
-    this.physics.add.existing(s);
-    s.body.setAllowGravity(false);
-    s.body.setVelocity((dx / len) * speed, (dy / len) * speed);
-    s.isBossShot = true;
-    this.bossShots.add(s);
-    this.time.delayedCall(4000, () => { if (s.active) s.destroy(); });
-  }
-
-  hitBoss(b) {
-    this.damageBoss();
-  }
-
-  damageBoss() {
-    const kills = HEROES[this.heroKey].kills;
-    // All attacks damage boss; elemental weakness does 2
-    const isWeak = kills.length > 0; // simplified: any elemental ability is effective
-    const dmg    = isWeak ? 2 : 1;
-
-    this.bossHp -= dmg;
-    this.flash(this.boss, 0xff0000);
-    this.floatText(this.boss.x, this.boss.y - 60, '-' + dmg, 0xff4400);
-
-    // Update phase
-    this.bossPhase = this.bossHp <= this.bossMaxHp * 0.33 ? 2 :
-                     this.bossHp <= this.bossMaxHp * 0.66 ? 1 : 0;
-
-    // Update bar
-    const pct = Math.max(0, this.bossHp / this.bossMaxHp);
-    this.bossBar.fill.setSize(400 * pct, 18);
-
-    if (this.bossHp <= 0) {
-      this.defeatBoss();
-    }
-  }
-
-  defeatBoss() {
-    this.bossDefeated = true;
-    this.bossActive   = false;
-    audioManager.play('boss_die');
-    this.floatText(this.boss.x, this.boss.y - 80, 'BOSS DEFEATED!', 0xffdd00);
-    this.tweens.add({
-      targets: [this.boss, this.boss.label, this.bossBar.bg, this.bossBar.fill, this.bossBar.txt],
-      alpha: 0,
-      duration: 800,
-      onComplete: () => {
-        this.boss.destroy();
-        // Clear remaining boss shots
-        this.bossShots.clear(true, true);
-      }
-    });
-
-    this.time.delayedCall(1200, () => { this.win(); });
-  }
-
-  // ─── PLAYER ───────────────────────────────────────────────────────────────
-
-  buildPlayer() {
-    const startX = 100;
-    const startY = LOW - 50;
-
-    this.player = this.add.rectangle(startX, startY, 28, 40, HEROES[this.heroKey].color);
-    this.physics.add.existing(this.player);
-    this.player.body.setCollideWorldBounds(true);
-    this.player.body.setGravityY(400);
-    this.player.body.setMaxVelocityY(600);
-
-    // Hero letter label
-    this.heroLabel = this.add.text(startX, startY - 28, HEROES[this.heroKey].letter, {
-      fontSize: '16px', color: '#ffffff', fontFamily: 'monospace',
-      stroke: '#000000', strokeThickness: 2
-    }).setOrigin(0.5);
-
-    this.physics.add.collider(this.player, this.platforms);
-  }
-
-  applyHero(k) {
-    this.heroKey = k;
-    const h = HEROES[k];
-    if (this.player) {
-      this.player.setFillStyle(h.color);
-    }
-    if (this.heroLabel) {
-      this.heroLabel.setText(h.letter);
-    }
-    this.atkCooldown = 0;
-    this.refreshBar();
-    this.refreshDmg();
-    this.updateHint(0);
-  }
-
-  swap(k) {
-    if (!ORDER.includes(k)) return;
-    if (k === this.heroKey) return;
-    this.applyHero(k);
-    this.floatText(this.player.x, this.player.y - 60, HEROES[k].name + '!', HEROES[k].color);
-    audioManager.play('swap');
-  }
-
-  // ─── INPUT / MOVEMENT ────────────────────────────────────────────────────
-
-  bindInput() {
+  _bindInput() {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keys    = this.input.keyboard.addKeys({
-      w: Phaser.Input.Keyboard.KeyCodes.W,
-      a: Phaser.Input.Keyboard.KeyCodes.A,
-      s: Phaser.Input.Keyboard.KeyCodes.S,
-      d: Phaser.Input.Keyboard.KeyCodes.D,
-      z: Phaser.Input.Keyboard.KeyCodes.Z,
-      x: Phaser.Input.Keyboard.KeyCodes.X,
-      q: Phaser.Input.Keyboard.KeyCodes.Q,
-      e: Phaser.Input.Keyboard.KeyCodes.E,
-      r: Phaser.Input.Keyboard.KeyCodes.R,
-      f: Phaser.Input.Keyboard.KeyCodes.F,
-      g: Phaser.Input.Keyboard.KeyCodes.G,
-      m: Phaser.Input.Keyboard.KeyCodes.M,
-      esc: Phaser.Input.Keyboard.KeyCodes.ESC,
-      one:   Phaser.Input.Keyboard.KeyCodes.ONE,
-      two:   Phaser.Input.Keyboard.KeyCodes.TWO,
-      three: Phaser.Input.Keyboard.KeyCodes.THREE,
-      four:  Phaser.Input.Keyboard.KeyCodes.FOUR,
-      five:  Phaser.Input.Keyboard.KeyCodes.FIVE,
-      six:   Phaser.Input.Keyboard.KeyCodes.SIX,
+      a: 'A', d: 'D', w: 'W', s: 'S', space: 'SPACE',
+      j: 'J', k: 'K', r: 'R', tab: 'TAB', esc: 'ESC',
+      n1: 'ONE', n2: 'TWO', n3: 'THREE', n4: 'FOUR', n5: 'FIVE', n6: 'SIX',
     });
-
-    // Hero swap keys
-    this.input.keyboard.on('keydown-ONE',   () => this.swap('fire'));
-    this.input.keyboard.on('keydown-TWO',   () => this.swap('water'));
-    this.input.keyboard.on('keydown-THREE', () => this.swap('earth'));
-    this.input.keyboard.on('keydown-FOUR',  () => this.swap('stone'));
-    this.input.keyboard.on('keydown-FIVE',  () => this.swap('poison'));
-    this.input.keyboard.on('keydown-SIX',   () => this.swap('rubber'));
-
-    // Menu
-    this.input.keyboard.on('keydown-M',   () => this.toggleMenu());
-    this.input.keyboard.on('keydown-ESC', () => { if (this.menuOpen) this.toggleMenu(); });
-
-    // Ability
-    this.input.keyboard.on('keydown-Q', () => this.ability());
-
-    // Grapple
-    this.input.keyboard.on('keydown-G', () => this.grappleSwing());
-
-    // Respawn at checkpoint
-    this.input.keyboard.on('keydown-R', () => {
-      if (this.dead && this.saves > 0 && this.lastCheckpoint) {
-        this.respawn();
-      }
-    });
+    this.input.keyboard.on('keydown-TAB', e => e.preventDefault());
   }
 
-  handleMovement(delta) {
-    if (!this.player || this.grappling) return;
+  // -------------------------------------------------------------------------
+  // Actions
+  // -------------------------------------------------------------------------
 
-    const speed   = 200;
-    const jumpVel = -480;
-    const body    = this.player.body;
+  _applyHero(k) {
+    this.cur = k;
+    this.player.setTexture('hero').setTint(HEROES[k].color);
+  }
 
-    this.grounded = body.blocked.down;
+  _swap(k) {
+    if (k === this.cur) return;
+    this._applyHero(k);
+    this.label.setText(HEROES[k].letter);
+    this._flash(this.player.x, this.player.y, HEROES[k].color);
+    this._refreshBar();
+  }
 
-    let vx = 0;
-    if (this.cursors.left.isDown  || this.keys.a.isDown) vx = -speed;
-    if (this.cursors.right.isDown || this.keys.d.isDown) vx =  speed;
-
-    body.setVelocityX(vx);
-
-    if ((this.cursors.up.isDown || this.cursors.space.isDown || this.keys.w.isDown) && this.grounded) {
-      body.setVelocityY(jumpVel);
-      audioManager.play('jump');
-    }
-
-    // Down through upper platforms
-    if (this.cursors.down.isDown || this.keys.s.isDown) {
-      // Allow passing through upper platforms (thin platforms) by temporarily disabling
-      this.upperPlatforms.getChildren().forEach(p => {
-        if (p.body) p.body.checkCollision.up = false;
-      });
+  _attack() {
+    const dir = this.player.facing || 1;
+    if (HEROES[this.cur].atk === 'ranged') {
+      const s = this.shots.create(this.player.x + dir * 22, this.player.y, 'px')
+        .setDisplaySize(14, 8).setTint(HEROES[this.cur].color);
+      s.body.setAllowGravity(false);
+      s.setVelocityX(dir * 560);
+      s.element = this.cur;
+      s.kills   = HEROES[this.cur].kills.slice();
+      this.time.delayedCall(1100, () => { if (s.active) s.destroy(); });
     } else {
-      this.upperPlatforms.getChildren().forEach(p => {
-        if (p.body) p.body.checkCollision.up = true;
+      const ax = this.player.x + dir * 30, ay = this.player.y;
+      const slash = this.add.rectangle(ax, ay, 30, 34, HEROES[this.cur].color, 0.55).setDepth(6);
+      this.tweens.add({ targets: slash, alpha: 0, scaleX: 1.4, duration: 160, onComplete: () => slash.destroy() });
+      const box = new Phaser.Geom.Rectangle(ax - 18, ay - 20, 36, 40);
+      this.enemies.children.iterate(e => {
+        if (e && e.active && Phaser.Geom.Intersects.RectangleToRectangle(box, e.getBounds()))
+          this._resolveHit(e, HEROES[this.cur].kills);
       });
-    }
-
-    // Sync label
-    if (this.heroLabel) {
-      this.heroLabel.setPosition(this.player.x, this.player.y - 28);
+      if (this.boss && this.boss.active && !this.bossDead &&
+          Phaser.Geom.Intersects.RectangleToRectangle(box, this.boss.getBounds()))
+        this._damageBoss();
     }
   }
 
-  handleAttack(time) {
-    if (!this.player) return;
-
-    const attackKey = this.cursors.shift.isDown || this.keys.z.isDown || this.keys.x.isDown;
-    const h         = HEROES[this.heroKey];
-    const now       = this.time.now;
-
-    if (attackKey && now > this.atkCooldown) {
-      this.atkCooldown = now + h.cd;
-      this.attack();
-    }
-  }
-
-  attack() {
-    const h  = HEROES[this.heroKey];
-    const px = this.player.x;
-    const py = this.player.y;
-
-    if (h.atk === 'ranged') {
-      // Fire projectile toward nearest enemy or in facing direction
-      let tx = px + 300;
-      let ty = py;
-      let nearest = null;
-      let nearestDist = Infinity;
-
-      this.enemies.forEach(e => {
-        if (e.dead) return;
-        const d = Phaser.Math.Distance.Between(px, py, e.body.x, e.body.y);
-        if (d < nearestDist) {
-          nearestDist = d;
-          nearest     = e;
-        }
-      });
-
-      if (nearest && nearestDist < 500) {
-        tx = nearest.body.x;
-        ty = nearest.body.y;
+  _ability() {
+    // EARTH — break crack OR douse fire wall
+    if (this.cur === 'earth') {
+      if (!this.gates.crack.broken && Math.abs(this.player.x - this.gates.crack.x) < 70) {
+        this.gates.crack.broken = true;
+        this._flash(this.gates.crack.x, this.gates.crack.obj.y, 0xc08a4e);
+        this.tweens.add({ targets: this.gates.crack.obj, alpha: 0, duration: 220, onComplete: () => this.gates.crack.obj.destroy() });
+        return this._floatText(this.gates.crack.x, LOW - 50, 'cleared!', '#c08a4e');
       }
-
-      const dx  = tx - px;
-      const dy  = ty - py;
-      const len = Math.sqrt(dx * dx + dy * dy) || 1;
-
-      const shot = this.add.circle(px, py, 6, HEROES[this.heroKey].color);
-      this.physics.add.existing(shot);
-      shot.body.setAllowGravity(false);
-      shot.body.setVelocity((dx / len) * 350, (dy / len) * 350);
-      shot.heroKey = this.heroKey;
-      this.shots.add(shot);
-
-      this.time.delayedCall(2500, () => { if (shot.active) shot.destroy(); });
-      audioManager.play('attack_ranged');
-
-    } else {
-      // Melee: hit nearby enemies
-      this.enemies.forEach(e => {
-        if (e.dead) return;
-        if (Phaser.Math.Distance.Between(px, py, e.body.x, e.body.y) < 60) {
-          this.resolveHit(e, HEROES[this.heroKey].kills);
-        }
-      });
-
-      // Melee vs boss
-      if (this.boss && this.bossActive && !this.bossDefeated) {
-        if (Phaser.Math.Distance.Between(px, py, this.boss.x, this.boss.y) < 80) {
-          this.damageBoss();
-        }
+      if (!this.gates.fireWall.doused && Math.abs(this.player.x - this.gates.fireWall.x) < 70) {
+        this.gates.fireWall.doused = true;
+        this.gates.fireWall.obj.glow.destroy();
+        this.tweens.add({ targets: this.gates.fireWall.obj, alpha: 0, duration: 240, onComplete: () => this.gates.fireWall.obj.destroy() });
+        return this._floatText(this.gates.fireWall.x, LOW - 60, 'doused!', '#c08a4e');
       }
-
-      // Melee flash
-      const slash = this.add.rectangle(px + 40, py, 60, 30, HEROES[this.heroKey].color, 0.7);
-      this.tweens.add({
-        targets: slash,
-        alpha: 0, scaleX: 0,
-        duration: 150,
-        onComplete: () => slash.destroy()
+    }
+    // STONE — raise a crushing wall
+    if (this.cur === 'stone') {
+      const dir = this.player.facing || 1, wx = this.player.x + dir * 44;
+      const wall = this._zone(wx, LOW - 30, 30, 72, 0x9a8c7a, 1);
+      this.tweens.add({ targets: wall, scaleY: { from: 0.1, to: 1 }, duration: 150 });
+      this.physics.add.collider(this.player, wall);
+      const crushBox = new Phaser.Geom.Rectangle(wx - 22, LOW - 66, 44, 80);
+      let crushed = 0;
+      this.enemies.children.iterate(e => {
+        if (e && e.active && Phaser.Geom.Intersects.RectangleToRectangle(crushBox, e.getBounds())) {
+          this._killEnemy(e); crushed++;
+        }
       });
-      audioManager.play('attack_melee');
-    }
-
-    // Ability side-effect for cross heroes
-    if (HEROES[this.heroKey].cross) {
-      this.addRegen(HEROES[this.heroKey].cross);
-    }
-  }
-
-  ability() {
-    const h = HEROES[this.heroKey];
-    switch (this.heroKey) {
-      case 'fire':
-        // Fire burst - damage all nearby enemies
-        this.enemies.forEach(e => {
-          if (e.dead) return;
-          if (Phaser.Math.Distance.Between(this.player.x, this.player.y, e.body.x, e.body.y) < 150) {
-            this.resolveHit(e, ['ice', 'fireD']);
-          }
-        });
-        this.floatText(this.player.x, this.player.y - 60, 'FLAME BURST!', 0xff5500);
-        audioManager.play('ability_fire');
-        break;
-
-      case 'water':
-        // Water cross - heal
-        this.hp = Math.min(this.hp + 1, this.maxHp);
-        this.drawHearts();
-        this.floatText(this.player.x, this.player.y - 60, 'HEAL +1', 0x3aa0ff);
-        audioManager.play('ability_water');
-        break;
-
-      case 'earth':
-        // Earth stomp - knock back
-        this.enemies.forEach(e => {
-          if (e.dead) return;
-          if (Phaser.Math.Distance.Between(this.player.x, this.player.y, e.body.x, e.body.y) < 120) {
-            const dx = e.body.x - this.player.x;
-            e.body.body.setVelocityX(dx * 4);
-            e.body.body.setVelocityY(-200);
-            this.resolveHit(e, []);
-          }
-        });
-        this.floatText(this.player.x, this.player.y - 60, 'EARTH STOMP!', 0xc08a4e);
-        audioManager.play('ability_earth');
-        break;
-
-      case 'stone':
-        // Stone shield - brief invincibility
-        this.invincible = true;
-        const shield = this.add.circle(this.player.x, this.player.y, 40, 0x9a8c7a, 0.5);
-        this.tweens.add({
-          targets: shield,
-          alpha: 0,
-          duration: 2000,
-          onComplete: () => { shield.destroy(); this.invincible = false; }
-        });
-        this.floatText(this.player.x, this.player.y - 60, 'STONE SHIELD!', 0x9a8c7a);
-        audioManager.play('ability_stone');
-        break;
-
-      case 'poison':
-        // Acid cloud - damage over time
-        this.enemies.forEach(e => {
-          if (e.dead) return;
-          if (Phaser.Math.Distance.Between(this.player.x, this.player.y, e.body.x, e.body.y) < 180) {
-            this.time.addEvent({
-              delay: 500,
-              repeat: 4,
-              callback: () => {
-                if (!e.dead) this.resolveHit(e, ['acidD']);
-              }
-            });
-          }
-        });
-        this.floatText(this.player.x, this.player.y - 60, 'ACID CLOUD!', 0x7ad14a);
-        audioManager.play('ability_poison');
-        break;
-
-      case 'rubber':
-        // Rubber bounce - super jump
-        this.player.body.setVelocityY(-700);
-        this.floatText(this.player.x, this.player.y - 60, 'BOUNCE!', 0xe85aa0);
-        audioManager.play('ability_rubber');
-        break;
-    }
-  }
-
-  grappleSwing() {
-    if (this.grappling) {
-      // Release
-      this.grappling = false;
-      if (this.grappleRope) { this.grappleRope.destroy(); this.grappleRope = null; }
+      this._flash(wx, LOW - 30, 0xcfc4b0);
+      this._floatText(wx, LOW - 80, crushed ? `crushed ${crushed}!` : 'wall up', '#cfc4b0');
+      this.time.delayedCall(2600, () => {
+        if (wall.active) this.tweens.add({ targets: wall, alpha: 0, duration: 200, onComplete: () => wall.destroy() });
+      });
       return;
     }
-
-    // Find nearest upper platform to use as anchor
-    let anchor = null;
-    let minDist = Infinity;
-
-    this.upperPlatforms.getChildren().forEach(p => {
-      const d = Phaser.Math.Distance.Between(this.player.x, this.player.y, p.x, p.y);
-      if (d < 200 && d < minDist) {
-        minDist = d;
-        anchor  = p;
-      }
-    });
-
-    if (!anchor) {
-      this.floatText(this.player.x, this.player.y - 40, 'No anchor!', 0xff8888);
-      return;
+    // RUBBER — grapple swing
+    if (this.cur === 'rubber' && !this.gates.grapple.busy &&
+        this.player.x > this.gates.grapple.x1 && this.player.x < this.gates.grapple.x2) {
+      this._grappleSwing(); return;
     }
-
-    this.grappling     = true;
-    this.grappleAnchor = { x: anchor.x, y: anchor.y };
-    this.grappleLen    = minDist;
-    this.grappleAngle  = Math.atan2(this.player.y - anchor.y, this.player.x - anchor.x);
-
-    this.grappleRope = this.add.graphics();
-    audioManager.play('grapple');
+    this._floatText(this.player.x, this.player.y - 34, 'no ability here', '#8fa593');
   }
 
-  handleGrapple(delta) {
-    if (!this.grappling || !this.grappleAnchor) return;
-
-    const dt      = delta / 1000;
-    const gravity = 500;
-    const anchor  = this.grappleAnchor;
-
-    // Pendulum physics
-    const angularAccel = (-gravity / this.grappleLen) * Math.sin(this.grappleAngle);
-    this.grappleAngVel = (this.grappleAngVel || 0) + angularAccel * dt;
-    this.grappleAngle += this.grappleAngVel * dt;
-
-    // Input to pump
-    if (this.cursors.left.isDown  || this.keys.a.isDown) this.grappleAngVel -= 2 * dt;
-    if (this.cursors.right.isDown || this.keys.d.isDown) this.grappleAngVel += 2 * dt;
-
-    const nx = anchor.x + Math.cos(this.grappleAngle) * this.grappleLen;
-    const ny = anchor.y + Math.sin(this.grappleAngle) * this.grappleLen;
-
-    this.player.setPosition(nx, ny);
-    this.player.body.reset(nx, ny);
-
-    // Draw rope
-    if (this.grappleRope) {
-      this.grappleRope.clear();
-      this.grappleRope.lineStyle(2, 0xffffff, 0.8);
-      this.grappleRope.beginPath();
-      this.grappleRope.moveTo(anchor.x, anchor.y);
-      this.grappleRope.lineTo(nx, ny);
-      this.grappleRope.strokePath();
-    }
-
-    if (this.heroLabel) this.heroLabel.setPosition(nx, ny - 28);
-
-    // Auto-release if grounded
-    if (this.player.body.blocked.down) {
-      this.grappling = false;
-      if (this.grappleRope) { this.grappleRope.destroy(); this.grappleRope = null; }
-    }
-  }
-
-  // ─── REGEN ────────────────────────────────────────────────────────────────
-
-  addRegen(type) {
-    // Cross abilities add periodic regen
-    const interval = type === 'water' ? 3 : 5;
-    this.time.delayedCall(interval * 1000, () => {
-      if (this.hp < this.maxHp) {
-        this.hp++;
-        this.drawHearts();
-        this.floatText(this.player.x, this.player.y - 50, '+1 REGEN', 0x44ffaa);
-      }
-    });
-  }
-
-  tickRegen(delta) {
-    // Passive regen from cross heroes is handled via delayedCall
-  }
-
-  // ─── COMBAT ───────────────────────────────────────────────────────────────
-
-  hurt(amount) {
-    if (this.invincible || this.dead) return;
-    this.hp -= amount;
-    this.drawHearts();
-    this.flash(this.player, 0xff0000);
-    this.invincible = true;
-    audioManager.play('hurt');
-
-    this.time.delayedCall(800, () => { this.invincible = false; });
-
-    if (this.hp <= 0) {
-      this.loseHard();
-    }
-  }
-
-  respawn() {
-    if (!this.lastCheckpoint || this.saves <= 0) return;
-    this.saves--;
-    this.hp = Math.ceil(this.maxHp / 2);
-    this.dead = false;
-    this.invincible = true;
-    this.player.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y - 60);
-    this.player.body.reset(this.lastCheckpoint.x, this.lastCheckpoint.y - 60);
-    this.player.setAlpha(1);
-    this.drawHearts();
-    this.refreshSaves();
-    this.floatText(this.lastCheckpoint.x, this.lastCheckpoint.y - 100, 'Respawned!', 0x44ff88);
-    this.time.delayedCall(1500, () => { this.invincible = false; });
-    audioManager.play('respawn');
-  }
-
-  win() {
-    this.won = true;
-    this.timerActive = false;
-    saveSystem.saveTime(Math.floor(this.elapsed));
-    audioManager.play('win');
-
-    const panel = this.add.rectangle(W / 2, H / 2, 500, 300, 0x000000, 0.85)
-      .setScrollFactor(0).setDepth(10);
-    this.add.text(W / 2, H / 2 - 90, '🏆 YOU WIN!', {
-      fontSize: '36px', color: '#ffdd00', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(11);
-    this.add.text(W / 2, H / 2 - 30, 'Time: ' + this.formatTime(this.elapsed), {
-      fontSize: '22px', color: '#ffffff', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(11);
-    this.add.text(W / 2, H / 2 + 30, 'Press R to restart', {
-      fontSize: '18px', color: '#aaffaa', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(11);
-
-    this.input.keyboard.once('keydown-R', () => { this.scene.restart(); });
-  }
-
-  loseHard() {
-    this.dead = true;
-    this.player.setAlpha(0.3);
-    this.timerActive = false;
-    audioManager.play('die');
-
-    const canRespawn = this.saves > 0 && this.lastCheckpoint !== null;
-
-    const panel = this.add.rectangle(W / 2, H / 2, 500, 280, 0x000000, 0.85)
-      .setScrollFactor(0).setDepth(10);
-    this.add.text(W / 2, H / 2 - 80, '💀 GAME OVER', {
-      fontSize: '32px', color: '#ff4444', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(11);
-
-    if (canRespawn) {
-      this.add.text(W / 2, H / 2, 'Press R to respawn at checkpoint\n(' + this.saves + ' save' + (this.saves !== 1 ? 's' : '') + ' remaining)', {
-        fontSize: '16px', color: '#ffffff', fontFamily: 'monospace', align: 'center'
-      }).setOrigin(0.5).setScrollFactor(0).setDepth(11);
-    } else {
-      this.add.text(W / 2, H / 2, 'No saves remaining!\nPress R to restart', {
-        fontSize: '16px', color: '#ffaaaa', fontFamily: 'monospace', align: 'center'
-      }).setOrigin(0.5).setScrollFactor(0).setDepth(11);
-      this.input.keyboard.once('keydown-R', () => { this.scene.restart(); });
-    }
-  }
-
-  // ─── HUD ──────────────────────────────────────────────────────────────────
-
-  buildHUD() {
-    // Hearts
-    this.drawHearts();
-
-    // Cooldown bar
-    this.barBg = this.add.rectangle(W - 110, H - 24, 100, 14, 0x333333)
-      .setScrollFactor(0).setDepth(5);
-    this.barFill = this.add.rectangle(W - 160, H - 24, 100, 14, HEROES[this.heroKey].color)
-      .setScrollFactor(0).setDepth(5).setOrigin(0, 0.5);
-    this.add.text(W - 110, H - 40, 'ATK CD', {
-      fontSize: '10px', color: '#ffffff', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(5);
-
-    // Damage multiplier
-    this.dmgText = this.add.text(W - 110, H - 58, 'DMG x1', {
-      fontSize: '12px', color: '#ffffff', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(5);
-
-    // Timer
-    this.timerText = this.add.text(W / 2, 10, '00:00', {
-      fontSize: '18px', color: '#ffffff', fontFamily: 'monospace',
-      stroke: '#000000', strokeThickness: 2
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(5);
-
-    // Hint text
-    this.hintText = this.add.text(W / 2, H - 20, '', {
-      fontSize: '13px', color: '#ffffaa', fontFamily: 'monospace',
-      stroke: '#000000', strokeThickness: 2
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(5);
-
-    // Saves
-    this.savesText = this.add.text(10, H - 20, 'Saves: 3', {
-      fontSize: '13px', color: '#aaffaa', fontFamily: 'monospace'
-    }).setScrollFactor(0).setDepth(5);
-
-    // Hero name (top-left)
-    this.heroNameText = this.add.text(10, 10, 'Hero: Fire', {
-      fontSize: '14px', color: '#ffffff', fontFamily: 'monospace'
-    }).setScrollFactor(0).setDepth(5);
-  }
-
-  drawHearts() {
-    this.heartSprites.forEach(h => h.destroy());
-    this.heartSprites = [];
-    for (let i = 0; i < this.maxHp; i++) {
-      const full  = i < this.hp;
-      const heart = this.add.text(14 + i * 24, 14, full ? '❤' : '🖤', {
-        fontSize: '18px'
-      }).setScrollFactor(0).setDepth(5);
-      this.heartSprites.push(heart);
-    }
-  }
-
-  refreshBar() {
-    if (!this.barFill) return;
-    this.barFill.setFillStyle(HEROES[this.heroKey].color);
-    if (this.heroNameText) {
-      this.heroNameText.setText('Hero: ' + HEROES[this.heroKey].name + '  [1-6]');
-    }
-  }
-
-  refreshDmg() {
-    if (!this.dmgText) return;
-    this.dmgText.setText('DMG x' + this.dmgMult);
-  }
-
-  refreshSaves() {
-    if (!this.savesText) return;
-    this.savesText.setText('Saves: ' + this.saves);
-  }
-
-  updateTimer() {
-    if (!this.timerText || !this.timerActive) return;
-    this.timerText.setText(this.formatTime(this.elapsed));
-  }
-
-  formatTime(seconds) {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-  }
-
-  updateHint(delta) {
-    if (!this.hintText) return;
-
-    // Context-sensitive hints
-    let hint = '';
-    const px = this.player ? this.player.x : 0;
-
-    if (px < 400) {
-      hint = 'Arrow keys / WASD to move, Space/W to jump';
-    } else if (px < 1000) {
-      hint = 'Z/X/Shift to attack | Q for ability | 1-6 to swap hero';
-    } else if (px < 1500) {
-      hint = 'Reach the checkpoint to save your progress';
-    } else if (px < 2500) {
-      hint = 'G to grapple onto upper platforms!';
-    } else if (px < 3500) {
-      hint = 'Each hero counters specific enemy types';
-    } else if (px < 4500) {
-      hint = 'Boss arena ahead - prepare yourself!';
-    } else {
-      hint = 'Defeat the boss to win!';
-    }
-
-    if (hint !== this.currentHint) {
-      this.currentHint = hint;
-      this.hintText.setText(hint);
-    }
-  }
-
-  // ─── MENU ─────────────────────────────────────────────────────────────────
-
-  buildMenu() {
-    const bg = this.add.rectangle(W / 2, H / 2, 420, 320, 0x000000, 0.92)
-      .setScrollFactor(0).setDepth(20).setVisible(false);
-    const title = this.add.text(W / 2, H / 2 - 120, 'MENU', {
-      fontSize: '24px', color: '#ffffff', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(21).setVisible(false);
-
-    const items = ['Resume', 'Restart Level', 'Controls', 'Quit'];
-    const itemObjs = items.map((label, i) => {
-      return this.add.text(W / 2, H / 2 - 60 + i * 44, label, {
-        fontSize: '18px', color: '#aaffaa', fontFamily: 'monospace'
-      }).setOrigin(0.5).setScrollFactor(0).setDepth(21).setVisible(false);
-    });
-
-    this.menuPanel = { bg, title, items: itemObjs };
-    this.menuItems = itemObjs;
-
-    // Menu navigation
-    this.input.keyboard.on('keydown-UP', () => {
-      if (!this.menuOpen) return;
-      this.menuCursor = (this.menuCursor - 1 + this.menuItems.length) % this.menuItems.length;
-      this.menuKeys();
-    });
-    this.input.keyboard.on('keydown-DOWN', () => {
-      if (!this.menuOpen) return;
-      this.menuCursor = (this.menuCursor + 1) % this.menuItems.length;
-      this.menuKeys();
-    });
-    this.input.keyboard.on('keydown-ENTER', () => {
-      if (!this.menuOpen) return;
-      this.menuSelect();
-    });
-  }
-
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-    const vis = this.menuOpen;
-    if (this.menuPanel) {
-      this.menuPanel.bg.setVisible(vis);
-      this.menuPanel.title.setVisible(vis);
-      this.menuPanel.items.forEach(i => i.setVisible(vis));
-    }
-    if (this.menuOpen) {
-      this.menuCursor = 0;
-      this.menuKeys();
-    }
-  }
-
-  menuKeys() {
-    if (!this.menuItems) return;
-    this.menuItems.forEach((item, i) => {
-      item.setColor(i === this.menuCursor ? '#ffff00' : '#aaffaa');
-    });
-  }
-
-  menuSelect() {
-    switch (this.menuCursor) {
-      case 0: this.toggleMenu(); break;          // Resume
-      case 1: this.scene.restart(); break;       // Restart
-      case 2:                                    // Controls
-        this.showPanel(
-          'Controls:\n' +
-          'Arrow/WASD - Move\n' +
-          'W/Space - Jump\n' +
-          'Z/X/Shift - Attack\n' +
-          'Q - Ability\n' +
-          'G - Grapple\n' +
-          '1-6 - Swap Hero\n' +
-          'M/Esc - Menu'
-        );
-        break;
-      case 3: window.location.reload(); break;   // Quit
-    }
-  }
-
-  showPanel(message) {
-    const panel = this.add.rectangle(W / 2, H / 2, 480, 300, 0x000022, 0.95)
-      .setScrollFactor(0).setDepth(30);
-    const txt = this.add.text(W / 2, H / 2, message, {
-      fontSize: '14px', color: '#ffffff', fontFamily: 'monospace', align: 'center'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(31);
-    const close = this.add.text(W / 2, H / 2 + 120, '[Press any key to close]', {
-      fontSize: '12px', color: '#aaaaaa', fontFamily: 'monospace'
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(31);
-
-    const dismiss = () => {
-      panel.destroy();
-      txt.destroy();
-      close.destroy();
-      this.menuOpen = false;
-    };
-    this.input.keyboard.once('keydown', dismiss);
-  }
-
-  // ─── UTILITY ──────────────────────────────────────────────────────────────
-
-  near(a, b, dist) {
-    return Phaser.Math.Distance.Between(a.x, a.y, b.x, b.y) < dist;
-  }
-
-  hasPack() {
-    return this.pack;
-  }
-
-  flash(obj, color) {
-    if (!obj || !obj.active) return;
-    const original = obj.fillColor;
-    obj.setFillStyle(color);
-    this.time.delayedCall(120, () => {
-      if (obj.active) obj.setFillStyle(original);
-    });
-  }
-
-  floatText(x, y, text, color = 0xffffff) {
-    const hex = '#' + color.toString(16).padStart(6, '0');
-    const t = this.add.text(x, y, text, {
-      fontSize: '14px', color: hex, fontFamily: 'monospace',
-      stroke: '#000000', strokeThickness: 2
-    }).setOrigin(0.5).setDepth(8);
+  _grappleSwing() {
+    this.gates.grapple.busy = true;
+    this.player.setAcceleration(0, 0).setVelocity(0, 0);
+    this.player.body.setAllowGravity(false);
+    const line = this.add.line(0, 0, this.player.x, this.player.y, this.gates.grapple.from, 250, 0xffe27a, 0.9)
+      .setOrigin(0, 0).setLineWidth(2).setDepth(4);
     this.tweens.add({
-      targets: t,
-      y: y - 50,
-      alpha: 0,
-      duration: 1200,
-      ease: 'Power2',
-      onComplete: () => t.destroy()
+      targets: this.player,
+      x: this.gates.grapple.to, y: LOW - 30,
+      duration: 620, ease: 'Sine.inOut',
+      onUpdate: () => {
+        line.setTo(this.player.x, this.player.y, this.gates.grapple.from, 250);
+        this.label.setPosition(this.player.x, this.player.y - 32);
+      },
+      onComplete: () => { line.destroy(); this.player.body.setAllowGravity(true); this.gates.grapple.busy = false; },
     });
-    return t;
+    this._floatText(this.player.x, this.player.y - 40, 'swing!', '#ffe27a');
   }
 
-  anyKey(callback) {
-    this.input.keyboard.once('keydown', callback);
+  _openChest() {
+    if (this.gates.chest.opened) return;
+    this.gates.chest.opened = true;
+    this.gates.chest.obj.setFillStyle(0x4a2f80, 1);
+    this.gates.apple.enableBody(true, 1180, LOW - 114, true, true);
+    this.gates.apple.body.setAllowGravity(false);
+    this.tweens.add({ targets: this.gates.apple, y: this.gates.apple.y - 8, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+    this._floatText(250, LOW - 50, 'a golden apple!', '#ffd23f');
   }
 
-  labelFor(type) {
-    return COUNTER[type] || '?';
+  _getApple() {
+    if (this.hasApple || !this.gates.apple.visible) return;
+    this.hasApple = true; this.dmg += 1;
+    this.gates.apple.disableBody(true, true);
+    this._floatText(this.player.x, this.player.y - 38, '+1 DAMAGE', '#ffd23f');
+    this._refreshDmg();
   }
 
-  poolVisual(x, y, w, h, color) {
-    return this.add.rectangle(x, y, w, h, color);
+  // -------------------------------------------------------------------------
+  // Enemies
+  // -------------------------------------------------------------------------
+
+  _addEnemy(x, y, type, behavior, minX, maxX) {
+    const e = this.enemies.create(x, y, 'dragon').setTint(ENEMY_TINT[type]);
+    e.body.setAllowGravity(false); e.setImmovable(true);
+    e.type = type; e.behavior = behavior; e.minX = minX; e.maxX = maxX; e.dir = 1;
+    e.tag = this.add.text(x, y - 22, this._labelFor(type),
+      { fontFamily: 'monospace', fontSize: '10px', color: '#0b140f' }).setOrigin(0.5).setDepth(6);
+    return e;
   }
 
-  jp(x, y) {
-    // Jump pad helper: create a spring/trampoline visual
-    const pad = this.add.rectangle(x, y, 40, 10, 0xffdd00);
-    this.physics.add.existing(pad, true);
-    this.platforms.add(pad);
-    // Player bounces when touching pad
-    return pad;
+  _labelFor(t) {
+    return ({ ice: 'ICE', fireD: 'FIRE', waterD: 'WATR', poisonD: 'POIS', acidD: 'ACID' })[t];
+  }
+
+  _tickEnemy(e) {
+    if (e.behavior === 'patrol') {
+      if (e.x < e.minX) e.dir = 1;
+      if (e.x > e.maxX) e.dir = -1;
+      e.setVelocityX(60 * e.dir);
+    } else if (e.behavior === 'advance') {
+      const d = this.player.x < e.x ? -1 : 1;
+      e.setVelocityX(38 * d); e.dir = d;
+    }
+    e.setFlipX(e.dir < 0);
+    if (e.tag) e.tag.setPosition(e.x, e.y - 22);
+  }
+
+  _hitEnemy(shot, e) {
+    if (!shot.active || !e.active) return;
+    this._resolveHit(e, shot.kills); shot.destroy();
+  }
+
+  _resolveHit(e, killList) {
+    if (killList.includes(e.type)) { this._killEnemy(e); }
+    else { this._floatText(e.x, e.y - 26, `Use ${COUNTER[e.type]}!`, '#ff8a6c'); }
+  }
+
+  _killEnemy(e) {
+    this._flash(e.x, e.y, 0xffffff);
+    this._floatText(e.x, e.y - 26, 'down!', '#ffffff');
+    if (e.tag) e.tag.destroy();
+    e.destroy();
+  }
+
+  // -------------------------------------------------------------------------
+  // Regen stones
+  // -------------------------------------------------------------------------
+
+  _addRegen(x, y) {
+    const s = this._zone(x, y, 26, 26, 0x6f7d73, 1);
+    s.setStrokeStyle(2, 0xffe27a);
+    s.gives = (Math.floor(x / 10) % 2 === 0);
+    s.ring  = this.add.circle(x, y, 20, 0xffe27a, 0).setStrokeStyle(2, 0xffe27a, 0.6).setDepth(2);
+    s.used  = false;
+    this.physics.add.overlap(this.player, s, () => {
+      if (s.used) return;
+      if (this.player.body.velocity.y < -20 && this.player.y > y) {
+        s.used = true; s.setFillStyle(0x3a463f, 1); if (s.ring) s.ring.destroy();
+        if (s.gives && this.hp < this.maxHp) { this.hp++; this._drawHearts(); this._floatText(x, y - 22, '+1 HP', '#ff6a78'); }
+        else this._floatText(x, y - 22, 'empty', '#8fa593');
+      }
+    });
+    this.regenStones.push(s);
+  }
+
+  // -------------------------------------------------------------------------
+  // Boss
+  // -------------------------------------------------------------------------
+
+  _tickBoss(time, delta) {
+    if (!this.boss || !this.boss.active || this.bossDead) return;
+    this.boss.mace.setPosition(this.boss.x, this.boss.y + 52);
+    if (this.boss.state === 'sleep') {
+      if (this.player.x > 4180) { this.boss.state = 'idle'; this.boss.t = 600; this.bossText.setVisible(true); }
+      return;
+    }
+    this.boss.t -= delta;
+    switch (this.boss.state) {
+      case 'idle':
+        this.boss.y = HIGH - 90 + Math.sin(time / 250) * 6;
+        this.boss.x += (this.boss.homeX - this.boss.x) * 0.05;
+        if (this.boss.t <= 0) { this.boss.state = 'rise'; this.boss.t = 460; this.boss.setTint(0xff7a5c); this.boss.targetX = this.player.x; }
+        break;
+      case 'rise':
+        this.boss.y += (150 - this.boss.y) * 0.15;
+        if (this.boss.t <= 0) { this.boss.state = 'slam'; this.boss.t = 420; }
+        break;
+      case 'slam':
+        this.boss.x += (this.boss.targetX - this.boss.x) * 0.25;
+        this.boss.y += (HIGH - 30 - this.boss.y) * 0.28;
+        if (this.boss.t <= 0) {
+          this.boss.state = 'recover'; this.boss.t = 1500; this.boss.setTint(0xffe1a0);
+          this.cameras.main.shake(160, 0.01);
+          if (Math.abs(this.player.x - this.boss.x) < 70 && this.player.y > HIGH - 80) this._hurt(1, this.boss.x);
+          this._flash(this.boss.x, HIGH - 20, 0xffce6a);
+        }
+        break;
+      case 'recover':
+        if (this.boss.t <= 0) { this.boss.state = 'idle'; this.boss.t = 900; this.boss.setTint(0x6b7280); }
+        break;
+    }
+    this.bossText.setPosition(this.boss.x, this.boss.y - 70);
+  }
+
+  _hitBoss(shot) {
+    if (!shot.active) return;
+    shot.destroy(); this._damageBoss();
+  }
+
+  _damageBoss() {
+    if (this.bossDead || !this.boss) return;
+    if (this.boss.state !== 'recover') { this._floatText(this.boss.x, this.boss.y - 60, 'armored!', '#aab2bb'); return; }
+    this.boss.hp -= this.dmg;
+    this._flash(this.boss.x, this.boss.y, 0xffce4a);
+    if (this.boss.hp <= 0) { this._defeatBoss(); }
+    else this._floatText(this.boss.x, this.boss.y - 60, `-${this.dmg}`, '#ffffff');
+  }
+
+  _defeatBoss() {
+    this.bossDead = true;
+    this.boss.mace.destroy();
+    this.bossText.setText('defeated!');
+    this.tweens.add({ targets: this.boss, alpha: 0, y: this.boss.y + 40, duration: 600, onComplete: () => this.boss.destroy() });
+    this.gates.cave.open = true;
+    this.tweens.add({ targets: this.gates.cave.flame, alpha: 0, duration: 400, onComplete: () => this.gates.cave.flame.destroy() });
+    this._floatText(4500, HIGH - 90, 'the bridge is clear', '#35c46a');
+  }
+
+  // -------------------------------------------------------------------------
+  // Damage / life
+  // -------------------------------------------------------------------------
+
+  _hurt(amount, fromX, fromPool) {
+    if (this.time.now < this.invulnUntil || this.over) return;
+    this.hp -= amount; this.invulnUntil = this.time.now + 1200;
+    const dir = this.player.x < fromX ? -1 : 1;
+    this.player.setVelocity(dir * (fromPool ? 330 : 260), fromPool ? -300 : -260);
+    if (this.hasApple) {
+      this.hasApple = false; this.dmg = Math.max(1, this.dmg - 1);
+      this._refreshDmg(); this._floatText(this.player.x, this.player.y - 46, 'lost buff', '#c8c8c8');
+    }
+    this._drawHearts(); this.cameras.main.shake(110, 0.006);
+    if (this.hp <= 0) this._respawn(false);
+  }
+
+  _respawn(fromFall) {
+    if (fromFall) {
+      if (this.time.now < this.invulnUntil) return;
+      this.hp = Math.max(0, this.hp - 1); this._drawHearts(); this.invulnUntil = this.time.now + 800;
+    }
+    if (this.hp <= 0) {
+      if (this.saves > 0) {
+        this.saves--; this._refreshSaves(); this.hp = this.maxHp; this._drawHearts();
+        this._floatText(this.player.x, this.player.y - 40, 'respawn', '#ffd23f');
+      } else { return this._loseHard('GAME OVER'); }
+    }
+    const c = this.checkpoints[this.cp];
+    this.player.setVelocity(0, 0).setPosition(c.x, c.y);
+    this.invulnUntil = this.time.now + 1200;
+  }
+
+  // -------------------------------------------------------------------------
+  // HUD helpers
+  // -------------------------------------------------------------------------
+
+  _drawHearts() {
+    const g = this.hud.hearts; g.clear();
+    for (let i = 0; i < this.maxHp; i++) {
+      const x = 22 + i * 26, y = 22;
+      g.fillStyle(i < this.hp ? 0xff4d5e : 0x33403a, 1);
+      g.fillCircle(x - 4, y - 2, 6); g.fillCircle(x + 4, y - 2, 6); g.fillTriangle(x - 9, y, x + 9, y, x, y + 10);
+    }
+  }
+
+  _refreshBar() {
+    this.hud.bar.forEach(b => {
+      const on = b.k === this.cur;
+      b.box.setFillStyle(on ? 0x1c3325 : 0x0c1812, on ? 1 : 0.8);
+      b.box.setStrokeStyle(on ? 3 : 2, HEROES[b.k].color);
+      b.txt.setColor(on ? '#ffffff' : '#9fb3a4');
+    });
+  }
+
+  _refreshDmg()   { this.hud.dmg.setText(this.hasApple ? `DMG ${this.dmg} (apple)` : `DMG ${this.dmg}`); }
+  _refreshSaves() { this.hud.saves.setText('respawns: ' + '●'.repeat(this.saves) + '○'.repeat(3 - this.saves)); }
+
+  _updateTimer() {
+    const m = Math.floor(this.timeLeft / 60), s = Math.floor(this.timeLeft % 60);
+    this.hud.timer.setText(`${m}:${s < 10 ? '0' : ''}${s}`).setColor(this.timeLeft < 60 ? '#ff6a5c' : '#e8efe6');
+  }
+
+  _updateHint() {
+    let m = '';
+    const g = this.gates;
+    if (!g.chest.opened && Math.abs(this.player.x - 250) < 120)
+      m = 'Walk into the chest for a golden apple';
+    else if (!g.crack.broken && Math.abs(this.player.x - g.crack.x) < 150)
+      m = 'Rubble blocks the way — EARTH (3), press K';
+    else if (!g.fireWall.doused && Math.abs(this.player.x - g.fireWall.x) < 150)
+      m = 'Fire wall — EARTH (3), press K to douse';
+    else if (this._near(1000))  m = 'Ice dragon — FIRE (1), attack with J';
+    else if (this._near(1740))  m = 'Fire dragon — WATER (2)';
+    else if (this.player.x > g.grapple.x1 - 120 && this.player.x < g.grapple.x2 && !g.grapple.busy)
+      m = 'Chasm — RUBBER (6), press K to swing';
+    else if (this._near(2700) && this._hasPack())
+      m = 'Too many to shoot — STONE (4), press K to crush them';
+    else if (Math.abs(this.player.x - 2980) < 150) m = 'Deep water — WATER (2) to cross';
+    else if (Math.abs(this.player.x - 3300) < 170) m = 'Acid pool & dragons — POISON (5)';
+    else if (this.physics.overlap(this.player, g.climb.zone)) m = 'EARTH (3) + hold ↑ to climb';
+    else if (this.boss && this.boss.active && !this.bossDead && this.player.x > 4180)
+      m = 'Strike when the dragon is stunned after a slam';
+    this.hud.hintBg.setVisible(!!m); this.hud.hint.setText(m);
+  }
+
+  _near(x) {
+    return Math.abs(this.player.x - x) < 170 &&
+      this.enemies.children.entries.some(e => e.active && Math.abs(e.x - x) < 200);
+  }
+  _hasPack() { return this.enemies.children.entries.filter(e => e.active && e.behavior === 'advance').length > 0; }
+
+  // -------------------------------------------------------------------------
+  // Menu
+  // -------------------------------------------------------------------------
+
+  _toggleMenu() {
+    this.menuOpen = !this.menuOpen; const v = this.menuOpen;
+    this.menu.dim.setVisible(v); this.menu.title.setVisible(v);
+    this.menu.cards.forEach(c => {
+      [c.card, c.dot, c.nm, c.ky].forEach(o => o.setVisible(v));
+      c.card.setFillStyle(c.k === this.cur ? 0x1c3325 : 0x132219, 0.98);
+    });
+    if (v) this.physics.pause(); else this.physics.resume();
+  }
+
+  _menuKeys() {
+    ORDER.forEach((k, i) => {
+      if (Phaser.Input.Keyboard.JustDown(this.keys['n' + (i + 1)])) { this._swap(k); this._toggleMenu(); }
+    });
+    if (Phaser.Input.Keyboard.JustDown(this.keys.esc)) this._toggleMenu();
+  }
+
+  // -------------------------------------------------------------------------
+  // Panels / game flow
+  // -------------------------------------------------------------------------
+
+  _startGame() {
+    this.started = true; this.physics.resume();
+    if (this.hud.start) { this.hud.start.forEach(o => o.destroy()); this.hud.start = null; }
+  }
+
+  _win() {
+    if (this.over) return; this.over = true; this.physics.pause();
+    saveSystem.saveTime(600 - this.timeLeft);
+    this._showPanel('LEVEL CLEAR', 'You crossed the bridge into the cave.\nLevel 2 awaits.\n\nPress R to play again', 0x35c46a);
+  }
+
+  _loseHard(title) {
+    if (this.over) return; this.over = true; this.physics.pause();
+    this._showPanel(title, '\nPress R to try Level 1 again', 0xff5a3c);
+  }
+
+  _showPanel(title, body, accent = 0xffe27a) {
+    const o = [];
+    o.push(this.add.rectangle(W / 2, H / 2, W, H, 0x06100a, 0.78).setScrollFactor(0).setDepth(70));
+    o.push(this.add.rectangle(W / 2, H / 2, 560, 280, 0x102018, 0.98).setStrokeStyle(3, accent).setScrollFactor(0).setDepth(71));
+    o.push(this.add.text(W / 2, H / 2 - 86, title,
+      { fontFamily: 'Trebuchet MS', fontSize: '30px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setScrollFactor(0).setDepth(72));
+    o.push(this.add.text(W / 2, H / 2 + 14, body,
+      { fontFamily: 'Trebuchet MS', fontSize: '15px', color: '#cfe0d2', align: 'center', lineSpacing: 6 }).setOrigin(0.5).setScrollFactor(0).setDepth(72));
+    if (title.includes('HEROES')) this.hud.start = o;
+  }
+
+  // -------------------------------------------------------------------------
+  // Low-level helpers
+  // -------------------------------------------------------------------------
+
+  _ground(x1, x2) {
+    const w = x2 - x1;
+    const r = this.add.rectangle(x1 + w / 2, LOW + 35, w, 70, 0x2c4a35);
+    this.physics.add.existing(r, true); this.platforms.push(r);
+  }
+
+  _upper(x1, x2) {
+    const w = x2 - x1;
+    const r = this.add.rectangle(x1 + w / 2, HIGH + 12, w, 24, 0x365c41);
+    this.physics.add.existing(r, true); this.platforms.push(r);
+    this.add.rectangle(x1 + w / 2, HIGH + 40, w, 8, 0x5a8a64).setDepth(-1);
+  }
+
+  _block(x, y, w, h, c) {
+    const r = this.add.rectangle(x, y, w, h, c);
+    this.physics.add.existing(r, true); this.platforms.push(r); return r;
+  }
+
+  _zone(x, y, w, h, c, a) {
+    const r = this.add.rectangle(x, y, w, h, c, a);
+    this.physics.add.existing(r, true); return r;
+  }
+
+  _poolVisual(cx, top, w, deep, surf) {
+    this.add.rectangle(cx, top + 38, w, 90, deep).setDepth(-2);
+    this.add.rectangle(cx, top + 2,  w, 12, surf, 0.6).setDepth(0);
+  }
+
+  _flash(x, y, c) {
+    const f = this.add.circle(x, y, 8, c, 0.9).setDepth(8);
+    this.tweens.add({ targets: f, radius: 30, alpha: 0, duration: 260, onComplete: () => f.destroy() });
+  }
+
+  _floatText(x, y, m, c) {
+    const t = this.add.text(x, y, m,
+      { fontFamily: 'Trebuchet MS', fontSize: '14px', color: c, fontStyle: 'bold' }).setOrigin(0.5).setDepth(9);
+    this.tweens.add({ targets: t, y: y - 32, alpha: 0, duration: 720, onComplete: () => t.destroy() });
+  }
+
+  _jp(key) { return Phaser.Input.Keyboard.JustDown(key); }
+
+  _anyKey() {
+    return Object.values(this.keys).some(k => Phaser.Input.Keyboard.JustDown(k)) ||
+      this._jp(this.cursors.up) || this._jp(this.cursors.left) || this._jp(this.cursors.right);
+  }
+
+  _resetState() {
+    this.platforms   = [];
+    this.regenStones = [];
+    this.gates       = {};
+    this.boss        = null;
+    this.bossText    = null;
+    this.cur         = 'fire';
+    this.hp          = 5;
+    this.maxHp       = 5;
+    this.dmg         = 1;
+    this.saves       = 3;
+    this.invulnUntil = 0;
+    this.nextShot    = 0;
+    this.climbing    = false;
+    this.hasApple    = false;
+    this.started     = false;
+    this.over        = false;
+    this.menuOpen    = false;
+    this.bossDead    = false;
+    this.timeLeft    = 600;
+    this.cp          = 0;
+    this.hud         = {};
+    this.menu        = {};
+    this.checkpoints = [
+      { x: 90,   y: 400 },
+      { x: 900,  y: 430 },
+      { x: 1900, y: 430 },
+      { x: 2340, y: 430 },
+      { x: 3520, y: 430 },
+      { x: 3760, y: HIGH - 20 },
+    ];
   }
 }
