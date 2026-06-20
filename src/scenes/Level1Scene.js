@@ -304,11 +304,22 @@ export class Level1Scene extends Phaser.Scene {
   _buildBoss() {
     const bossTex = this.textures.exists('master-dragon') ? 'master-dragon' : 'boss';
     this.boss = this.physics.add.sprite(4380, HIGH - 90, bossTex);
-    if (bossTex === 'master-dragon') this.boss.setDisplaySize(120, 120);
+    if (bossTex === 'master-dragon') {
+      // preserve native 917:500 aspect ratio — display 220px wide
+      const src = this.textures.get('master-dragon').getSourceImage();
+      const dispW = 220, dispH = Math.round(dispW * src.height / src.width);
+      this.boss.setDisplaySize(dispW, dispH);
+      // body in texture px: fill the content area (content ≈ full texture)
+      this.boss.body.setSize(src.width * 0.7, src.height * 0.7)
+        .setOffset(src.width * 0.15, src.height * 0.15);
+    } else {
+      this.boss.setTint(0x6b7280);
+    }
     this.boss.body.setAllowGravity(false);
     this.boss.setImmovable(true);
     this.boss.hp = 10; this.boss.state = 'sleep'; this.boss.t = 0;
     this.boss.homeX = 4380; this.boss.targetX = 4380;
+    this.boss.hurtUntil = 0;  // per-hit cooldown (800 ms between valid hits)
     this.boss.mace = this.add.rectangle(4380, HIGH - 40, 12, 46, 0xcfd6dd).setDepth(5);
     this.bossText = this.add.text(4380, HIGH - 150, 'KNIGHT DRAGON',
       { fontFamily: 'Trebuchet MS', fontSize: '13px', color: '#ffd2c2' })
@@ -672,6 +683,8 @@ export class Level1Scene extends Phaser.Scene {
   _damageBoss() {
     if (this.bossDead || !this.boss) return;
     if (this.boss.state !== 'recover') { this._floatText(this.boss.x, this.boss.y - 60, 'armored!', '#aab2bb'); return; }
+    if (this.time.now < this.boss.hurtUntil) return;   // 800ms cooldown between hits
+    this.boss.hurtUntil = this.time.now + 800;
     this.boss.hp -= this.dmg;
     this._flash(this.boss.x, this.boss.y, 0xffce4a);
     if (this.boss.hp <= 0) { this._defeatBoss(); }
