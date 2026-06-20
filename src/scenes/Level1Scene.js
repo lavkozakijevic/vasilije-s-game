@@ -14,6 +14,7 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('hero_earth',  'assets/sprites/earth-300.png');
     this.load.image('hero_stone',  'assets/sprites/stone-300.png');
     this.load.image('hero_poison', 'assets/sprites/poison-300.png');
+    this.load.image('hero_ice',    'assets/sprites/ice-300.png');   // used for the Rubber slot for now
 
     // placeholder textures for heroes without art yet
     const h = this.make.graphics({ add: false });
@@ -336,18 +337,23 @@ export class Level1Scene extends Phaser.Scene {
 
   _applyHero(k) {
     this.cur = k;
+    // Each 300x300 sprite has the character at a different vertical position.
+    // feetY / cx are measured (alpha bounding box) in TEXTURE pixels.
     const SPRITE_MAP = {
-      fire:   'hero_fire',
-      water:  'hero_water',
-      earth:  'hero_earth',
-      stone:  'hero_stone',
-      poison: 'hero_poison',
+      fire:   { tex: 'hero_fire',   feetY: 295, cx: 156 },
+      water:  { tex: 'hero_water',  feetY: 295, cx: 158 },
+      earth:  { tex: 'hero_earth',  feetY: 279, cx: 151 },
+      stone:  { tex: 'hero_stone',  feetY: 297, cx: 158 },
+      poison: { tex: 'hero_poison', feetY: 292, cx: 154 },
+      rubber: { tex: 'hero_ice',    feetY: 295, cx: 157 },  // ice art stands in for Rubber
     };
-    if (SPRITE_MAP[k]) {
-      this.player.setTexture(SPRITE_MAP[k]).setDisplaySize(54, 54).clearTint();
-      // offset.y=7 so body bottom lands at player.y+20, same as the placeholder shape
-      // keeps ground level consistent when swapping heroes
-      this.player.body.setSize(28, 40).setOffset(13, 7);
+    const s = SPRITE_MAP[k];
+    if (s) {
+      this.player.setTexture(s.tex).setDisplaySize(54, 54).clearTint();
+      // Body is sized in TEXTURE px. Scale = 54/300, so a 28x40 DISPLAY body
+      // = 156x222 texture px. Anchor its bottom at the measured feet line.
+      const bw = 156, bh = 222;
+      this.player.body.setSize(bw, bh).setOffset(Math.round(s.cx - bw / 2), s.feetY - bh);
     } else {
       this.player.setTexture('hero').setDisplaySize(30, 42).setTint(HEROES[k].color);
       this.player.body.setSize(28, 40).setOffset(1, 1);
