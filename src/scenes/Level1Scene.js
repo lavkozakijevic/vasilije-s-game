@@ -54,8 +54,11 @@ export class Level1Scene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     this.cameras.main.setDeadzone(240, 400);
 
+    const best = this.saveData.bestTime;
+    const bestLine = best ? `\nBest time: ${this._fmtTime(best)}` : '';
+    const cpLine = this.cp > 0 ? `\nStarting from checkpoint ${this.cp}` : '';
     this._showPanel('ELEMENTAL HEROES',
-      'LEVEL 1 — The Jungle\nReach the cave at the end.\nEvery obstacle has one hero that beats it.\n\nPress any key or tap to begin');
+      `LEVEL 1 — The Jungle\nReach the cave at the end.\nEvery obstacle has one hero that beats it.${bestLine}${cpLine}\n\nPress any key or tap to begin`);
     this.physics.pause();
   }
 
@@ -238,7 +241,8 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildPlayer() {
-    this.player = this.physics.add.sprite(90, 400, 'hero');
+    const startCp = this.checkpoints[this.cp];
+    this.player = this.physics.add.sprite(startCp.x, startCp.y, 'hero');
     this.player.setCollideWorldBounds(true).setMaxVelocity(270, 950).setDragX(1500);
     this.player.body.setSize(28, 40).setOffset(1, 1);
     this.player.facing = 1;
@@ -696,8 +700,12 @@ export class Level1Scene extends Phaser.Scene {
 
   _win() {
     if (this.over) return; this.over = true; this.physics.pause();
-    saveSystem.saveTime(600 - this.timeLeft);
-    this._showPanel('LEVEL CLEAR', 'You crossed the bridge into the cave.\nLevel 2 awaits.\n\nPress R to play again', 0x35c46a);
+    const elapsed = 600 - this.timeLeft;
+    const prev = this.saveData.bestTime;
+    saveSystem.saveTime(elapsed);
+    const isNew = prev === null || elapsed < prev;
+    const timeLine = `Time: ${this._fmtTime(elapsed)}${isNew ? ' — NEW BEST!' : (prev ? `\nBest: ${this._fmtTime(prev)}` : '')}`;
+    this._showPanel('LEVEL CLEAR', `You crossed the bridge into the cave.\n${timeLine}\n\nPress R to play again`, 0x35c46a);
   }
 
   _loseHard(title) {
@@ -761,6 +769,8 @@ export class Level1Scene extends Phaser.Scene {
 
   _jp(key) { return Phaser.Input.Keyboard.JustDown(key); }
 
+  _fmtTime(s) { const m = Math.floor(s / 60); const sec = Math.floor(s % 60); return `${m}:${sec < 10 ? '0' : ''}${sec}`; }
+
   _anyKey() {
     return Object.values(this.keys).some(k => Phaser.Input.Keyboard.JustDown(k)) ||
       this._jp(this.cursors.up) || this._jp(this.cursors.left) || this._jp(this.cursors.right);
@@ -786,7 +796,6 @@ export class Level1Scene extends Phaser.Scene {
     this.menuOpen    = false;
     this.bossDead    = false;
     this.timeLeft    = 600;
-    this.cp          = 0;
     this.hud         = {};
     this.menu        = {};
     this.checkpoints = [
@@ -797,5 +806,8 @@ export class Level1Scene extends Phaser.Scene {
       { x: 3520, y: 430 },
       { x: 3760, y: HIGH - 20 },
     ];
+    const saved = saveSystem.load();
+    this.cp = saved.furthestCheckpoint || 0;
+    this.saveData = saved;
   }
 }
