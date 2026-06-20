@@ -26,6 +26,16 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('mound',        'assets/sprites/mound.png');
     this.load.image('platform',     'assets/sprites/platform.png');
     this.load.image('golden-apple', 'assets/sprites/golden-apple.png');
+    this.load.image('acid',         'assets/sprites/acid.png');
+    this.load.image('aqua',         'assets/sprites/aqua.png');
+    this.load.image('chasm',        'assets/sprites/chasm.png');
+
+    // dragon enemies
+    this.load.image('d_ice',     'assets/sprites/ice-dragon.png');
+    this.load.image('d_water',   'assets/sprites/water-dragon.png');
+    this.load.image('d_poison',  'assets/sprites/poison-dragon.png');
+    this.load.image('d_acid',    'assets/sprites/acid-dragon.png');
+    this.load.image('d_regular', 'assets/sprites/regular-dragon.png');
 
     // placeholder textures for heroes without art yet
     const h = this.make.graphics({ add: false });
@@ -236,9 +246,7 @@ export class Level1Scene extends Phaser.Scene {
     this.physics.add.overlap(this.player, fw, () => this._hurt(1, fw.x), () => !this.gates.fireWall.doused);
 
     // 3) GRAPPLE CHASM (gap 1950–2300)
-    this._poolVisual(2125, LOW, 350, 0x140a12, 0x6b3a55);
-    for (let i = 0; i < 4; i++)
-      this.add.rectangle(2000 + i * 90, LOW + 70, 40, 26, 0xff6a4d, 0.8).setDepth(0);
+    this._poolImg('chasm', 2125, LOW, 380);
     this.add.star(2125, 250, 4, 5, 12, 0xffe27a).setDepth(3);
     this.gates.grapple = { x1: 1860, x2: 1948, from: 2125, to: 2330, busy: false };
 
@@ -247,7 +255,7 @@ export class Level1Scene extends Phaser.Scene {
 
     // 5) ACID POOL (3150–3450)
     const ax = (3150 + 3450) / 2, aw = 300;
-    this._poolVisual(ax, LOW, aw, 0x14331a, 0x7ad14a);
+    this._poolImg('acid', ax, LOW, aw + 20);
     const acidSolid = this._zone(ax, LOW + 8,  aw, 16, 0, 0);
     const acidWater = this._zone(ax, LOW + 34, aw, 70, 0, 0);
     this.gates.acidPool = { solid: acidSolid, water: acidWater, x: ax };
@@ -255,7 +263,7 @@ export class Level1Scene extends Phaser.Scene {
 
     // 2b) WATER POOL (~2980)
     const wx = 2980, ww = 240;
-    this._poolVisual(wx, LOW, ww, 0x123a55, 0x3aa0ff);
+    this._poolImg('aqua', wx, LOW, ww + 20);
     const waterSolid = this._zone(wx, LOW + 8,  ww, 16, 0, 0);
     const waterWater = this._zone(wx, LOW + 34, ww, 70, 0, 0);
     this.gates.waterPool = { solid: waterSolid, water: waterWater, x: wx };
@@ -541,11 +549,25 @@ export class Level1Scene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   _addEnemy(x, y, type, behavior, minX, maxX) {
-    const e = this.enemies.create(x, y, 'dragon').setTint(ENEMY_TINT[type]);
+    // map each gameplay type to a dragon illustration
+    const DRAGON = {
+      ice:     'd_ice',
+      fireD:   'd_regular',  // a fierce dragon Water must douse
+      waterD:  'd_water',
+      poisonD: 'd_poison',
+      acidD:   'd_acid',
+    };
+    const tex = DRAGON[type] || 'dragon';
+    const e = this.enemies.create(x, y, tex);
+    e.setDisplaySize(72, 72);
+    // body sized in TEXTURE px (300x300 art, scale 72/300): a ~46x40 display body
+    if (this.textures.get(tex).getSourceImage().width === 300) {
+      e.body.setSize(190, 165).setOffset(55, 90);
+    }
     e.body.setAllowGravity(false); e.setImmovable(true);
     e.type = type; e.behavior = behavior; e.minX = minX; e.maxX = maxX; e.dir = 1;
-    e.tag = this.add.text(x, y - 22, this._labelFor(type),
-      { fontFamily: 'monospace', fontSize: '10px', color: '#0b140f' }).setOrigin(0.5).setDepth(6);
+    e.tag = this.add.text(x, y - 40, this._labelFor(type),
+      { fontFamily: 'monospace', fontSize: '10px', color: '#cfe0d2' }).setOrigin(0.5).setDepth(6);
     return e;
   }
 
@@ -563,7 +585,7 @@ export class Level1Scene extends Phaser.Scene {
       e.setVelocityX(38 * d); e.dir = d;
     }
     e.setFlipX(e.dir < 0);
-    if (e.tag) e.tag.setPosition(e.x, e.y - 22);
+    if (e.tag) e.tag.setPosition(e.x, e.y - 40);
   }
 
   _hitEnemy(shot, e) {
@@ -849,6 +871,16 @@ export class Level1Scene extends Phaser.Scene {
   _zone(x, y, w, h, c, a) {
     const r = this.add.rectangle(x, y, w, h, c, a);
     this.physics.add.existing(r, true); return r;
+  }
+
+  // a pool/chasm illustration whose liquid surface sits at the ground line
+  _poolImg(key, cx, top, dispW) {
+    const src = this.textures.get(key).getSourceImage();
+    const scale = dispW / src.width;
+    this.add.image(cx, top - 6, key)
+      .setOrigin(0.5, 0)
+      .setDisplaySize(dispW, src.height * scale)
+      .setDepth(-2);
   }
 
   _poolVisual(cx, top, w, deep, surf) {
