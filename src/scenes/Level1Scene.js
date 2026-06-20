@@ -8,6 +8,10 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   preload() {
+    // real sprites
+    this.load.image('hero_earth', 'assets/sprites/earth-300.png');
+
+    // placeholder textures for heroes without art yet
     const h = this.make.graphics({ add: false });
     h.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 30, 42, 8);
     h.generateTexture('hero', 30, 42);
@@ -328,7 +332,12 @@ export class Level1Scene extends Phaser.Scene {
 
   _applyHero(k) {
     this.cur = k;
-    this.player.setTexture('hero').setTint(HEROES[k].color);
+    const SPRITE_MAP = { earth: 'hero_earth' };
+    if (SPRITE_MAP[k]) {
+      this.player.setTexture(SPRITE_MAP[k]).setDisplaySize(54, 54).clearTint();
+    } else {
+      this.player.setTexture('hero').setDisplaySize(30, 42).setTint(HEROES[k].color);
+    }
   }
 
   _swap(k) {
