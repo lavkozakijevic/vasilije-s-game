@@ -6,18 +6,10 @@ export class SaveSystem {
   load() {
     try {
       const raw = localStorage.getItem(this.KEY);
-      if (!raw) return { bestTime: null, furthestCheckpoint: 0, heroUnlocks: ['fire', 'water', 'earth', 'stone', 'poison', 'rubber'] };
+      if (!raw) return { bestTime: null, heroUnlocks: ['fire', 'water', 'earth', 'stone', 'poison', 'rubber'] };
       return JSON.parse(raw);
     } catch (e) {
-      return { bestTime: null, furthestCheckpoint: 0, heroUnlocks: ['fire', 'water', 'earth', 'stone', 'poison', 'rubber'] };
-    }
-  }
-
-  saveCheckpoint(index) {
-    const data = this.load();
-    if (index > (data.furthestCheckpoint || 0)) {
-      data.furthestCheckpoint = index;
-      localStorage.setItem(this.KEY, JSON.stringify(data));
+      return { bestTime: null, heroUnlocks: ['fire', 'water', 'earth', 'stone', 'poison', 'rubber'] };
     }
   }
 

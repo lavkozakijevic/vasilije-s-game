@@ -70,9 +70,8 @@ export class Level1Scene extends Phaser.Scene {
 
     const best = this.saveData.bestTime;
     const bestLine = best ? `\nBest time: ${this._fmtTime(best)}` : '';
-    const cpLine = this.cp > 0 ? `\nStarting from checkpoint ${this.cp}` : '';
     this._showPanel('ELEMENTAL HEROES',
-      `LEVEL 1 — The Jungle\nReach the cave at the end.\nEvery obstacle has one hero that beats it.${bestLine}${cpLine}\n\nPress any key or tap to begin`);
+      `LEVEL 1 — The Jungle\nReach the cave at the end.\nEvery obstacle has one hero that beats it.${bestLine}\n\nPress any key or tap to begin`);
     this.physics.pause();
   }
 
@@ -82,7 +81,7 @@ export class Level1Scene extends Phaser.Scene {
       return;
     }
     if (this.over) {
-      if (Phaser.Input.Keyboard.JustDown(this.keys.r)) this.scene.restart();
+      if (Phaser.Input.Keyboard.JustDown(this.keys.r)) { this.scene.restart(); return; }
       return;
     }
 
@@ -127,12 +126,9 @@ export class Level1Scene extends Phaser.Scene {
     this.label.setPosition(this.player.x, this.player.y - 32);
     this.player.setAlpha(this.time.now < this.invulnUntil ? (Math.floor(this.time.now / 80) % 2 ? 0.4 : 1) : 1);
 
-    // advance checkpoint (forward only)
+    // advance checkpoint (forward only, in-session only)
     for (let i = this.cp + 1; i < this.checkpoints.length; i++) {
-      if (this.player.x > this.checkpoints[i].x) {
-        this.cp = i;
-        saveSystem.saveCheckpoint(i);
-      }
+      if (this.player.x > this.checkpoints[i].x) this.cp = i;
     }
 
     if (this.player.y > H + 90 && !this.over) this._respawn(true);
@@ -859,8 +855,7 @@ export class Level1Scene extends Phaser.Scene {
       { x: 3520, y: 430 },
       { x: 3760, y: HIGH - 20 },
     ];
-    const saved = saveSystem.load();
-    this.cp = saved.furthestCheckpoint || 0;
-    this.saveData = saved;
+    this.cp = 0;
+    this.saveData = saveSystem.load();
   }
 }
