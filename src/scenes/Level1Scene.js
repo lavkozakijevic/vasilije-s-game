@@ -231,12 +231,13 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildGates() {
-    // 1) CRACK — full-height invisible wall so player cannot jump over; mound is the visual
-    this._block(820, LOW / 2, 120, LOW + 40, 0x355640).setVisible(false);
-    const rubble = this._zone(820, LOW - 25, 44, 56, 0x6e5a3c, 0);
+    // 1) CRACK — solid mound wall, taller than a jump so it must be broken by Earth
     const moundImg = this._propImg('mound', 820, LOW, 260, 2);
-    this.gates.crack = { obj: rubble, mound: moundImg, x: 820, broken: false };
-    this.physics.add.collider(this.player, rubble, null, () => !this.gates.crack.broken);
+    const wall = this._block(820, LOW - 85, 92, 170, 0x355640);
+    wall.setVisible(false);
+    this.gates.crack = { obj: wall, mound: moundImg, x: 820, broken: false };
+    this.physics.add.collider(this.player, wall, null, () => !this.gates.crack.broken);
+    this.physics.add.collider(this.enemies, wall, null, () => !this.gates.crack.broken);
 
     // 2) FIRE WALL
     const fw = this._zone(1520, LOW - 44, 44, 84, 0xff5a3c, 0.85);
@@ -465,8 +466,9 @@ export class Level1Scene extends Phaser.Scene {
   _ability() {
     // EARTH — break crack OR douse fire wall
     if (this.cur === 'earth') {
-      if (!this.gates.crack.broken && Math.abs(this.player.x - this.gates.crack.x) < 70) {
+      if (!this.gates.crack.broken && Math.abs(this.player.x - this.gates.crack.x) < 110) {
         this.gates.crack.broken = true;
+        this.gates.crack.obj.body.enable = false;
         this._flash(this.gates.crack.x, LOW - 60, 0xc08a4e);
         this.tweens.add({ targets: this.gates.crack.mound, alpha: 0, duration: 400, onComplete: () => this.gates.crack.mound.destroy() });
         return this._floatText(this.gates.crack.x, LOW - 80, 'cleared!', '#c08a4e');
@@ -848,7 +850,7 @@ export class Level1Scene extends Phaser.Scene {
     const src = this.textures.get('ground-tile').getSourceImage();
     const tileH = 120;
     const scale = tileH / src.height;
-    const grassTop = 26 * scale;         // transparent strip above grass in the texture
+    const grassTop = 35 * scale;         // transparent strip above grass in the texture
     const ts = this.add.tileSprite(x1, LOW - grassTop, w, tileH, 'ground-tile')
       .setOrigin(0, 0).setDepth(-1);
     ts.tileScaleX = scale; ts.tileScaleY = scale;
