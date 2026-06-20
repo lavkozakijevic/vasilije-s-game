@@ -9,7 +9,11 @@ export class Level1Scene extends Phaser.Scene {
 
   preload() {
     // real sprites
-    this.load.image('hero_earth', 'assets/sprites/earth-300.png');
+    this.load.image('hero_fire',   'assets/sprites/fire-300.png');
+    this.load.image('hero_water',  'assets/sprites/water-300.png');
+    this.load.image('hero_earth',  'assets/sprites/earth-300.png');
+    this.load.image('hero_stone',  'assets/sprites/stone-300.png');
+    this.load.image('hero_poison', 'assets/sprites/poison-300.png');
 
     // placeholder textures for heroes without art yet
     const h = this.make.graphics({ add: false });
@@ -332,10 +336,17 @@ export class Level1Scene extends Phaser.Scene {
 
   _applyHero(k) {
     this.cur = k;
-    const SPRITE_MAP = { earth: 'hero_earth' };
+    const SPRITE_MAP = {
+      fire:   'hero_fire',
+      water:  'hero_water',
+      earth:  'hero_earth',
+      stone:  'hero_stone',
+      poison: 'hero_poison',
+    };
     if (SPRITE_MAP[k]) {
       this.player.setTexture(SPRITE_MAP[k]).setDisplaySize(54, 54).clearTint();
-      // body: feet sit at ~90% down the 54px sprite; offset so bottom of body = visual feet
+      // offset tuned so physics body bottom aligns with visual feet
+      // (14 = pushes body down within the 54px display so feet touch the ground)
       this.player.body.setSize(28, 40).setOffset(13, 14);
     } else {
       this.player.setTexture('hero').setDisplaySize(30, 42).setTint(HEROES[k].color);
