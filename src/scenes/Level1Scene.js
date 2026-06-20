@@ -335,8 +335,11 @@ export class Level1Scene extends Phaser.Scene {
     const SPRITE_MAP = { earth: 'hero_earth' };
     if (SPRITE_MAP[k]) {
       this.player.setTexture(SPRITE_MAP[k]).setDisplaySize(54, 54).clearTint();
+      // body: feet sit at ~90% down the 54px sprite; offset so bottom of body = visual feet
+      this.player.body.setSize(28, 40).setOffset(13, 9);
     } else {
       this.player.setTexture('hero').setDisplaySize(30, 42).setTint(HEROES[k].color);
+      this.player.body.setSize(28, 40).setOffset(1, 1);
     }
   }
 
