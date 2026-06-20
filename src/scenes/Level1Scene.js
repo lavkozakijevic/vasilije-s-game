@@ -345,9 +345,9 @@ export class Level1Scene extends Phaser.Scene {
     };
     if (SPRITE_MAP[k]) {
       this.player.setTexture(SPRITE_MAP[k]).setDisplaySize(54, 54).clearTint();
-      // offset tuned so physics body bottom aligns with visual feet
-      // (14 = pushes body down within the 54px display so feet touch the ground)
-      this.player.body.setSize(28, 40).setOffset(13, 14);
+      // offset.y=7 so body bottom lands at player.y+20, same as the placeholder shape
+      // keeps ground level consistent when swapping heroes
+      this.player.body.setSize(28, 40).setOffset(13, 7);
     } else {
       this.player.setTexture('hero').setDisplaySize(30, 42).setTint(HEROES[k].color);
       this.player.body.setSize(28, 40).setOffset(1, 1);
