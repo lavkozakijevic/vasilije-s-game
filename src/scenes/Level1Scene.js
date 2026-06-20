@@ -20,6 +20,9 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('1-1-back',  'assets/sprites/1-1-back.png');
     this.load.image('1-1-mid',   'assets/sprites/1-1-mid.png');
     this.load.image('1-1-front', 'assets/sprites/1-1-front.png');
+    this.load.image('1-2-back',  'assets/sprites/1-2-back.png');
+    this.load.image('1-2-mid',   'assets/sprites/1-2-mid.png');
+    this.load.image('1-2-front', 'assets/sprites/1-2-front.png');
 
     // environment / props
     this.load.image('ground-tile',  'assets/sprites/ground-tile.png');
@@ -159,29 +162,44 @@ export class Level1Scene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   _buildParallax() {
-    // three jungle layers, locked to the camera and scrolled manually for parallax
-    const defs = [
-      { key: '1-1-back',  factor: 0.15, depth: -30 },
-      { key: '1-1-mid',   factor: 0.40, depth: -20 },
-      { key: '1-1-front', factor: 0.75, depth: -10 },
+    // two parallax sets: section 1 (jungle floor) and section 2 (1-2, the boss
+    // bridge area). Both lock to the camera; the second crossfades in near x≈3500.
+    this.SECTION2_X = 3500;   // world x where the 1-2 backdrop has fully taken over
+    const factors = [
+      { suffix: 'back',  factor: 0.15, depth: -30 },
+      { suffix: 'mid',   factor: 0.40, depth: -20 },
+      { suffix: 'front', factor: 0.75, depth: -10 },
     ];
-    this.bgLayers = [];
-    defs.forEach(d => {
-      const ts = this.add.tileSprite(0, 0, W, H, d.key)
-        .setOrigin(0, 0).setScrollFactor(0).setDepth(d.depth);
-      const src = this.textures.get(d.key).getSourceImage();
-      const scale = H / src.height;          // fit image height to the game height
-      ts.tileScaleX = scale;
-      ts.tileScaleY = scale;
-      ts.factor = d.factor;
-      this.bgLayers.push(ts);
-    });
+    const buildSet = (prefix, baseAlpha, depthShift) => {
+      const layers = [];
+      factors.forEach(d => {
+        const key = `${prefix}-${d.suffix}`;
+        if (!this.textures.exists(key)) return;
+        const ts = this.add.tileSprite(0, 0, W, H, key)
+          .setOrigin(0, 0).setScrollFactor(0).setDepth(d.depth + depthShift).setAlpha(baseAlpha);
+        const src = this.textures.get(key).getSourceImage();
+        const scale = H / src.height;
+        ts.tileScaleX = scale; ts.tileScaleY = scale; ts.factor = d.factor;
+        layers.push(ts);
+      });
+      return layers;
+    };
+    this.bgLayers  = buildSet('1-1', 1, 0);
+    this.bgLayers2 = buildSet('1-2', 0, 1);   // sits just in front, faded out at start
   }
 
   _updateParallax() {
     if (!this.bgLayers) return;
     const sx = this.cameras.main.scrollX;
     this.bgLayers.forEach(l => { l.tilePositionX = (sx * l.factor) / l.tileScaleX; });
+    if (this.bgLayers2 && this.bgLayers2.length) {
+      // fade 1-2 in over a 600px band ending at SECTION2_X
+      const t = Phaser.Math.Clamp((this.player.x - (this.SECTION2_X - 600)) / 600, 0, 1);
+      this.bgLayers2.forEach(l => {
+        l.tilePositionX = (sx * l.factor) / l.tileScaleX;
+        l.setAlpha(t);
+      });
+    }
   }
 
   _buildTerrain() {
@@ -320,10 +338,6 @@ export class Level1Scene extends Phaser.Scene {
     this.boss.hp = 10; this.boss.state = 'sleep'; this.boss.t = 0;
     this.boss.homeX = 4380; this.boss.targetX = 4380;
     this.boss.hurtUntil = 0;  // per-hit cooldown (800 ms between valid hits)
-    this.boss.mace = this.add.rectangle(4380, HIGH - 40, 12, 46, 0xcfd6dd).setDepth(5);
-    this.bossText = this.add.text(4380, HIGH - 150, 'KNIGHT DRAGON',
-      { fontFamily: 'Trebuchet MS', fontSize: '13px', color: '#ffd2c2' })
-      .setOrigin(0.5).setDepth(6).setVisible(false);
     this.physics.add.overlap(this.player, this.boss, () => { if (!this.bossDead) this._hurt(1, this.boss.x); });
     this.physics.add.overlap(this.shots, this.boss, (shot) => this._hitBoss(shot));
     // portal — hidden until boss dies
@@ -642,9 +656,8 @@ export class Level1Scene extends Phaser.Scene {
 
   _tickBoss(time, delta) {
     if (!this.boss || !this.boss.active || this.bossDead) return;
-    this.boss.mace.setPosition(this.boss.x, this.boss.y + 52);
     if (this.boss.state === 'sleep') {
-      if (this.player.x > 4180) { this.boss.state = 'idle'; this.boss.t = 600; this.bossText.setVisible(true); }
+      if (this.player.x > 4180) { this.boss.state = 'idle'; this.boss.t = 600; }
       return;
     }
     this.boss.t -= delta;
@@ -669,10 +682,9 @@ export class Level1Scene extends Phaser.Scene {
         }
         break;
       case 'recover':
-        if (this.boss.t <= 0) { this.boss.state = 'idle'; this.boss.t = 900; this.boss.setTint(0x6b7280); }
+        if (this.boss.t <= 0) { this.boss.state = 'idle'; this.boss.t = 900; this.boss.clearTint(); }
         break;
     }
-    this.bossText.setPosition(this.boss.x, this.boss.y - 70);
   }
 
   _hitBoss(shot) {
@@ -693,8 +705,7 @@ export class Level1Scene extends Phaser.Scene {
 
   _defeatBoss() {
     this.bossDead = true;
-    this.boss.mace.destroy();
-    this.bossText.setText('defeated!');
+    this._floatText(this.boss.x, this.boss.y - 50, 'defeated!', '#ffffff');
     this.tweens.add({ targets: this.boss, alpha: 0, y: this.boss.y + 40, duration: 600, onComplete: () => this.boss.destroy() });
     this.gates.cave.open = true;
     this.tweens.add({ targets: this.gates.cave.block, alpha: 0, duration: 300, onComplete: () => this.gates.cave.block.destroy() });
@@ -984,7 +995,6 @@ export class Level1Scene extends Phaser.Scene {
     this.regenStones = [];
     this.gates       = {};
     this.boss        = null;
-    this.bossText    = null;
     this.cur         = 'fire';
     this.hp          = 5;
     this.maxHp       = 5;
