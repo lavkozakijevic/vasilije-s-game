@@ -16,6 +16,11 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('hero_poison', 'assets/sprites/poison-300.png');
     this.load.image('hero_ice',    'assets/sprites/ice-300.png');   // used for the Rubber slot for now
 
+    // parallax background layers
+    this.load.image('1-1-back',  'assets/sprites/1-1-back.png');
+    this.load.image('1-1-mid',   'assets/sprites/1-1-mid.png');
+    this.load.image('1-1-front', 'assets/sprites/1-1-front.png');
+
     // placeholder textures for heroes without art yet
     const h = this.make.graphics({ add: false });
     h.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 30, 42, 8);
@@ -84,6 +89,7 @@ export class Level1Scene extends Phaser.Scene {
     this.timeLeft -= delta / 1000;
     if (this.timeLeft <= 0) { this.timeLeft = 0; this._updateTimer(); return this._loseHard('TIME UP'); }
     this._updateTimer();
+    this._updateParallax();
 
     if (Phaser.Input.Keyboard.JustDown(this.keys.tab)) this._toggleMenu();
     if (this.menuOpen) { this._menuKeys(); this.label.setPosition(this.player.x, this.player.y - 32); return; }
@@ -139,11 +145,29 @@ export class Level1Scene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   _buildParallax() {
-    this.add.rectangle(WORLD_W / 2, 150, WORLD_W, 320, 0x1d3a28).setScrollFactor(0.2).setDepth(-30);
-    for (let x = 0; x < WORLD_W; x += 170) {
-      const hh = 120 + ((x * 37) % 100);
-      this.add.rectangle(x, LOW - hh / 2, 64, hh, 0x244c34, 0.7).setScrollFactor(0.5).setDepth(-20);
-    }
+    // three jungle layers, locked to the camera and scrolled manually for parallax
+    const defs = [
+      { key: '1-1-back',  factor: 0.15, depth: -30 },
+      { key: '1-1-mid',   factor: 0.40, depth: -20 },
+      { key: '1-1-front', factor: 0.75, depth: -10 },
+    ];
+    this.bgLayers = [];
+    defs.forEach(d => {
+      const ts = this.add.tileSprite(0, 0, W, H, d.key)
+        .setOrigin(0, 0).setScrollFactor(0).setDepth(d.depth);
+      const src = this.textures.get(d.key).getSourceImage();
+      const scale = H / src.height;          // fit image height to the game height
+      ts.tileScaleX = scale;
+      ts.tileScaleY = scale;
+      ts.factor = d.factor;
+      this.bgLayers.push(ts);
+    });
+  }
+
+  _updateParallax() {
+    if (!this.bgLayers) return;
+    const sx = this.cameras.main.scrollX;
+    this.bgLayers.forEach(l => { l.tilePositionX = (sx * l.factor) / l.tileScaleX; });
   }
 
   _buildTerrain() {
