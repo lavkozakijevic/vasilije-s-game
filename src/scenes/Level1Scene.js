@@ -23,7 +23,6 @@ export class Level1Scene extends Phaser.Scene {
 
     // environment / props
     this.load.image('ground-tile',  'assets/sprites/ground-tile.png');
-    this.load.image('tree',         'assets/sprites/tree.png');
     this.load.image('mound',        'assets/sprites/mound.png');
     this.load.image('platform',     'assets/sprites/platform.png');
     this.load.image('golden-apple', 'assets/sprites/golden-apple.png');
@@ -180,9 +179,7 @@ export class Level1Scene extends Phaser.Scene {
     this._ground(3450, 3640);
     this._upper(3650, 4950);
 
-    // decorative props (no collision) — behind the player
-    this._prop('mound', 820,  LOW, 280, -2);   // earth mound at the crack passage
-    this._prop('tree',  700,  LOW, 150, -1);   // tree on the way in
+    // (mound is placed in _buildGates as part of the crack gate visual)
 
     // crate to hop (collision kept, drawn as simple block)
     this._block(560, LOW - 26, 46, 52, 0x6b5235);
@@ -198,33 +195,37 @@ export class Level1Scene extends Phaser.Scene {
     this.add.rectangle(4880, HIGH - 46, 80,  96,  0x050906).setDepth(2);
   }
 
-  // a bottom-anchored decorative image
-  _prop(key, x, baseY, dispW, depth) {
+  // a bottom-anchored decorative image (returns the image)
+  _propImg(key, x, baseY, dispW, depth) {
     const src = this.textures.get(key).getSourceImage();
     const scale = dispW / src.width;
-    this.add.image(x, baseY, key)
+    return this.add.image(x, baseY, key)
       .setOrigin(0.5, 1)
       .setDisplaySize(dispW, src.height * scale)
       .setDepth(depth);
   }
 
-  // platform art whose top surface aligns with surfaceY
+  _prop(key, x, baseY, dispW, depth) {
+    this._propImg(key, x, baseY, dispW, depth);
+  }
+
+  // platform art: bottom anchored at baseY, top surface approximately at surfaceY
   _platformArt(x, surfaceY, dispW) {
     const src = this.textures.get('platform').getSourceImage();
     const scale = dispW / src.width;
-    const img = this.add.image(x, 0, 'platform')
-      .setOrigin(0.5, 0)
-      .setDisplaySize(dispW, src.height * scale)
+    const dispH = src.height * scale;
+    this.add.image(x, LOW, 'platform')
+      .setOrigin(0.5, 1)
+      .setDisplaySize(dispW, dispH)
       .setDepth(-1);
-    // content top sits ~65px down in a 327-tall source; offset so it lands on surfaceY
-    img.y = surfaceY - 65 * scale;
   }
 
   _buildGates() {
-    // 1) CRACK
-    this._block(820, LOW - 86, 120, 70, 0x355640);
-    const rubble = this._zone(820, LOW - 25, 44, 56, 0x6e5a3c, 1);
-    this.gates.crack = { obj: rubble, x: 820, broken: false };
+    // 1) CRACK — invisible wall blocks passage; mound is the visual
+    this._block(820, LOW - 86, 120, 70, 0x355640).setVisible(false);
+    const rubble = this._zone(820, LOW - 25, 44, 56, 0x6e5a3c, 0);
+    const moundImg = this._propImg('mound', 820, LOW, 260, 2);
+    this.gates.crack = { obj: rubble, mound: moundImg, x: 820, broken: false };
     this.physics.add.collider(this.player, rubble, null, () => !this.gates.crack.broken);
 
     // 2) FIRE WALL
@@ -276,7 +277,8 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildPickups() {
-    const chest = this._zone(250, LOW - 18, 30, 28, 0x7a4bd1, 1);
+    const chest = this._zone(250, LOW - 18, 30, 28, 0xc8860a, 1);
+    chest.setStrokeStyle(2, 0xffd23f);
     this.gates.chest = { obj: chest, opened: false };
     this.physics.add.overlap(this.player, chest, () => this._openChest());
 
@@ -458,9 +460,9 @@ export class Level1Scene extends Phaser.Scene {
     if (this.cur === 'earth') {
       if (!this.gates.crack.broken && Math.abs(this.player.x - this.gates.crack.x) < 70) {
         this.gates.crack.broken = true;
-        this._flash(this.gates.crack.x, this.gates.crack.obj.y, 0xc08a4e);
-        this.tweens.add({ targets: this.gates.crack.obj, alpha: 0, duration: 220, onComplete: () => this.gates.crack.obj.destroy() });
-        return this._floatText(this.gates.crack.x, LOW - 50, 'cleared!', '#c08a4e');
+        this._flash(this.gates.crack.x, LOW - 60, 0xc08a4e);
+        this.tweens.add({ targets: this.gates.crack.mound, alpha: 0, duration: 400, onComplete: () => this.gates.crack.mound.destroy() });
+        return this._floatText(this.gates.crack.x, LOW - 80, 'cleared!', '#c08a4e');
       }
       if (!this.gates.fireWall.doused && Math.abs(this.player.x - this.gates.fireWall.x) < 70) {
         this.gates.fireWall.doused = true;
@@ -519,7 +521,7 @@ export class Level1Scene extends Phaser.Scene {
   _openChest() {
     if (this.gates.chest.opened) return;
     this.gates.chest.opened = true;
-    this.gates.chest.obj.setFillStyle(0x4a2f80, 1);
+    this.gates.chest.obj.setFillStyle(0x6b4f20, 0.5);
     this.gates.apple.enableBody(true, 1180, LOW - 114, true, true);
     this.gates.apple.body.setAllowGravity(false);
     this.tweens.add({ targets: this.gates.apple, y: this.gates.apple.y - 8, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
