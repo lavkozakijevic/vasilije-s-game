@@ -29,6 +29,9 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('acid',         'assets/sprites/acid.png');
     this.load.image('aqua',         'assets/sprites/aqua.png');
     this.load.image('chasm',        'assets/sprites/chasm.png');
+    this.load.image('bridge',        'assets/sprites/bridge.png');
+    this.load.image('master-dragon', 'assets/sprites/master-dragon.png');
+    this.load.on('loaderror', () => {});
 
     // dragon enemies
     this.load.image('d_ice',     'assets/sprites/ice-dragon.png');
@@ -107,10 +110,10 @@ export class Level1Scene extends Phaser.Scene {
     this._updateParallax();
 
     if (Phaser.Input.Keyboard.JustDown(this.keys.tab)) this._toggleMenu();
-    if (this.menuOpen) { this._menuKeys(); this.label.setPosition(this.player.x, this.player.y - 32); return; }
+    if (this.menuOpen) { this._menuKeys(); return; }
     ORDER.forEach((k, i) => { if (Phaser.Input.Keyboard.JustDown(this.keys['n' + (i + 1)])) this._swap(k); });
 
-    if (this.gates.grapple.busy) { this.label.setPosition(this.player.x, this.player.y - 32); return; }
+    if (this.gates.grapple.busy) return;
 
     // movement
     const left  = this.cursors.left.isDown  || this.keys.a.isDown;
@@ -139,7 +142,6 @@ export class Level1Scene extends Phaser.Scene {
     this.enemies.children.iterate(e => { if (e && e.active) this._tickEnemy(e); });
     this._tickBoss(time, delta);
 
-    this.label.setPosition(this.player.x, this.player.y - 32);
     this.player.setAlpha(this.time.now < this.invulnUntil ? (Math.floor(this.time.now / 80) % 2 ? 0.4 : 1) : 1);
 
     // advance checkpoint (forward only, in-session only)
@@ -191,18 +193,16 @@ export class Level1Scene extends Phaser.Scene {
 
     // (mound is placed in _buildGates as part of the crack gate visual)
 
-    // crate to hop (collision kept, drawn as simple block)
-    this._block(560, LOW - 26, 46, 52, 0x6b5235);
-
-    // apple ledge — collision invisible, platform art on top
-    const ledge = this._block(1180, LOW - 92, 140, 18, 0x6b5235);
+    // apple ledge — collision matches measured platform art surface (LOW-87)
+    const ledge = this._block(1180, LOW - 78, 140, 18, 0x6b5235);
     ledge.setVisible(false);
-    this._platformArt(1180, LOW - 101, 200);
+    this._platformArt(1180, 0, 200);
+
+    // bridge for boss arena
+    this._bridgePlatform(4200, HIGH - 10, 700);
 
     const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
     this.physics.add.existing(net, true); this.platforms.push(net);
-    this.add.rectangle(4880, HIGH - 46, 120, 120, 0x0a140d).setDepth(1);
-    this.add.rectangle(4880, HIGH - 46, 80,  96,  0x050906).setDepth(2);
   }
 
   // a bottom-anchored decorative image (returns the image)
@@ -231,8 +231,8 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildGates() {
-    // 1) CRACK — invisible wall blocks passage; mound is the visual
-    this._block(820, LOW - 86, 120, 70, 0x355640).setVisible(false);
+    // 1) CRACK — full-height invisible wall so player cannot jump over; mound is the visual
+    this._block(820, LOW / 2, 120, LOW + 40, 0x355640).setVisible(false);
     const rubble = this._zone(820, LOW - 25, 44, 56, 0x6e5a3c, 0);
     const moundImg = this._propImg('mound', 820, LOW, 260, 2);
     this.gates.crack = { obj: rubble, mound: moundImg, x: 820, broken: false };
@@ -279,18 +279,20 @@ export class Level1Scene extends Phaser.Scene {
     this._addEnemy(1740, LOW - 20, 'fireD',   'patrol', 1680, 1860);
     this._addEnemy(2480, LOW - 20, 'waterD',  'patrol', 2400, 2560);
     this._addEnemy(2860, LOW - 20, 'poisonD', 'patrol', 2800, 2930);
-    for (let i = 0; i < 4; i++) this._addEnemy(2640 + i * 40, LOW - 20, 'ice', 'advance', 2560, 2760);
+    for (let i = 0; i < 2; i++) this._addEnemy(2640 + i * 80, LOW - 20, 'ice', 'advance', 2560, 2760);
     this._addEnemy(3210, LOW - 20, 'acidD', 'patrol', 3170, 3280);
     this._addEnemy(3390, LOW - 20, 'acidD', 'patrol', 3350, 3440);
   }
 
   _buildPickups() {
-    const chest = this._zone(250, LOW - 18, 30, 28, 0xc8860a, 1);
-    chest.setStrokeStyle(2, 0xffd23f);
-    this.gates.chest = { obj: chest, opened: false };
-    this.physics.add.overlap(this.player, chest, () => this._openChest());
+    // chest — use the apple sprite as pickup visual, hidden zone for collision
+    const chestZone = this._zone(250, LOW - 28, 40, 40, 0, 0);
+    this.gates.chestSprite = this.add.image(250, LOW - 28, 'golden-apple').setDisplaySize(38, 38).setDepth(2);
+    this.gates.chest = { obj: chestZone, opened: false };
+    this.physics.add.overlap(this.player, chestZone, () => this._openChest());
 
-    this.gates.apple = this.physics.add.sprite(1180, LOW - 114, 'golden-apple').setDisplaySize(34, 34);
+    // apple at the platform ledge (ledge top = LOW-87)
+    this.gates.apple = this.physics.add.sprite(1180, LOW - 105, 'golden-apple').setDisplaySize(34, 34);
     this.gates.apple.body.setAllowGravity(false);
     this.gates.apple.disableBody(true, true);
     this.physics.add.overlap(this.player, this.gates.apple, () => this._getApple());
@@ -299,10 +301,12 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildBoss() {
-    this.boss = this.physics.add.sprite(4380, HIGH - 90, 'boss').setTint(0x6b7280);
+    const bossTex = this.textures.exists('master-dragon') ? 'master-dragon' : 'boss';
+    this.boss = this.physics.add.sprite(4380, HIGH - 90, bossTex);
+    if (bossTex === 'master-dragon') this.boss.setDisplaySize(120, 120);
     this.boss.body.setAllowGravity(false);
     this.boss.setImmovable(true);
-    this.boss.hp = 5; this.boss.state = 'sleep'; this.boss.t = 0;
+    this.boss.hp = 10; this.boss.state = 'sleep'; this.boss.t = 0;
     this.boss.homeX = 4380; this.boss.targetX = 4380;
     this.boss.mace = this.add.rectangle(4380, HIGH - 40, 12, 46, 0xcfd6dd).setDepth(5);
     this.bossText = this.add.text(4380, HIGH - 150, 'KNIGHT DRAGON',
@@ -310,12 +314,11 @@ export class Level1Scene extends Phaser.Scene {
       .setOrigin(0.5).setDepth(6).setVisible(false);
     this.physics.add.overlap(this.player, this.boss, () => { if (!this.bossDead) this._hurt(1, this.boss.x); });
     this.physics.add.overlap(this.shots, this.boss, (shot) => this._hitBoss(shot));
-    this.gates.cave = {
-      x: 4760, open: false,
-      flame: this.add.rectangle(4760, HIGH - 40, 40, 84, 0xff5a3c, 0.85).setDepth(3),
-    };
-    this.gates.cave.zone = this._zone(4760, HIGH - 40, 40, 84, 0, 0);
-    this.physics.add.overlap(this.player, this.gates.cave.zone,
+    // portal — hidden until boss dies
+    this.gates.cave = { x: 4760, open: false };
+    this.gates.cave.portal = this._buildPortal(4760, HIGH - 50);
+    this.gates.cave.block = this._zone(4760, HIGH - 40, 50, 90, 0xff5a3c, 0.7).setDepth(3);
+    this.physics.add.overlap(this.player, this.gates.cave.block,
       () => { if (this.bossDead) this._win(); else this._hurt(1, 4760); });
   }
 
@@ -326,9 +329,6 @@ export class Level1Scene extends Phaser.Scene {
     this.player.body.setSize(28, 40).setOffset(1, 1);
     this.player.facing = 1;
     this._applyHero('fire');
-    this.label = this.add.text(0, 0, 'F',
-      { fontFamily: 'monospace', fontSize: '16px', color: '#0c1410', fontStyle: 'bold' })
-      .setOrigin(0.5).setDepth(7);
   }
 
   _buildHUD() {
@@ -433,7 +433,6 @@ export class Level1Scene extends Phaser.Scene {
   _swap(k) {
     if (k === this.cur) return;
     this._applyHero(k);
-    this.label.setText(HEROES[k].letter);
     this._flash(this.player.x, this.player.y, HEROES[k].color);
     this._refreshBar();
   }
@@ -519,7 +518,6 @@ export class Level1Scene extends Phaser.Scene {
       duration: 620, ease: 'Sine.inOut',
       onUpdate: () => {
         line.setTo(this.player.x, this.player.y, this.gates.grapple.from, 250);
-        this.label.setPosition(this.player.x, this.player.y - 32);
       },
       onComplete: () => { line.destroy(); this.player.body.setAllowGravity(true); this.gates.grapple.busy = false; },
     });
@@ -529,8 +527,8 @@ export class Level1Scene extends Phaser.Scene {
   _openChest() {
     if (this.gates.chest.opened) return;
     this.gates.chest.opened = true;
-    this.gates.chest.obj.setFillStyle(0x6b4f20, 0.5);
-    this.gates.apple.enableBody(true, 1180, LOW - 114, true, true);
+    this.tweens.add({ targets: this.gates.chestSprite, alpha: 0, y: this.gates.chestSprite.y - 20, duration: 300, onComplete: () => this.gates.chestSprite.destroy() });
+    this.gates.apple.enableBody(true, 1180, LOW - 105, true, true);
     this.gates.apple.body.setAllowGravity(false);
     this.tweens.add({ targets: this.gates.apple, y: this.gates.apple.y - 8, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     this._floatText(250, LOW - 50, 'a golden apple!', '#ffd23f');
@@ -566,8 +564,7 @@ export class Level1Scene extends Phaser.Scene {
     }
     e.body.setAllowGravity(false); e.setImmovable(true);
     e.type = type; e.behavior = behavior; e.minX = minX; e.maxX = maxX; e.dir = 1;
-    e.tag = this.add.text(x, y - 40, this._labelFor(type),
-      { fontFamily: 'monospace', fontSize: '10px', color: '#cfe0d2' }).setOrigin(0.5).setDepth(6);
+    e.tag = null;
     return e;
   }
 
@@ -685,8 +682,9 @@ export class Level1Scene extends Phaser.Scene {
     this.bossText.setText('defeated!');
     this.tweens.add({ targets: this.boss, alpha: 0, y: this.boss.y + 40, duration: 600, onComplete: () => this.boss.destroy() });
     this.gates.cave.open = true;
-    this.tweens.add({ targets: this.gates.cave.flame, alpha: 0, duration: 400, onComplete: () => this.gates.cave.flame.destroy() });
-    this._floatText(4500, HIGH - 90, 'the bridge is clear', '#35c46a');
+    this.tweens.add({ targets: this.gates.cave.block, alpha: 0, duration: 300, onComplete: () => this.gates.cave.block.destroy() });
+    this._openPortal(this.gates.cave.portal);
+    this._floatText(4500, HIGH - 90, 'a portal appears!', '#a07fff');
   }
 
   // -------------------------------------------------------------------------
@@ -906,6 +904,64 @@ export class Level1Scene extends Phaser.Scene {
   _anyKey() {
     return Object.values(this.keys).some(k => Phaser.Input.Keyboard.JustDown(k)) ||
       this._jp(this.cursors.up) || this._jp(this.cursors.left) || this._jp(this.cursors.right);
+  }
+
+  // bridge platform for boss arena — uses bridge.png art if loaded, else a simple rect
+  _bridgePlatform(cx, y, w) {
+    const r = this.add.rectangle(cx, y + 10, w, 20, 0x5a3a1a);
+    this.physics.add.existing(r, true); this.platforms.push(r);
+    if (this.textures.exists('bridge')) {
+      const src = this.textures.get('bridge').getSourceImage();
+      const scale = w / src.width;
+      this.add.image(cx, y, 'bridge')
+        .setOrigin(0.5, 0.5)
+        .setDisplaySize(w, src.height * scale)
+        .setDepth(-1);
+      r.setAlpha(0);
+    }
+  }
+
+  // creates a portal graphic (initially invisible) at world position x, y
+  _buildPortal(x, y) {
+    const g = this.add.graphics().setDepth(5);
+    g.x = x; g.y = y;
+    g.portalAngle = 0;
+    g.setAlpha(0);
+    g.setVisible(false);
+    this._drawPortalFrame(g);
+    return g;
+  }
+
+  _drawPortalFrame(g) {
+    g.clear();
+    const a = g.portalAngle || 0;
+    // outer ring
+    g.lineStyle(5, 0xa07fff, 0.9);
+    g.strokeCircle(0, 0, 32);
+    // inner glow
+    g.fillStyle(0x6030cc, 0.5);
+    g.fillCircle(0, 0, 26);
+    // spinning sparks
+    for (let i = 0; i < 6; i++) {
+      const sa = a + (i / 6) * Math.PI * 2;
+      const sx = Math.cos(sa) * 28, sy = Math.sin(sa) * 28;
+      g.fillStyle(0xd0a0ff, 1);
+      g.fillCircle(sx, sy, 3);
+    }
+  }
+
+  _openPortal(g) {
+    g.setVisible(true);
+    this.tweens.add({ targets: g, alpha: 1, duration: 600, ease: 'Sine.Out' });
+    // animate portal spin
+    this.time.addEvent({ delay: 30, loop: true, callback: () => {
+      if (!g.active) return;
+      g.portalAngle = (g.portalAngle || 0) + 0.08;
+      this._drawPortalFrame(g);
+    }});
+    // overlap trigger for win
+    const zone = this._zone(g.x, g.y, 64, 64, 0, 0);
+    this.physics.add.overlap(this.player, zone, () => { if (this.bossDead) this._win(); });
   }
 
   _resetState() {
