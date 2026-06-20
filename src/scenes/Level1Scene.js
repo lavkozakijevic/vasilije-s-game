@@ -21,6 +21,13 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('1-1-mid',   'assets/sprites/1-1-mid.png');
     this.load.image('1-1-front', 'assets/sprites/1-1-front.png');
 
+    // environment / props
+    this.load.image('ground-tile',  'assets/sprites/ground-tile.png');
+    this.load.image('tree',         'assets/sprites/tree.png');
+    this.load.image('mound',        'assets/sprites/mound.png');
+    this.load.image('platform',     'assets/sprites/platform.png');
+    this.load.image('golden-apple', 'assets/sprites/golden-apple.png');
+
     // placeholder textures for heroes without art yet
     const h = this.make.graphics({ add: false });
     h.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 30, 42, 8);
@@ -172,12 +179,45 @@ export class Level1Scene extends Phaser.Scene {
     this._ground(3100, 3150);
     this._ground(3450, 3640);
     this._upper(3650, 4950);
-    this._block(560,  LOW - 26, 46, 52, 0x6b5235);
-    this._block(1180, LOW - 92, 140, 18, 0x6b5235);
+
+    // decorative props (no collision) — behind the player
+    this._prop('mound', 820,  LOW, 280, -2);   // earth mound at the crack passage
+    this._prop('tree',  700,  LOW, 150, -1);   // tree on the way in
+
+    // crate to hop (collision kept, drawn as simple block)
+    this._block(560, LOW - 26, 46, 52, 0x6b5235);
+
+    // apple ledge — collision invisible, platform art on top
+    const ledge = this._block(1180, LOW - 92, 140, 18, 0x6b5235);
+    ledge.setVisible(false);
+    this._platformArt(1180, LOW - 101, 200);
+
     const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
     this.physics.add.existing(net, true); this.platforms.push(net);
     this.add.rectangle(4880, HIGH - 46, 120, 120, 0x0a140d).setDepth(1);
     this.add.rectangle(4880, HIGH - 46, 80,  96,  0x050906).setDepth(2);
+  }
+
+  // a bottom-anchored decorative image
+  _prop(key, x, baseY, dispW, depth) {
+    const src = this.textures.get(key).getSourceImage();
+    const scale = dispW / src.width;
+    this.add.image(x, baseY, key)
+      .setOrigin(0.5, 1)
+      .setDisplaySize(dispW, src.height * scale)
+      .setDepth(depth);
+  }
+
+  // platform art whose top surface aligns with surfaceY
+  _platformArt(x, surfaceY, dispW) {
+    const src = this.textures.get('platform').getSourceImage();
+    const scale = dispW / src.width;
+    const img = this.add.image(x, 0, 'platform')
+      .setOrigin(0.5, 0)
+      .setDisplaySize(dispW, src.height * scale)
+      .setDepth(-1);
+    // content top sits ~65px down in a 327-tall source; offset so it lands on surfaceY
+    img.y = surfaceY - 65 * scale;
   }
 
   _buildGates() {
@@ -240,7 +280,7 @@ export class Level1Scene extends Phaser.Scene {
     this.gates.chest = { obj: chest, opened: false };
     this.physics.add.overlap(this.player, chest, () => this._openChest());
 
-    this.gates.apple = this.physics.add.sprite(1180, LOW - 114, 'px').setDisplaySize(20, 20).setTint(0xffd23f);
+    this.gates.apple = this.physics.add.sprite(1180, LOW - 114, 'golden-apple').setDisplaySize(34, 34);
     this.gates.apple.body.setAllowGravity(false);
     this.gates.apple.disableBody(true, true);
     this.physics.add.overlap(this.player, this.gates.apple, () => this._getApple());
@@ -780,7 +820,16 @@ export class Level1Scene extends Phaser.Scene {
   _ground(x1, x2) {
     const w = x2 - x1;
     const r = this.add.rectangle(x1 + w / 2, LOW + 35, w, 70, 0x2c4a35);
+    r.setVisible(false);                 // collision only; tiled art drawn on top
     this.physics.add.existing(r, true); this.platforms.push(r);
+    // tiled ground art
+    const src = this.textures.get('ground-tile').getSourceImage();
+    const tileH = 120;
+    const scale = tileH / src.height;
+    const grassTop = 26 * scale;         // transparent strip above grass in the texture
+    const ts = this.add.tileSprite(x1, LOW - grassTop, w, tileH, 'ground-tile')
+      .setOrigin(0, 0).setDepth(-1);
+    ts.tileScaleX = scale; ts.tileScaleY = scale;
   }
 
   _upper(x1, x2) {
