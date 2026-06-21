@@ -358,6 +358,10 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildHUD() {
+    this.hud.bossBar = this.add.graphics().setScrollFactor(0).setDepth(40).setVisible(false);
+    this.hud.bossLabel = this.add.text(W / 2, H - 70, 'MASTER DRAGON',
+      { fontFamily: 'Trebuchet MS', fontSize: '11px', color: '#ffd2c2' })
+      .setOrigin(0.5, 1).setScrollFactor(0).setDepth(40).setVisible(false);
     this.hud.hearts = this.add.graphics().setScrollFactor(0).setDepth(40);
     this.hud.timer  = this.add.text(W / 2, 16, '10:00',
       { fontFamily: 'Trebuchet MS', fontSize: '18px', color: '#e8efe6' })
@@ -657,7 +661,11 @@ export class Level1Scene extends Phaser.Scene {
   _tickBoss(time, delta) {
     if (!this.boss || !this.boss.active || this.bossDead) return;
     if (this.boss.state === 'sleep') {
-      if (this.player.x > 4180) { this.boss.state = 'idle'; this.boss.t = 600; }
+      if (this.player.x > 4180) {
+        this.boss.state = 'idle'; this.boss.t = 600;
+        this.hud.bossBar.setVisible(true); this.hud.bossLabel.setVisible(true);
+        this._drawBossBar();
+      }
       return;
     }
     this.boss.t -= delta;
@@ -675,7 +683,7 @@ export class Level1Scene extends Phaser.Scene {
         this.boss.x += (this.boss.targetX - this.boss.x) * 0.25;
         this.boss.y += (HIGH - 30 - this.boss.y) * 0.28;
         if (this.boss.t <= 0) {
-          this.boss.state = 'recover'; this.boss.t = 1500; this.boss.setTint(0xffe1a0);
+          this.boss.state = 'recover'; this.boss.t = 3000; this.boss.setTint(0xffe1a0);
           this.cameras.main.shake(160, 0.01);
           if (Math.abs(this.player.x - this.boss.x) < 70 && this.player.y > HIGH - 80) this._hurt(1, this.boss.x);
           this._flash(this.boss.x, HIGH - 20, 0xffce6a);
@@ -695,16 +703,17 @@ export class Level1Scene extends Phaser.Scene {
   _damageBoss() {
     if (this.bossDead || !this.boss) return;
     if (this.boss.state !== 'recover') { this._floatText(this.boss.x, this.boss.y - 60, 'armored!', '#aab2bb'); return; }
-    if (this.time.now < this.boss.hurtUntil) return;   // 800ms cooldown between hits
-    this.boss.hurtUntil = this.time.now + 800;
+    if (this.time.now < this.boss.hurtUntil) return;   // 1500ms cooldown between hits
+    this.boss.hurtUntil = this.time.now + 1500;
     this.boss.hp -= this.dmg;
     this._flash(this.boss.x, this.boss.y, 0xffce4a);
     if (this.boss.hp <= 0) { this._defeatBoss(); }
-    else this._floatText(this.boss.x, this.boss.y - 60, `-${this.dmg}`, '#ffffff');
+    else { this._floatText(this.boss.x, this.boss.y - 60, `-${this.dmg}`, '#ffffff'); this._drawBossBar(); }
   }
 
   _defeatBoss() {
     this.bossDead = true;
+    this.hud.bossBar.setVisible(false); this.hud.bossLabel.setVisible(false);
     this._floatText(this.boss.x, this.boss.y - 50, 'defeated!', '#ffffff');
     this.tweens.add({ targets: this.boss, alpha: 0, y: this.boss.y + 40, duration: 600, onComplete: () => this.boss.destroy() });
     this.gates.cave.open = true;
@@ -930,6 +939,20 @@ export class Level1Scene extends Phaser.Scene {
   _anyKey() {
     return Object.values(this.keys).some(k => Phaser.Input.Keyboard.JustDown(k)) ||
       this._jp(this.cursors.up) || this._jp(this.cursors.left) || this._jp(this.cursors.right);
+  }
+
+  _drawBossBar() {
+    const g = this.hud.bossBar; g.clear();
+    const bw = 200, bh = 10, bx = W / 2 - bw / 2, by = H - 60;
+    g.fillStyle(0x3a1010, 1); g.fillRect(bx, by, bw, bh);
+    const fill = Math.max(0, this.boss.hp / 10);
+    g.fillStyle(0xff4444, 1); g.fillRect(bx, by, Math.round(bw * fill), bh);
+    g.lineStyle(2, 0xff9090, 0.8); g.strokeRect(bx, by, bw, bh);
+    // 10 tick marks so each hit is visible
+    for (let i = 1; i < 10; i++) {
+      const tx = bx + Math.round(bw * i / 10);
+      g.lineStyle(1, 0x660000, 0.6); g.lineBetween(tx, by, tx, by + bh);
+    }
   }
 
   // bridge platform for boss arena — uses bridge.png art if loaded, else a simple rect
