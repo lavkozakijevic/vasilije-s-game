@@ -383,6 +383,9 @@ export class Level1Scene extends Phaser.Scene {
     this.boss.arenaL = 4980; this.boss.arenaR = 5500;
     this.boss.homeX = 5400; this.boss.targetX = 5400;
     this.boss.hurtUntil = 0;  // per-hit cooldown (800 ms between valid hits)
+    // floating HP hearts that hover above the dragon (world-space, follow it)
+    this.boss.maxHp = 10;
+    this.boss.hearts = this.add.graphics().setDepth(41).setVisible(false);
     this.physics.add.overlap(this.player, this.boss, () => { if (!this.bossDead) this._hurt(1, this.boss.x); });
     this.physics.add.overlap(this.shots, this.boss, (shot) => this._hitBoss(shot));
     // portal — hidden until boss dies
@@ -708,11 +711,13 @@ export class Level1Scene extends Phaser.Scene {
       if (this.player.x > 5180) {
         this.boss.state = 'idle'; this.boss.t = 600;
         this.hud.bossBar.setVisible(true); this.hud.bossLabel.setVisible(true);
+        this.boss.hearts.setVisible(true);
         this._drawBossBar();
       }
       return;
     }
     this.boss.t -= delta;
+    this._drawBossHearts();
     // keep the dragon hovering over the player but always inside the arena so it
     // never drifts off-screen while the camera follows the player
     const clamp = (v) => Phaser.Math.Clamp(v, this.boss.arenaL, this.boss.arenaR);
@@ -758,7 +763,7 @@ export class Level1Scene extends Phaser.Scene {
     this.boss.hurtUntil = this.time.now + 700;
     this.boss.hp = Math.max(0, this.boss.hp - 1);   // exactly one heart per valid hit
     this._flash(this.boss.x, this.boss.y, 0xffce4a);
-    this._drawBossBar();
+    this._drawBossBar(); this._drawBossHearts();
     if (this.boss.hp <= 0) { this._defeatBoss(); }
     else { this._floatText(this.boss.x, this.boss.y - 60, `${this.boss.hp} left`, '#ffffff'); }
   }
@@ -767,6 +772,7 @@ export class Level1Scene extends Phaser.Scene {
     if (this.bossDead) return;
     this.bossDead = true;
     this.hud.bossBar.setVisible(false); this.hud.bossLabel.setVisible(false);
+    if (this.boss.hearts) this.boss.hearts.destroy();
     this._floatText(this.boss.x, this.boss.y - 50, 'defeated!', '#ffffff');
     this.tweens.add({ targets: this.boss, alpha: 0, y: this.boss.y + 40, duration: 600, onComplete: () => this.boss.destroy() });
     this.gates.cave.open = true;
@@ -1014,6 +1020,23 @@ export class Level1Scene extends Phaser.Scene {
     for (let i = 1; i < 10; i++) {
       const tx = bx + Math.round(bw * i / 10);
       g.lineStyle(1, 0x660000, 0.6); g.lineBetween(tx, by, tx, by + bh);
+    }
+  }
+
+  // small hearts floating above the dragon, one per remaining HP
+  _drawBossHearts() {
+    if (!this.boss || !this.boss.hearts) return;
+    const g = this.boss.hearts; g.clear();
+    const n = this.boss.maxHp, hp = Math.max(0, this.boss.hp);
+    const sp = 16, total = (n - 1) * sp;
+    const bx = this.boss.x - total / 2;
+    const by = this.boss.y - this.boss.displayHeight / 2 - 22;
+    for (let i = 0; i < n; i++) {
+      const x = bx + i * sp, y = by;
+      const filled = i < hp;
+      g.fillStyle(filled ? 0xff4d5e : 0x402028, 1);
+      g.fillCircle(x - 3, y - 1, 4); g.fillCircle(x + 3, y - 1, 4);
+      g.fillTriangle(x - 6, y + 1, x + 6, y + 1, x, y + 8);
     }
   }
 
