@@ -14,7 +14,8 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('hero_earth',  'assets/sprites/earth-300.png');
     this.load.image('hero_stone',  'assets/sprites/stone-300.png');
     this.load.image('hero_poison', 'assets/sprites/poison-300.png');
-    this.load.image('hero_ice',    'assets/sprites/ice-300.png');   // used for the Rubber slot for now
+    this.load.image('hero_ice',    'assets/sprites/ice-300.png');
+    this.load.image('hero_rubber', 'assets/sprites/rubber.png');
 
     // parallax background layers
     this.load.image('1-1-back',  'assets/sprites/1-1-back.png');
@@ -35,6 +36,7 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('bridge',        'assets/sprites/bridge.png');
     this.load.image('master-dragon', 'assets/sprites/master-dragon.png');
     this.load.image('tree',          'assets/sprites/tree.png');
+    this.load.image('fire-bush',     'assets/sprites/fire-bush.png');
     this.load.on('loaderror', () => {});
 
     // dragon enemies
@@ -216,11 +218,16 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _burningTree(x, baseY) {
-    if (!this.textures.exists('tree')) return;
-    const img = this._propImg('tree', x, baseY, 80, 1);
-    img.setTint(0xff6620);
-    const glow = this.add.rectangle(x, baseY - 60, 70, 120, 0xff4400, 0.18).setDepth(0);
-    this.tweens.add({ targets: glow, alpha: { from: 0.10, to: 0.28 }, duration: 320, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    // prefer the fire-bush art; fall back to a tinted tree if it isn't present
+    const hasBush = this.textures.exists('fire-bush');
+    const key = hasBush ? 'fire-bush' : (this.textures.exists('tree') ? 'tree' : null);
+    if (!key) return;
+    const dispW = hasBush ? 150 : 80;
+    const img = this._propImg(key, x, baseY, dispW, 1);
+    if (!hasBush) img.setTint(0xff6620);
+    // flickering ember glow
+    const glow = this.add.rectangle(x, baseY - 70, dispW * 0.8, 150, 0xff4400, 0.18).setDepth(0);
+    this.tweens.add({ targets: glow, alpha: { from: 0.10, to: 0.30 }, duration: 280, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
   // a bottom-anchored decorative image (returns the image)
@@ -459,7 +466,7 @@ export class Level1Scene extends Phaser.Scene {
       earth:  { tex: 'hero_earth',  feetY: 279, cx: 151 },
       stone:  { tex: 'hero_stone',  feetY: 297, cx: 158 },
       poison: { tex: 'hero_poison', feetY: 292, cx: 154 },
-      rubber: { tex: 'hero_ice',    feetY: 295, cx: 157 },  // ice art stands in for Rubber
+      rubber: { tex: 'hero_rubber', feetY: 280, cx: 150 },
     };
     const s = SPRITE_MAP[k];
     if (s) {
