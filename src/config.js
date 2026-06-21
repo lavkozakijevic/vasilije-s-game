@@ -2,7 +2,7 @@ export const W = 960;
 export const H = 540;
 export const LOW = 470;
 export const HIGH = 330;
-export const WORLD_W = 5200;
+export const WORLD_W = 6400;
 
 export const HEROES = {
   fire:  { name: 'Fire',   color: 0xff5a3c, letter: 'F', atk: 'ranged', cd: 1300, kills: ['ice'] },
