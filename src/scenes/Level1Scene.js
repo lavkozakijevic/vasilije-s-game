@@ -369,9 +369,9 @@ export class Level1Scene extends Phaser.Scene {
       const src = this.textures.get('master-dragon').getSourceImage();
       const dispW = 220, dispH = Math.round(dispW * src.height / src.width);
       this.boss.setDisplaySize(dispW, dispH);
-      // body in texture px: fill the content area (content ≈ full texture)
-      this.boss.body.setSize(src.width * 0.7, src.height * 0.7)
-        .setOffset(src.width * 0.15, src.height * 0.15);
+      // body in display pixels (world space) — NOT texture pixels which get scaled
+      this.boss.body.setSize(dispW * 0.7, dispH * 0.7)
+        .setOffset(dispW * 0.15, dispH * 0.15);
     } else {
       this.boss.setTint(0x6b7280);
     }
