@@ -362,7 +362,10 @@ export class Level1Scene extends Phaser.Scene {
     }
     this.boss.body.setAllowGravity(false);
     this.boss.setImmovable(true);
+    this.boss.setDepth(6);   // always in front of bridge/background art
     this.boss.hp = 10; this.boss.state = 'sleep'; this.boss.t = 0;
+    // arena span (bridge is centred at 5200, width 700 → 4850..5550)
+    this.boss.arenaL = 4980; this.boss.arenaR = 5500;
     this.boss.homeX = 5400; this.boss.targetX = 5400;
     this.boss.hurtUntil = 0;  // per-hit cooldown (800 ms between valid hits)
     this.physics.add.overlap(this.player, this.boss, () => { if (!this.bossDead) this._hurt(1, this.boss.x); });
@@ -696,11 +699,15 @@ export class Level1Scene extends Phaser.Scene {
       return;
     }
     this.boss.t -= delta;
+    // keep the dragon hovering over the player but always inside the arena so it
+    // never drifts off-screen while the camera follows the player
+    const clamp = (v) => Phaser.Math.Clamp(v, this.boss.arenaL, this.boss.arenaR);
+    this.boss.homeX = clamp(this.player.x);
     switch (this.boss.state) {
       case 'idle':
         this.boss.y = HIGH - 90 + Math.sin(time / 250) * 6;
         this.boss.x += (this.boss.homeX - this.boss.x) * 0.05;
-        if (this.boss.t <= 0) { this.boss.state = 'rise'; this.boss.t = 460; this.boss.setTint(0xff7a5c); this.boss.targetX = this.player.x; }
+        if (this.boss.t <= 0) { this.boss.state = 'rise'; this.boss.t = 460; this.boss.setTint(0xff7a5c); this.boss.targetX = clamp(this.player.x); }
         break;
       case 'rise':
         this.boss.y += (150 - this.boss.y) * 0.15;
@@ -720,6 +727,8 @@ export class Level1Scene extends Phaser.Scene {
         if (this.boss.t <= 0) { this.boss.state = 'idle'; this.boss.t = 900; this.boss.clearTint(); }
         break;
     }
+    // never let the dragon leave the arena (and thus the screen)
+    this.boss.x = clamp(this.boss.x);
   }
 
   _hitBoss(shot) {
