@@ -804,8 +804,17 @@ export class Level1Scene extends Phaser.Scene {
       } else { return this._loseHard('GAME OVER'); }
     }
     const c = this.checkpoints[this.cp];
-    this.player.body.reset(c.x, c.y);   // repositions physics body + clears velocity
-    this.player.setVelocity(0, 0);
+    this.player.body.reset(c.x, c.y);
+    this.player.body.setVelocity(0, 0);
+    this.player.body.setAcceleration(0, 0);
+    // teleport the physics body one frame later so the platform collider has
+    // resolved and the player lands instead of falling through the ground
+    this.time.delayedCall(16, () => {
+      if (this.player && this.player.body) {
+        this.player.body.reset(c.x, c.y);
+        this.player.body.setVelocity(0, 0);
+      }
+    });
     this.invulnUntil = this.time.now + 1200;
   }
 
@@ -1089,13 +1098,13 @@ export class Level1Scene extends Phaser.Scene {
     this.hud         = {};
     this.menu        = {};
     this.checkpoints = [
-      { x: 90,   y: 400 },
-      { x: 900,  y: 430 },
-      { x: 1900, y: 430 },
-      { x: 2340, y: 430 },
-      { x: 3520, y: 430 },
-      { x: 4360, y: LOW - 20 },
-      { x: 5050, y: LOW - 20 },   // boss arena — respawn here during the dragon fight
+      { x: 90,   y: LOW - 80 },
+      { x: 900,  y: LOW - 80 },
+      { x: 1900, y: LOW - 80 },
+      { x: 2340, y: LOW - 80 },
+      { x: 3520, y: LOW - 80 },
+      { x: 4360, y: LOW - 80 },
+      { x: 5050, y: LOW - 80 },   // boss arena
     ];
     this.cp = 0;
     this.saveData = saveSystem.load();
