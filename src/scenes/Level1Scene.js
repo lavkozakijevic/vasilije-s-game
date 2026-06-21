@@ -211,8 +211,8 @@ export class Level1Scene extends Phaser.Scene {
 
     // (mound is placed in _buildGates as part of the crack gate visual)
 
-    // apple ledge — collision matches measured platform art surface (LOW-87)
-    const ledge = this._block(1180, LOW - 78, 140, 18, 0x6b5235);
+    // apple ledge — collision top aligns with platform's solid surface (~LOW-74)
+    const ledge = this._block(1180, LOW - 65, 140, 18, 0x6b5235);
     ledge.setVisible(false);
     this._platformArt(1180, 0, 200);
 
@@ -250,7 +250,8 @@ export class Level1Scene extends Phaser.Scene {
 
   _buildGates() {
     // 1) CRACK — solid mound wall, taller than a jump so it must be broken by Earth
-    const moundImg = this._propImg('mound', 820, LOW, 260, 2);
+    // +12 pushes the 28px transparent bottom margin below LOW so the dirt sits on the ground
+    const moundImg = this._propImg('mound', 820, LOW + 12, 260, 2);
     const wall = this._block(820, LOW - 85, 92, 170, 0x355640);
     wall.setVisible(false);
     this.gates.crack = { obj: wall, mound: moundImg, x: 820, broken: false };
