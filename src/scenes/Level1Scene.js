@@ -126,17 +126,9 @@ export class Level1Scene extends Phaser.Scene {
     else if (right) { this.player.setAccelerationX(1900);  this.player.facing =  1; }
     else            { this.player.setAccelerationX(0); }
 
-    // climbing (Earth on the ladder)
-    const onLadder = this.cur === 'earth' && this.physics.overlap(this.player, this.gates.climb.zone);
-    const up   = this.cursors.up.isDown   || this.keys.w.isDown;
-    const down = this.cursors.down.isDown || this.keys.s.isDown;
-    this.climbing = onLadder && (up || down || this.player.body.velocity.y > -50);
-    this.player.body.setAllowGravity(!this.climbing);
-    if (this.climbing) this.player.setVelocityY(up ? -170 : down ? 170 : 0);
-
     // jump
     const onGround = this.player.body.blocked.down || this.player.body.touching.down;
-    if (!this.climbing && (this._jp(this.cursors.up) || this._jp(this.keys.w) || this._jp(this.keys.space)) && onGround)
+    if ((this._jp(this.cursors.up) || this._jp(this.keys.w) || this._jp(this.keys.space)) && onGround)
       this.player.setVelocityY(-560);
 
     // attack & ability
@@ -207,8 +199,7 @@ export class Level1Scene extends Phaser.Scene {
     this._ground(0, 1950);
     this._ground(2300, 2860);
     this._ground(3100, 3750);   // extended — burning tree / bonus enemies live here
-    this._ground(4050, 4250);   // post-acid landing pad before the climb
-    this._upper(4250, 6100);
+    this._ground(4050, 6100);   // continues at ground level all the way to the boss arena
 
     // (mound is placed in _buildGates as part of the crack gate visual)
 
@@ -219,9 +210,6 @@ export class Level1Scene extends Phaser.Scene {
 
     // burning tree between water pool and acid pool (decorative, tinted orange)
     this._burningTree(3380, LOW);
-
-    // bridge for boss arena
-    this._bridgePlatform(5200, HIGH - 10, 700);
 
     const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
     this.physics.add.existing(net, true); this.platforms.push(net);
@@ -300,10 +288,6 @@ export class Level1Scene extends Phaser.Scene {
     const waterWater = this._zone(wx, LOW + 34, ww, 70, 0, 0);
     this.gates.waterPool = { solid: waterSolid, water: waterWater, x: wx };
     this.physics.add.overlap(this.player, waterWater, () => this._hurt(1, this.player.x + 1, true), () => this.cur !== 'water');
-
-    // 6) EARTH CLIMB (moved right with the terrain extension)
-    this.add.rectangle(4255, 400, 60, 150, 0x3a5240).setDepth(-2);
-    this.gates.climb = { zone: this._zone(4255, 400, 56, 150, 0, 0), topY: HIGH };
   }
 
   _buildEnemies() {
@@ -325,7 +309,7 @@ export class Level1Scene extends Phaser.Scene {
     this._addEnemy(3780, LOW - 20, 'acidD', 'patrol', 3755, 3840);
     this._addEnemy(4020, LOW - 20, 'acidD', 'patrol', 3970, 4050);
 
-    // Section 4 — post-acid landing pad before the climb
+    // Section 4 — post-acid landing pad leading into the boss arena
     this._addEnemy(4110, LOW - 20, 'waterD', 'advance', 4055, 4240);
     this._addEnemy(4180, LOW - 20, 'ice',    'advance', 4055, 4240);
   }
@@ -343,12 +327,12 @@ export class Level1Scene extends Phaser.Scene {
     this.gates.apple.disableBody(true, true);
     this.physics.add.overlap(this.player, this.gates.apple, () => this._getApple());
 
-    [1290, 2380, 3300, 3700, 4140, 4600].forEach(x => this._addRegen(x, (x < 4250 ? LOW : HIGH) - 26));
+    [1290, 2380, 3300, 3700, 4140, 4600].forEach(x => this._addRegen(x, LOW - 26));
   }
 
   _buildBoss() {
     const bossTex = this.textures.exists('master-dragon') ? 'master-dragon' : 'boss';
-    this.boss = this.physics.add.sprite(5400, HIGH - 90, bossTex);
+    this.boss = this.physics.add.sprite(5400, LOW - 90, bossTex);
     if (bossTex === 'master-dragon') {
       // preserve native 917:500 aspect ratio — display 220px wide
       const src = this.textures.get('master-dragon').getSourceImage();
@@ -362,9 +346,9 @@ export class Level1Scene extends Phaser.Scene {
     }
     this.boss.body.setAllowGravity(false);
     this.boss.setImmovable(true);
-    this.boss.setDepth(6);   // always in front of bridge/background art
+    this.boss.setDepth(6);   // always in front of background art
     this.boss.hp = 10; this.boss.state = 'sleep'; this.boss.t = 0;
-    // arena span (bridge is centred at 5200, width 700 → 4850..5550)
+    // arena span on the ground in front of the cave portal
     this.boss.arenaL = 4980; this.boss.arenaR = 5500;
     this.boss.homeX = 5400; this.boss.targetX = 5400;
     this.boss.hurtUntil = 0;  // per-hit cooldown (800 ms between valid hits)
@@ -372,8 +356,8 @@ export class Level1Scene extends Phaser.Scene {
     this.physics.add.overlap(this.shots, this.boss, (shot) => this._hitBoss(shot));
     // portal — hidden until boss dies
     this.gates.cave = { x: 5760, open: false };
-    this.gates.cave.portal = this._buildPortal(5760, HIGH - 50);
-    this.gates.cave.block = this._zone(5760, HIGH - 40, 50, 90, 0xff5a3c, 0.7).setDepth(3);
+    this.gates.cave.portal = this._buildPortal(5760, LOW - 50);
+    this.gates.cave.block = this._zone(5760, LOW - 40, 50, 90, 0xff5a3c, 0.7).setDepth(3);
     this.physics.add.overlap(this.player, this.gates.cave.block,
       () => { if (this.bossDead) this._win(); else this._hurt(1, 5760); });
   }
@@ -705,22 +689,22 @@ export class Level1Scene extends Phaser.Scene {
     this.boss.homeX = clamp(this.player.x);
     switch (this.boss.state) {
       case 'idle':
-        this.boss.y = HIGH - 90 + Math.sin(time / 250) * 6;
+        this.boss.y = LOW - 90 + Math.sin(time / 250) * 6;
         this.boss.x += (this.boss.homeX - this.boss.x) * 0.05;
         if (this.boss.t <= 0) { this.boss.state = 'rise'; this.boss.t = 460; this.boss.setTint(0xff7a5c); this.boss.targetX = clamp(this.player.x); }
         break;
       case 'rise':
-        this.boss.y += (150 - this.boss.y) * 0.15;
+        this.boss.y += ((LOW - 230) - this.boss.y) * 0.15;
         if (this.boss.t <= 0) { this.boss.state = 'slam'; this.boss.t = 420; }
         break;
       case 'slam':
         this.boss.x += (this.boss.targetX - this.boss.x) * 0.25;
-        this.boss.y += (HIGH - 30 - this.boss.y) * 0.28;
+        this.boss.y += ((LOW - 30) - this.boss.y) * 0.28;
         if (this.boss.t <= 0) {
           this.boss.state = 'recover'; this.boss.t = 3000; this.boss.setTint(0xffe1a0);
           this.cameras.main.shake(160, 0.01);
-          if (Math.abs(this.player.x - this.boss.x) < 70 && this.player.y > HIGH - 80) this._hurt(1, this.boss.x);
-          this._flash(this.boss.x, HIGH - 20, 0xffce6a);
+          if (Math.abs(this.player.x - this.boss.x) < 70 && this.player.y > LOW - 80) this._hurt(1, this.boss.x);
+          this._flash(this.boss.x, LOW - 20, 0xffce6a);
         }
         break;
       case 'recover':
@@ -755,7 +739,7 @@ export class Level1Scene extends Phaser.Scene {
     this.gates.cave.open = true;
     this.tweens.add({ targets: this.gates.cave.block, alpha: 0, duration: 300, onComplete: () => this.gates.cave.block.destroy() });
     this._openPortal(this.gates.cave.portal);
-    this._floatText(4500, HIGH - 90, 'a portal appears!', '#a07fff');
+    this._floatText(4500, LOW - 90, 'a portal appears!', '#a07fff');
   }
 
   // -------------------------------------------------------------------------
@@ -838,7 +822,6 @@ export class Level1Scene extends Phaser.Scene {
       m = 'Too many to shoot — STONE (4), press Q to crush them';
     else if (Math.abs(this.player.x - 2980) < 150) m = 'Deep water — WATER (2) to cross';
     else if (Math.abs(this.player.x - 3900) < 200) m = 'Acid pool & dragons — POISON (5)';
-    else if (this.physics.overlap(this.player, g.climb.zone)) m = 'EARTH (3) + hold ↑ to climb';
     else if (this.boss && this.boss.active && !this.bossDead && this.player.x > 5180)
       m = 'Strike when the dragon is stunned after a slam';
     this.hud.hintBg.setVisible(!!m); this.hud.hint.setText(m);
@@ -1076,7 +1059,8 @@ export class Level1Scene extends Phaser.Scene {
       { x: 1900, y: 430 },
       { x: 2340, y: 430 },
       { x: 3520, y: 430 },
-      { x: 4360, y: HIGH - 20 },
+      { x: 4360, y: LOW - 20 },
+      { x: 5050, y: LOW - 20 },   // boss arena — respawn here during the dragon fight
     ];
     this.cp = 0;
     this.saveData = saveSystem.load();
