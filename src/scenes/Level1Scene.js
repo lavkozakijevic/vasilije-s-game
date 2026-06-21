@@ -34,6 +34,7 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('chasm',        'assets/sprites/chasm.png');
     this.load.image('bridge',        'assets/sprites/bridge.png');
     this.load.image('master-dragon', 'assets/sprites/master-dragon.png');
+    this.load.image('tree',          'assets/sprites/tree.png');
     this.load.on('loaderror', () => {});
 
     // dragon enemies
@@ -139,8 +140,8 @@ export class Level1Scene extends Phaser.Scene {
       this.player.setVelocityY(-560);
 
     // attack & ability
-    if (this._jp(this.keys.j) && time > this.nextShot) { this.nextShot = time + HEROES[this.cur].cd; this._attack(); }
-    if (this._jp(this.keys.k)) this._ability();
+    if (this._jp(this.keys.e) && time > this.nextShot) { this.nextShot = time + HEROES[this.cur].cd; this._attack(); }
+    if (this._jp(this.keys.q)) this._ability();
 
     this.enemies.children.iterate(e => { if (e && e.active) this._tickEnemy(e); });
     this._tickBoss(time, delta);
@@ -205,9 +206,9 @@ export class Level1Scene extends Phaser.Scene {
   _buildTerrain() {
     this._ground(0, 1950);
     this._ground(2300, 2860);
-    this._ground(3100, 3150);
-    this._ground(3450, 3640);
-    this._upper(3650, 4950);
+    this._ground(3100, 3750);   // extended — burning tree / bonus enemies live here
+    this._ground(4050, 4250);   // post-acid landing pad before the climb
+    this._upper(4250, 6100);
 
     // (mound is placed in _buildGates as part of the crack gate visual)
 
@@ -216,11 +217,22 @@ export class Level1Scene extends Phaser.Scene {
     ledge.setVisible(false);
     this._platformArt(1180, 0, 200);
 
+    // burning tree between water pool and acid pool (decorative, tinted orange)
+    this._burningTree(3380, LOW);
+
     // bridge for boss arena
-    this._bridgePlatform(4200, HIGH - 10, 700);
+    this._bridgePlatform(5200, HIGH - 10, 700);
 
     const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
     this.physics.add.existing(net, true); this.platforms.push(net);
+  }
+
+  _burningTree(x, baseY) {
+    if (!this.textures.exists('tree')) return;
+    const img = this._propImg('tree', x, baseY, 80, 1);
+    img.setTint(0xff6620);
+    const glow = this.add.rectangle(x, baseY - 60, 70, 120, 0xff4400, 0.18).setDepth(0);
+    this.tweens.add({ targets: glow, alpha: { from: 0.10, to: 0.28 }, duration: 320, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
   // a bottom-anchored decorative image (returns the image)
@@ -273,8 +285,8 @@ export class Level1Scene extends Phaser.Scene {
     // 4) STONE CRUSH
     this.gates.stoneSpot = { x: 2700, used: false };
 
-    // 5) ACID POOL (3150–3450)
-    const ax = (3150 + 3450) / 2, aw = 300;
+    // 5) ACID POOL (3750–4050) — moved right to allow burning-tree section
+    const ax = (3750 + 4050) / 2, aw = 300;
     this._poolImg('acid', ax, LOW, aw + 20);
     const acidSolid = this._zone(ax, LOW + 8,  aw, 16, 0, 0);
     const acidWater = this._zone(ax, LOW + 34, aw, 70, 0, 0);
@@ -289,19 +301,33 @@ export class Level1Scene extends Phaser.Scene {
     this.gates.waterPool = { solid: waterSolid, water: waterWater, x: wx };
     this.physics.add.overlap(this.player, waterWater, () => this._hurt(1, this.player.x + 1, true), () => this.cur !== 'water');
 
-    // 6) EARTH CLIMB
-    this.add.rectangle(3655, 400, 60, 150, 0x3a5240).setDepth(-2);
-    this.gates.climb = { zone: this._zone(3655, 400, 56, 150, 0, 0), topY: HIGH };
+    // 6) EARTH CLIMB (moved right with the terrain extension)
+    this.add.rectangle(4255, 400, 60, 150, 0x3a5240).setDepth(-2);
+    this.gates.climb = { zone: this._zone(4255, 400, 56, 150, 0, 0), topY: HIGH };
   }
 
   _buildEnemies() {
+    // Section 1 (pre-chasm)
     this._addEnemy(1000, LOW - 20, 'ice',     'patrol',  940, 1120);
     this._addEnemy(1740, LOW - 20, 'fireD',   'patrol', 1680, 1860);
+
+    // Section 2 (post-chasm)
     this._addEnemy(2480, LOW - 20, 'waterD',  'patrol', 2400, 2560);
-    this._addEnemy(2860, LOW - 20, 'poisonD', 'patrol', 2800, 2930);
     for (let i = 0; i < 2; i++) this._addEnemy(2640 + i * 80, LOW - 20, 'ice', 'advance', 2560, 2760);
-    this._addEnemy(3210, LOW - 20, 'acidD', 'patrol', 3170, 3280);
-    this._addEnemy(3390, LOW - 20, 'acidD', 'patrol', 3350, 3440);
+    this._addEnemy(2860, LOW - 20, 'poisonD', 'patrol', 2800, 2930);
+
+    // Section 3 — burning-tree zone (between water pool and acid pool)
+    this._addEnemy(3200, LOW - 20, 'waterD', 'patrol', 3120, 3320);  // left of tree
+    this._addEnemy(3550, LOW - 20, 'ice',    'patrol', 3420, 3640);  // right of tree
+    this._addEnemy(3680, LOW - 20, 'fireD',  'patrol', 3600, 3750);  // approaching acid
+
+    // Section 3b — acid pool flankers
+    this._addEnemy(3780, LOW - 20, 'acidD', 'patrol', 3755, 3840);
+    this._addEnemy(4020, LOW - 20, 'acidD', 'patrol', 3970, 4050);
+
+    // Section 4 — post-acid landing pad before the climb
+    this._addEnemy(4110, LOW - 20, 'waterD', 'advance', 4055, 4240);
+    this._addEnemy(4180, LOW - 20, 'ice',    'advance', 4055, 4240);
   }
 
   _buildPickups() {
@@ -317,12 +343,12 @@ export class Level1Scene extends Phaser.Scene {
     this.gates.apple.disableBody(true, true);
     this.physics.add.overlap(this.player, this.gates.apple, () => this._getApple());
 
-    [1290, 2380, 3520, 4180].forEach(x => this._addRegen(x, (x < 3700 ? LOW : HIGH) - 26));
+    [1290, 2380, 3300, 3700, 4140, 4600].forEach(x => this._addRegen(x, (x < 4250 ? LOW : HIGH) - 26));
   }
 
   _buildBoss() {
     const bossTex = this.textures.exists('master-dragon') ? 'master-dragon' : 'boss';
-    this.boss = this.physics.add.sprite(4380, HIGH - 90, bossTex);
+    this.boss = this.physics.add.sprite(5400, HIGH - 90, bossTex);
     if (bossTex === 'master-dragon') {
       // preserve native 917:500 aspect ratio — display 220px wide
       const src = this.textures.get('master-dragon').getSourceImage();
@@ -337,16 +363,16 @@ export class Level1Scene extends Phaser.Scene {
     this.boss.body.setAllowGravity(false);
     this.boss.setImmovable(true);
     this.boss.hp = 10; this.boss.state = 'sleep'; this.boss.t = 0;
-    this.boss.homeX = 4380; this.boss.targetX = 4380;
+    this.boss.homeX = 5400; this.boss.targetX = 5400;
     this.boss.hurtUntil = 0;  // per-hit cooldown (800 ms between valid hits)
     this.physics.add.overlap(this.player, this.boss, () => { if (!this.bossDead) this._hurt(1, this.boss.x); });
     this.physics.add.overlap(this.shots, this.boss, (shot) => this._hitBoss(shot));
     // portal — hidden until boss dies
-    this.gates.cave = { x: 4760, open: false };
-    this.gates.cave.portal = this._buildPortal(4760, HIGH - 50);
-    this.gates.cave.block = this._zone(4760, HIGH - 40, 50, 90, 0xff5a3c, 0.7).setDepth(3);
+    this.gates.cave = { x: 5760, open: false };
+    this.gates.cave.portal = this._buildPortal(5760, HIGH - 50);
+    this.gates.cave.block = this._zone(5760, HIGH - 40, 50, 90, 0xff5a3c, 0.7).setDepth(3);
     this.physics.add.overlap(this.player, this.gates.cave.block,
-      () => { if (this.bossDead) this._win(); else this._hurt(1, 4760); });
+      () => { if (this.bossDead) this._win(); else this._hurt(1, 5760); });
   }
 
   _buildPlayer() {
@@ -426,7 +452,7 @@ export class Level1Scene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keys    = this.input.keyboard.addKeys({
       a: 'A', d: 'D', w: 'W', s: 'S', space: 'SPACE',
-      j: 'J', k: 'K', r: 'R', tab: 'TAB', esc: 'ESC',
+      e: 'E', q: 'Q', r: 'R', tab: 'TAB', esc: 'ESC',
       n1: 'ONE', n2: 'TWO', n3: 'THREE', n4: 'FOUR', n5: 'FIVE', n6: 'SIX',
     });
     this.input.keyboard.on('keydown-TAB', e => e.preventDefault());
@@ -662,7 +688,7 @@ export class Level1Scene extends Phaser.Scene {
   _tickBoss(time, delta) {
     if (!this.boss || !this.boss.active || this.bossDead) return;
     if (this.boss.state === 'sleep') {
-      if (this.player.x > 4180) {
+      if (this.player.x > 5180) {
         this.boss.state = 'idle'; this.boss.t = 600;
         this.hud.bossBar.setVisible(true); this.hud.bossLabel.setVisible(true);
         this._drawBossBar();
@@ -792,19 +818,19 @@ export class Level1Scene extends Phaser.Scene {
     if (!g.chest.opened && Math.abs(this.player.x - 250) < 120)
       m = 'Walk into the chest for a golden apple';
     else if (!g.crack.broken && Math.abs(this.player.x - g.crack.x) < 150)
-      m = 'Rubble blocks the way — EARTH (3), press K';
+      m = 'Rubble blocks the way — EARTH (3), press Q';
     else if (!g.fireWall.doused && Math.abs(this.player.x - g.fireWall.x) < 150)
-      m = 'Fire wall — EARTH (3), press K to douse';
-    else if (this._near(1000))  m = 'Ice dragon — FIRE (1), attack with J';
+      m = 'Fire wall — EARTH (3), press Q to douse';
+    else if (this._near(1000))  m = 'Ice dragon — FIRE (1), attack with E';
     else if (this._near(1740))  m = 'Fire dragon — WATER (2)';
     else if (this.player.x > g.grapple.x1 - 120 && this.player.x < g.grapple.x2 && !g.grapple.busy)
-      m = 'Chasm — RUBBER (6), press K to swing';
+      m = 'Chasm — RUBBER (6), press Q to swing';
     else if (this._near(2700) && this._hasPack())
-      m = 'Too many to shoot — STONE (4), press K to crush them';
+      m = 'Too many to shoot — STONE (4), press Q to crush them';
     else if (Math.abs(this.player.x - 2980) < 150) m = 'Deep water — WATER (2) to cross';
-    else if (Math.abs(this.player.x - 3300) < 170) m = 'Acid pool & dragons — POISON (5)';
+    else if (Math.abs(this.player.x - 3900) < 200) m = 'Acid pool & dragons — POISON (5)';
     else if (this.physics.overlap(this.player, g.climb.zone)) m = 'EARTH (3) + hold ↑ to climb';
-    else if (this.boss && this.boss.active && !this.bossDead && this.player.x > 4180)
+    else if (this.boss && this.boss.active && !this.bossDead && this.player.x > 5180)
       m = 'Strike when the dragon is stunned after a slam';
     this.hud.hintBg.setVisible(!!m); this.hud.hint.setText(m);
   }
@@ -1041,7 +1067,7 @@ export class Level1Scene extends Phaser.Scene {
       { x: 1900, y: 430 },
       { x: 2340, y: 430 },
       { x: 3520, y: 430 },
-      { x: 3760, y: HIGH - 20 },
+      { x: 4360, y: HIGH - 20 },
     ];
     this.cp = 0;
     this.saveData = saveSystem.load();
