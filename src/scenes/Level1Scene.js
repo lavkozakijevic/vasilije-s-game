@@ -210,9 +210,8 @@ export class Level1Scene extends Phaser.Scene {
     ledge.setVisible(false);
     this._platformArt(1180, 0, 200);
 
-    // one big burning fire bush between the water and acid pools — a real hazard:
-    // it blocks and burns, so the player must jump over it
-    this._fireBush(3380, 150);
+    // (the big mid-level fire bush is created in _buildGates, after the player
+    //  exists, since fire bushes register colliders against this.player)
 
     const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
     this.physics.add.existing(net, true); this.platforms.push(net);
@@ -293,6 +292,9 @@ export class Level1Scene extends Phaser.Scene {
     const fwL = this._fireBush(1500, 70, { zh: 150, zwFactor: 0.7 });
     const fwR = this._fireBush(1548, 70, { zh: 150, zwFactor: 0.7 });
     this.gates.fireWall = { x: 1524, doused: false, bushes: [fwL, fwR] };
+
+    // big mid-level fire bush between the water and acid pools (jump-over hazard)
+    this._fireBush(3380, 150);
 
     // 3) GRAPPLE CHASM (gap 1950–2300)
     this._poolImg('chasm', 2125, LOW, 380);
