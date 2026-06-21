@@ -265,9 +265,18 @@ export class Level1Scene extends Phaser.Scene {
     this.physics.add.collider(this.player, wall, null, () => !this.gates.crack.broken);
     this.physics.add.collider(this.enemies, wall, null, () => !this.gates.crack.broken);
 
-    // 2) FIRE WALL
-    const fw = this._zone(1520, LOW - 44, 44, 84, 0xff5a3c, 0.85);
-    fw.glow = this.add.rectangle(1520, LOW - 44, 56, 96, 0xffb14a, 0.25).setDepth(1);
+    // 2) FIRE WALL — rendered as fire-bush sprites; invisible zone handles collision
+    const fw = this._zone(1520, LOW - 44, 44, 84, 0, 0);
+    // two small fire-bush sprites side by side make the wall look full
+    const fwBushL = this.textures.exists('fire-bush')
+      ? this._propImg('fire-bush', 1496, LOW, 55, 2)
+      : this.add.rectangle(1496, LOW - 44, 44, 84, 0xff5a3c, 0.85).setDepth(2);
+    const fwBushR = this.textures.exists('fire-bush')
+      ? this._propImg('fire-bush', 1544, LOW, 55, 2)
+      : this.add.rectangle(1544, LOW - 44, 44, 84, 0xff5a3c, 0.85).setDepth(2);
+    fw.glow = this.add.rectangle(1520, LOW - 50, 90, 120, 0xff4400, 0.18).setDepth(1);
+    this.tweens.add({ targets: fw.glow, alpha: { from: 0.10, to: 0.30 }, duration: 280, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    fw.bushL = fwBushL; fw.bushR = fwBushR;
     this.gates.fireWall = { obj: fw, x: 1520, doused: false };
     this.physics.add.collider(this.player, fw, null, () => !this.gates.fireWall.doused);
     this.physics.add.overlap(this.player, fw, () => this._hurt(1, fw.x), () => !this.gates.fireWall.doused);
@@ -525,8 +534,13 @@ export class Level1Scene extends Phaser.Scene {
       }
       if (!this.gates.fireWall.doused && Math.abs(this.player.x - this.gates.fireWall.x) < 70) {
         this.gates.fireWall.doused = true;
-        this.gates.fireWall.obj.glow.destroy();
-        this.tweens.add({ targets: this.gates.fireWall.obj, alpha: 0, duration: 240, onComplete: () => this.gates.fireWall.obj.destroy() });
+        const fw2 = this.gates.fireWall.obj;
+        fw2.glow.destroy();
+        const douseTargets = [fw2.bushL, fw2.bushR].filter(Boolean);
+        if (douseTargets.length) {
+          this.tweens.add({ targets: douseTargets, alpha: 0, duration: 240, onComplete: () => douseTargets.forEach(t => t.destroy()) });
+        }
+        fw2.destroy();
         return this._floatText(this.gates.fireWall.x, LOW - 60, 'doused!', '#c08a4e');
       }
     }
@@ -723,8 +737,9 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _hitBoss(shot) {
-    if (!shot.active) return;
-    shot.destroy(); this._damageBoss();
+    if (!shot || !shot.active) return;
+    shot.disableBody(true, true);   // disable immediately so no further overlaps fire
+    this._damageBoss();
   }
 
   _damageBoss() {
@@ -732,7 +747,7 @@ export class Level1Scene extends Phaser.Scene {
     if (this.boss.state !== 'recover') { this._floatText(this.boss.x, this.boss.y - 60, 'armored!', '#aab2bb'); return; }
     if (this.time.now < this.boss.hurtUntil) return;   // 1500ms cooldown between hits
     this.boss.hurtUntil = this.time.now + 1500;
-    this.boss.hp -= this.dmg;
+    this.boss.hp -= 1;   // always -1 per hit so apple buff doesn't trivialise the boss
     this._flash(this.boss.x, this.boss.y, 0xffce4a);
     if (this.boss.hp <= 0) { this._defeatBoss(); }
     else { this._floatText(this.boss.x, this.boss.y - 60, `-${this.dmg}`, '#ffffff'); this._drawBossBar(); }
@@ -778,7 +793,8 @@ export class Level1Scene extends Phaser.Scene {
       } else { return this._loseHard('GAME OVER'); }
     }
     const c = this.checkpoints[this.cp];
-    this.player.setVelocity(0, 0).setPosition(c.x, c.y);
+    this.player.body.reset(c.x, c.y);   // repositions physics body + clears velocity
+    this.player.setVelocity(0, 0);
     this.invulnUntil = this.time.now + 1200;
   }
 
