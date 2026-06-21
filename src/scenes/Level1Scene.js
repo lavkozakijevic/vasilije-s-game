@@ -210,24 +210,47 @@ export class Level1Scene extends Phaser.Scene {
     ledge.setVisible(false);
     this._platformArt(1180, 0, 200);
 
-    // burning tree between water pool and acid pool (decorative, tinted orange)
-    this._burningTree(3380, LOW);
+    // one big burning fire bush between the water and acid pools — a real hazard:
+    // it blocks and burns, so the player must jump over it
+    this._fireBush(3380, 150);
 
     const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
     this.physics.add.existing(net, true); this.platforms.push(net);
   }
 
-  _burningTree(x, baseY) {
-    // prefer the fire-bush art; fall back to a tinted tree if it isn't present
+  // A fire bush: fire-bush art (falls back to a tinted tree) plus a flickering
+  // glow and a collision+damage zone. Returns a handle with { sprite, glow, zone,
+  // x, doused }. While not doused it BLOCKS the player and BURNS on contact.
+  _fireBush(x, dispW, opts = {}) {
     const hasBush = this.textures.exists('fire-bush');
     const key = hasBush ? 'fire-bush' : (this.textures.exists('tree') ? 'tree' : null);
-    if (!key) return;
-    const dispW = hasBush ? 150 : 80;
-    const img = this._propImg(key, x, baseY, dispW, 1);
-    if (!hasBush) img.setTint(0xff6620);
-    // flickering ember glow
-    const glow = this.add.rectangle(x, baseY - 70, dispW * 0.8, 150, 0xff4400, 0.18).setDepth(0);
+    const sprite = key ? this._propImg(key, x, LOW, dispW, 2) : null;
+    if (sprite && !hasBush) sprite.setTint(0xff6620);
+    const glow = this.add.rectangle(x, LOW - dispW * 0.5, dispW * 0.85, dispW * 1.1, 0xff4400, 0.18).setDepth(1);
     this.tweens.add({ targets: glow, alpha: { from: 0.10, to: 0.30 }, duration: 280, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    // collision/damage zone covers the burning trunk (a bit narrower than the art).
+    // Tall zones can't be jumped (must be doused); short ones can be hopped over.
+    const zh = opts.zh || 70;
+    const zw = Math.max(34, dispW * (opts.zwFactor || 0.5));
+    const zone = this._zone(x, LOW - zh / 2 + 6, zw, zh, 0, 0);
+    const bush = { sprite, glow, zone, x, doused: false };
+    this.physics.add.collider(this.player, zone, null, () => !bush.doused);
+    this.physics.add.overlap(this.player, zone, () => this._hurt(1, x), () => !bush.doused);
+    this.fireBushes.push(bush);
+    return bush;
+  }
+
+  // douse a fire bush (Earth) — stops it blocking/burning and fades the art out
+  _douseBush(bush) {
+    if (!bush || bush.doused) return;
+    bush.doused = true;
+    const fades = [bush.sprite, bush.glow].filter(Boolean);
+    if (fades.length) this.tweens.add({ targets: fades, alpha: 0, duration: 240, onComplete: () => fades.forEach(o => o.destroy()) });
+  }
+
+  // a tree.png decoration (no collision) for non-fire scenery
+  _decorTree(x, dispW) {
+    if (this.textures.exists('tree')) this._propImg('tree', x, LOW, dispW, -1);
   }
 
   // a bottom-anchored decorative image (returns the image)
@@ -265,21 +288,11 @@ export class Level1Scene extends Phaser.Scene {
     this.physics.add.collider(this.player, wall, null, () => !this.gates.crack.broken);
     this.physics.add.collider(this.enemies, wall, null, () => !this.gates.crack.broken);
 
-    // 2) FIRE WALL — rendered as fire-bush sprites; invisible zone handles collision
-    const fw = this._zone(1520, LOW - 44, 44, 84, 0, 0);
-    // two small fire-bush sprites side by side make the wall look full
-    const fwBushL = this.textures.exists('fire-bush')
-      ? this._propImg('fire-bush', 1496, LOW, 55, 2)
-      : this.add.rectangle(1496, LOW - 44, 44, 84, 0xff5a3c, 0.85).setDepth(2);
-    const fwBushR = this.textures.exists('fire-bush')
-      ? this._propImg('fire-bush', 1544, LOW, 55, 2)
-      : this.add.rectangle(1544, LOW - 44, 44, 84, 0xff5a3c, 0.85).setDepth(2);
-    fw.glow = this.add.rectangle(1520, LOW - 50, 90, 120, 0xff4400, 0.18).setDepth(1);
-    this.tweens.add({ targets: fw.glow, alpha: { from: 0.10, to: 0.30 }, duration: 280, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    fw.bushL = fwBushL; fw.bushR = fwBushR;
-    this.gates.fireWall = { obj: fw, x: 1520, doused: false };
-    this.physics.add.collider(this.player, fw, null, () => !this.gates.fireWall.doused);
-    this.physics.add.overlap(this.player, fw, () => this._hurt(1, fw.x), () => !this.gates.fireWall.doused);
+    // 2) FIRE WALL — two fire bushes side by side, too tall to jump, so the
+    // player must douse them with Earth. Each is a real burning hazard.
+    const fwL = this._fireBush(1500, 70, { zh: 150, zwFactor: 0.7 });
+    const fwR = this._fireBush(1548, 70, { zh: 150, zwFactor: 0.7 });
+    this.gates.fireWall = { x: 1524, doused: false, bushes: [fwL, fwR] };
 
     // 3) GRAPPLE CHASM (gap 1950–2300)
     this._poolImg('chasm', 2125, LOW, 380);
@@ -532,15 +545,9 @@ export class Level1Scene extends Phaser.Scene {
         this.tweens.add({ targets: this.gates.crack.mound, alpha: 0, duration: 400, onComplete: () => this.gates.crack.mound.destroy() });
         return this._floatText(this.gates.crack.x, LOW - 80, 'cleared!', '#c08a4e');
       }
-      if (!this.gates.fireWall.doused && Math.abs(this.player.x - this.gates.fireWall.x) < 70) {
+      if (!this.gates.fireWall.doused && Math.abs(this.player.x - this.gates.fireWall.x) < 90) {
         this.gates.fireWall.doused = true;
-        const fw2 = this.gates.fireWall.obj;
-        fw2.glow.destroy();
-        const douseTargets = [fw2.bushL, fw2.bushR].filter(Boolean);
-        if (douseTargets.length) {
-          this.tweens.add({ targets: douseTargets, alpha: 0, duration: 240, onComplete: () => douseTargets.forEach(t => t.destroy()) });
-        }
-        fw2.destroy();
+        this.gates.fireWall.bushes.forEach(b => this._douseBush(b));
         return this._floatText(this.gates.fireWall.x, LOW - 60, 'doused!', '#c08a4e');
       }
     }
@@ -743,17 +750,19 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _damageBoss() {
-    if (this.bossDead || !this.boss) return;
-    if (this.boss.state !== 'recover') { this._floatText(this.boss.x, this.boss.y - 60, 'armored!', '#aab2bb'); return; }
-    if (this.time.now < this.boss.hurtUntil) return;   // 1500ms cooldown between hits
-    this.boss.hurtUntil = this.time.now + 1500;
-    this.boss.hp -= 1;   // always -1 per hit so apple buff doesn't trivialise the boss
+    if (this.bossDead || !this.boss || this.boss.state === 'sleep') return;
+    // hard cooldown so a burst of shots / repeated melee can never one-shot the boss
+    if (this.time.now < this.boss.hurtUntil) return;
+    this.boss.hurtUntil = this.time.now + 700;
+    this.boss.hp = Math.max(0, this.boss.hp - 1);   // exactly one heart per valid hit
     this._flash(this.boss.x, this.boss.y, 0xffce4a);
+    this._drawBossBar();
     if (this.boss.hp <= 0) { this._defeatBoss(); }
-    else { this._floatText(this.boss.x, this.boss.y - 60, `-${this.dmg}`, '#ffffff'); this._drawBossBar(); }
+    else { this._floatText(this.boss.x, this.boss.y - 60, `${this.boss.hp} left`, '#ffffff'); }
   }
 
   _defeatBoss() {
+    if (this.bossDead) return;
     this.bossDead = true;
     this.hud.bossBar.setVisible(false); this.hud.bossLabel.setVisible(false);
     this._floatText(this.boss.x, this.boss.y - 50, 'defeated!', '#ffffff');
@@ -846,7 +855,7 @@ export class Level1Scene extends Phaser.Scene {
     else if (Math.abs(this.player.x - 2980) < 150) m = 'Deep water — WATER (2) to cross';
     else if (Math.abs(this.player.x - 3900) < 200) m = 'Acid pool & dragons — POISON (5)';
     else if (this.boss && this.boss.active && !this.bossDead && this.player.x > 5180)
-      m = 'Strike when the dragon is stunned after a slam';
+      m = 'Master Dragon — keep attacking! 10 hits to win';
     this.hud.hintBg.setVisible(!!m); this.hud.hint.setText(m);
   }
 
@@ -1058,6 +1067,7 @@ export class Level1Scene extends Phaser.Scene {
   _resetState() {
     this.platforms   = [];
     this.regenStones = [];
+    this.fireBushes  = [];
     this.gates       = {};
     this.boss        = null;
     this.cur         = 'fire';
