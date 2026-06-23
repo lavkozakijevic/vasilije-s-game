@@ -1,4 +1,4 @@
-import { W, H, LOW, HIGH, WORLD_W, HEROES, ORDER, COUNTER, ENEMY_TINT } from '../config.js';
+import { W, H, TILE, LOW, HIGH, WORLD_W, WORLD_H, HEROES, ORDER, COUNTER, ENEMY_TINT } from '../config.js';
 import { saveSystem } from '../systems/save.js';
 import { audioManager } from '../systems/audio.js';
 
@@ -46,6 +46,22 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('d_acid',    'assets/sprites/acid-dragon.png');
     this.load.image('d_regular', 'assets/sprites/regular-dragon.png');
 
+    // tilemap JSON + per-tile images (gid → flat filename in assets/tiles/)
+    this.load.json('mapdata', 'assets/maps/first.json');
+    const TILE_FILES = {
+      1: 'ground-below',       2: 'ground-top-left',     3: 'ground-top-mid',
+      4: 'ground-top-right',   5: 'ground-cliff-left',   6: 'ground-cliff-right',
+      7: 'ground-cliff-water-bottom', 8: 'ground-cliff-water-top',
+      9: 'water-bottom',       10: 'water-top',
+      11: 'village-barrel',    12: 'village-bush-1',     13: 'village-bush-2',
+      14: 'village-bush-3',    15: 'village-canon',      16: 'village-crate',
+      17: 'village-maces',     18: 'village-shield-crest', 19: 'village-shield-round',
+      20: 'village-spears',    21: 'village-swords',
+      36: 'Well',              37: 'tree-2',
+    };
+    Object.entries(TILE_FILES).forEach(([gid, f]) =>
+      this.load.image('tile_' + gid, `assets/tiles/${f}.png`));
+
     // placeholder textures for heroes without art yet
     const h = this.make.graphics({ add: false });
     h.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 30, 42, 8);
@@ -67,14 +83,14 @@ export class Level1Scene extends Phaser.Scene {
   create() {
     this._resetState();
 
-    this.physics.world.setBounds(0, 0, WORLD_W, H + 260);
-    this.cameras.main.setBounds(0, 0, WORLD_W, H);
+    this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H + 260);
+    this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
 
     this.enemies = this.physics.add.group();
     this.shots   = this.physics.add.group();
 
     this._buildParallax();
-    this._buildTerrain();
+    this._buildTilemap();
     this._buildPlayer();   // must exist before any overlap/collider references it
     this._buildGates();
     this._buildEnemies();
@@ -147,7 +163,7 @@ export class Level1Scene extends Phaser.Scene {
       if (this.player.x > this.checkpoints[i].x) this.cp = i;
     }
 
-    if (this.player.y > H + 90 && !this.over) this._respawn(true);
+    if (this.player.y > WORLD_H + 90 && !this.over) this._respawn(true);
 
     this._updateHint();
   }
@@ -197,24 +213,51 @@ export class Level1Scene extends Phaser.Scene {
     }
   }
 
-  _buildTerrain() {
-    this._ground(0, 1950);
-    this._ground(2300, 2860);
-    this._ground(3100, 3750);   // extended — burning tree / bonus enemies live here
-    this._ground(4050, 6100);   // continues at ground level all the way to the boss arena
+  _buildTilemap() {
+    const GID_MASK = 0x1FFFFFFF;
+    const FLIP_H   = 0x80000000;
+    const mapData  = this.cache.json.get('mapdata');
+    const mapCols  = mapData.width;  // 110
 
-    // (mound is placed in _buildGates as part of the crack gate visual)
+    // Render every tile layer — decorative images only, no per-tile physics
+    mapData.layers.forEach((layer, li) => {
+      if (layer.type !== 'tilelayer') return;
+      for (let i = 0; i < layer.data.length; i++) {
+        const raw = layer.data[i];
+        if (!raw) continue;
+        const gid   = raw & GID_MASK;
+        const flipH = !!(raw & FLIP_H);
+        const col   = i % mapCols;
+        const row   = Math.floor(i / mapCols);
+        const key   = 'tile_' + gid;
+        if (this.textures.exists(key)) {
+          const img = this.add.image(col * TILE, (row + 1) * TILE, key)
+            .setOrigin(0, 1).setDepth(li - 5);
+          if (flipH) img.setFlipX(true);
+        }
+      }
+    });
 
-    // apple ledge — collision top aligns with platform's solid surface (~LOW-74)
+    // ONE solid physics strip covering cols 5-52 (the continuous ground span across
+    // both the "ground" layer and the "buildings" layer fill at cols 25-41).
+    // Top of strip = LOW = 1280, matching the tilemap's row-10 surface.
+    const gSC = 5, gEC = 52;
+    const gW  = (gEC - gSC + 1) * TILE;   // 6144 px
+    const gX  = gSC * TILE + gW / 2;       // 3712
+    const gY  = LOW + TILE / 2;            // 1344 (center of row-10 tile)
+    const strip = this.add.rectangle(gX, gY, gW, TILE, 0, 0);
+    this.physics.add.existing(strip, true);
+    this.platforms.push(strip);
+
+    // Apple ledge — collision top aligns with LOW - 74
     const ledge = this._block(1180, LOW - 65, 140, 18, 0x6b5235);
     ledge.setVisible(false);
     this._platformArt(1180, 0, 200);
 
-    // (the big mid-level fire bush is created in _buildGates, after the player
-    //  exists, since fire bushes register colliders against this.player)
-
-    const net = this.add.rectangle(WORLD_W / 2, H + 200, WORLD_W, 40, 0, 0);
-    this.physics.add.existing(net, true); this.platforms.push(net);
+    // Fall-through kill net at the bottom of the world
+    const net = this.add.rectangle(WORLD_W / 2, WORLD_H + 200, WORLD_W, 40, 0, 0);
+    this.physics.add.existing(net, true);
+    this.platforms.push(net);
   }
 
   // A fire bush: fire-bush art (falls back to a tinted tree) plus a flickering
@@ -298,7 +341,7 @@ export class Level1Scene extends Phaser.Scene {
 
     // 3) GRAPPLE CHASM (gap 1950–2300)
     this._poolImg('chasm', 2125, LOW, 380);
-    this.add.star(2125, 250, 4, 5, 12, 0xffe27a).setDepth(3);
+    this.add.star(2125, LOW - 220, 4, 5, 12, 0xffe27a).setDepth(3);
     this.gates.grapple = { x1: 1860, x2: 1948, from: 2125, to: 2330, busy: false };
 
     // 4) STONE CRUSH
@@ -347,8 +390,8 @@ export class Level1Scene extends Phaser.Scene {
 
   _buildPickups() {
     // chest — use the apple sprite as pickup visual, hidden zone for collision
-    const chestZone = this._zone(250, LOW - 28, 40, 40, 0, 0);
-    this.gates.chestSprite = this.add.image(250, LOW - 28, 'golden-apple').setDisplaySize(38, 38).setDepth(2);
+    const chestZone = this._zone(950, LOW - 28, 40, 40, 0, 0);
+    this.gates.chestSprite = this.add.image(950, LOW - 28, 'golden-apple').setDisplaySize(38, 38).setDepth(2);
     this.gates.chest = { obj: chestZone, opened: false };
     this.physics.add.overlap(this.player, chestZone, () => this._openChest());
 
@@ -588,14 +631,15 @@ export class Level1Scene extends Phaser.Scene {
     this.gates.grapple.busy = true;
     this.player.setAcceleration(0, 0).setVelocity(0, 0);
     this.player.body.setAllowGravity(false);
-    const line = this.add.line(0, 0, this.player.x, this.player.y, this.gates.grapple.from, 250, 0xffe27a, 0.9)
+    const anchorY = LOW - 220;
+    const line = this.add.line(0, 0, this.player.x, this.player.y, this.gates.grapple.from, anchorY, 0xffe27a, 0.9)
       .setOrigin(0, 0).setLineWidth(2).setDepth(4);
     this.tweens.add({
       targets: this.player,
       x: this.gates.grapple.to, y: LOW - 30,
       duration: 620, ease: 'Sine.inOut',
       onUpdate: () => {
-        line.setTo(this.player.x, this.player.y, this.gates.grapple.from, 250);
+        line.setTo(this.player.x, this.player.y, this.gates.grapple.from, anchorY);
       },
       onComplete: () => { line.destroy(); this.player.body.setAllowGravity(true); this.gates.grapple.busy = false; },
     });
@@ -609,7 +653,7 @@ export class Level1Scene extends Phaser.Scene {
     this.gates.apple.enableBody(true, 1180, LOW - 105, true, true);
     this.gates.apple.body.setAllowGravity(false);
     this.tweens.add({ targets: this.gates.apple, y: this.gates.apple.y - 8, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-    this._floatText(250, LOW - 50, 'a golden apple!', '#ffd23f');
+    this._floatText(950, LOW - 50, 'a golden apple!', '#ffd23f');
   }
 
   _getApple() {
@@ -857,7 +901,7 @@ export class Level1Scene extends Phaser.Scene {
   _updateHint() {
     let m = '';
     const g = this.gates;
-    if (!g.chest.opened && Math.abs(this.player.x - 250) < 120)
+    if (!g.chest.opened && Math.abs(this.player.x - 950) < 120)
       m = 'Walk into the chest for a golden apple';
     else if (!g.crack.broken && Math.abs(this.player.x - g.crack.x) < 150)
       m = 'Rubble blocks the way — EARTH (3), press Q';
@@ -1121,13 +1165,13 @@ export class Level1Scene extends Phaser.Scene {
     this.hud         = {};
     this.menu        = {};
     this.checkpoints = [
-      { x: 90,   y: LOW - 80 },
-      { x: 900,  y: LOW - 80 },
+      { x: 850,  y: LOW - 80 },   // near tilemap "characters" spawn marker
+      { x: 1200, y: LOW - 80 },
       { x: 1900, y: LOW - 80 },
-      { x: 2340, y: LOW - 80 },
-      { x: 3520, y: LOW - 80 },
-      { x: 4360, y: LOW - 80 },
-      { x: 5050, y: LOW - 80 },   // boss arena
+      { x: 2600, y: LOW - 80 },
+      { x: 3700, y: LOW - 80 },
+      { x: 4600, y: LOW - 80 },
+      { x: 5200, y: LOW - 80 },   // boss arena
     ];
     this.cp = 0;
     this.saveData = saveSystem.load();

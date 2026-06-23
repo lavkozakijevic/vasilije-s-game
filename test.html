@@ -36,6 +36,8 @@
 
 const TILE = 128;
 const FLIP_H = 0x80000000, GID_MASK = 0x1FFFFFFF;
+// gids 9 and 10 from tileset-earth are water tiles — non-solid
+const WATER_GIDS = new Set([9, 10]);
 // JSON basename  ->  the actual flat filename you uploaded
 const OVERRIDES = {
   "Cartoon_Medieval_Armory_Level_Set_Environment - Tree 02.png": "tree-2.png",
@@ -78,6 +80,8 @@ const OVERRIDES = {
     type: Phaser.AUTO,
     parent: document.body,
     backgroundColor: '#6db3e8',
+    pixelArt: true,
+    roundPixels: true,
     scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
     physics: { default: 'arcade', arcade: { gravity: { y: 1500 }, debug: false } },
     scene: { preload, create, update },
@@ -110,7 +114,7 @@ const OVERRIDES = {
             .setOrigin(0, 1).setDepth(li);
           if (flipH) img.setFlipX(true);
         }
-        if (collide) {
+        if (collide && !WATER_GIDS.has(gid)) {
           const r = scene.add.rectangle(col * TILE + TILE / 2, row * TILE + TILE / 2, TILE, TILE);
           scene.physics.add.existing(r, true);
           solids.push(r);

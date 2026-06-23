@@ -1,8 +1,10 @@
 export const W = 960;
 export const H = 540;
-export const LOW = 470;
-export const HIGH = 330;
-export const WORLD_W = 6400;
+export const TILE = 128;           // tilemap cell size in pixels
+export const WORLD_W = 14080;      // 110 * TILE
+export const WORLD_H = 1536;       // 12 * TILE
+export const LOW = 1280;           // row 10 * TILE — top surface of ground tiles
+export const HIGH = 896;           // row 7 * TILE (placeholder for upper ledges)
 
 export const HEROES = {
   fire:  { name: 'Fire',   color: 0xff5a3c, letter: 'F', atk: 'ranged', cd: 1300, kills: ['ice'] },
