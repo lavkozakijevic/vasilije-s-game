@@ -159,8 +159,8 @@ export class Level1Scene extends Phaser.Scene {
       }
     });
 
-    // One solid physics strip: ground layer solid from col 5 to col 80
-    const gSC = 5, gEC = 80;
+    // One solid physics strip: ground layer solid from col 0 to col 80
+    const gSC = 0, gEC = 80;
     const gW  = (gEC - gSC + 1) * TILE;
     const gX  = gSC * TILE + gW / 2;
     const gY  = LOW + TILE / 2;
@@ -576,10 +576,10 @@ export class Level1Scene extends Phaser.Scene {
     this.hud         = {};
     this.menu        = {};
     this.checkpoints = [
-      { x: 850,  y: LOW - 80 },
-      { x: 1200, y: LOW - 80 },
-      { x: 2600, y: LOW - 80 },
-      { x: 4600, y: LOW - 80 },
+      { x: 765,  y: LOW - 80 },
+      { x: 2000, y: LOW - 80 },
+      { x: 4500, y: LOW - 80 },
+      { x: 7000, y: LOW - 80 },
     ];
     this.cp = 0;
     this.saveData = saveSystem.load();
