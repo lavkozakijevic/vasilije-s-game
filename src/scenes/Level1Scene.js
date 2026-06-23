@@ -238,10 +238,9 @@ export class Level1Scene extends Phaser.Scene {
       }
     });
 
-    // ONE solid physics strip covering cols 5-52 (the continuous ground span across
-    // both the "ground" layer and the "buildings" layer fill at cols 25-41).
-    // Top of strip = LOW = 1280, matching the tilemap's row-10 surface.
-    const gSC = 5, gEC = 52;
+    // ONE solid physics strip covering cols 5-80 (the continuous ground span in
+    // the updated map: ground layer solid from col 5 to col 80).
+    const gSC = 5, gEC = 80;
     const gW  = (gEC - gSC + 1) * TILE;   // 6144 px
     const gX  = gSC * TILE + gW / 2;       // 3712
     const gY  = LOW + TILE / 2;            // 1344 (center of row-10 tile)
