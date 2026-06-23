@@ -337,7 +337,7 @@ export class Level1Scene extends Phaser.Scene {
     };
     const s = SPRITE_MAP[k];
     if (s) {
-      this.player.setTexture(s.tex).setDisplaySize(54, 54).clearTint();
+      this.player.setTexture(s.tex).setDisplaySize(120, 120).clearTint();
       const bw = 156, bh = 222;
       this.player.body.setSize(bw, bh).setOffset(Math.round(s.cx - bw / 2), s.feetY - bh);
     } else {
