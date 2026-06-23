@@ -174,7 +174,8 @@ export class Level1Scene extends Phaser.Scene {
     this.platforms.push(net);
   }
 
-  // Read the map's object layers and spawn characters tagged there
+  // Read the map's object layers and spawn characters tagged there.
+  // Objects are Tiled text objects — match by text content (case-insensitive).
   _buildNPCs() {
     const mapData = this.cache.json.get('mapdata');
     const DRAGON_TEX = {
@@ -184,26 +185,29 @@ export class Level1Scene extends Phaser.Scene {
     for (const layer of mapData.layers) {
       if (layer.type !== 'objectgroup') continue;
       for (const obj of (layer.objects || [])) {
-        const name = (obj.name || obj.text?.text || '').toLowerCase().trim();
-        if (!name || name === 'characters') continue;
+        // text objects store the content in obj.text.text; name field may be empty
+        const label = (obj.name || obj.text?.text || '').toLowerCase();
+        const wx = obj.x, wy = obj.y;
 
-        const wx = obj.x;
-        const wy = obj.y;
-
-        if (name === 'blacksmith') {
-          this._spawnStatic('blacksmith', wx, wy, 96);
-        } else if (name.startsWith('dragon')) {
-          // e.g. "dragon_ice", "dragon_water", "dragon"
-          const variant = name.replace('dragon_', '').replace('dragon', 'regular').trim() || 'regular';
+        if (label.includes('blacksmith')) {
+          // display at LOW so it sits on the ground (wy from Tiled is the top edge)
+          this._spawnStatic('blacksmith', wx, LOW, 170);
+        } else if (label.includes('dragon')) {
+          const variant = ['ice','fire','water','poison','acid']
+            .find(v => label.includes(v)) || 'regular';
           const tex = DRAGON_TEX[variant] || 'd_regular';
-          this._spawnDragon(wx, wy, tex, variant);
+          this._spawnDragon(wx, LOW - 85, tex, variant);
         }
       }
     }
   }
 
   _spawnStatic(key, x, y, dispW) {
-    if (!this.textures.exists(key)) return;
+    if (!this.textures.exists(key)) {
+      // fallback placeholder so it's clear something is missing
+      this.add.rectangle(x, y - dispW / 2, dispW * 0.6, dispW, 0x8b5e3c, 0.8).setDepth(2);
+      return;
+    }
     const src = this.textures.get(key).getSourceImage();
     const dispH = Math.round(dispW * src.height / src.width);
     this.add.image(x, y, key).setOrigin(0.5, 1).setDisplaySize(dispW, dispH).setDepth(2);
@@ -211,9 +215,11 @@ export class Level1Scene extends Phaser.Scene {
 
   _spawnDragon(x, y, tex, type) {
     const e = this.enemies.create(x, y, tex);
-    e.setDisplaySize(72, 72);
+    e.setDisplaySize(170, 170);
     if (this.textures.exists(tex) && this.textures.get(tex).getSourceImage().width === 300) {
-      e.body.setSize(190, 165).setOffset(55, 90);
+      // body sized in texture coords (300px src, displayed at 170px)
+      const scale = 300 / 170;
+      e.body.setSize(Math.round(120 * scale), Math.round(100 * scale)).setOffset(Math.round(90 * scale), Math.round(120 * scale));
     }
     e.body.setAllowGravity(false);
     e.setImmovable(true);
