@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vasilije's Game — Test Level</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
+<style>
+  html,body{margin:0;height:100%;background:#6db3e8;overflow:hidden;
+    font-family:"Trebuchet MS",system-ui,sans-serif;}
+  #overlay{position:fixed;left:12px;top:12px;z-index:10;color:#fff;
+    background:rgba(0,0,0,.45);padding:9px 13px;border-radius:9px;font-size:13px;
+    line-height:1.6;max-width:340px;}
+  #overlay b{font-size:14px;}
+  #missing{color:#ffd2d2;font-size:12px;margin-top:6px;}
+  kbd{background:#0008;border:1px solid #fff6;border-radius:4px;padding:0 5px;}
+</style>
+</head>
+<body>
+<div id="overlay">
+  <b>Test Level</b><br>
+  Move <kbd>←</kbd> <kbd>→</kbd> · Jump <kbd>Space</kbd> · Reset <kbd>R</kbd>
+  <div id="missing"></div>
+</div>
+
+<script>
+/* =========================================================================
+   TEST LEVEL — loads the Tiled map (first.json) and lets you walk a box on it.
+   - remaps the long craftpix image paths to the flat /assets/tiles/ folder
+   - one renamed file is remapped explicitly (the tree)
+   - "ground" layer becomes solid; other tile layers are decoration
+   - spawns a controllable box at the "characters" object marker
+   Drop this at the repo root as test.html. Files expected:
+     assets/maps/first.json   ·   assets/tiles/<all the PNGs>
+   ========================================================================= */
+
+const TILE = 128;
+const FLIP_H = 0x80000000, GID_MASK = 0x1FFFFFFF;
+// JSON basename  ->  the actual flat filename you uploaded
+const OVERRIDES = {
+  "Cartoon_Medieval_Armory_Level_Set_Environment - Tree 02.png": "tree-2.png",
+};
+
+(async function () {
+  let map;
+  try {
+    map = await fetch('assets/maps/first.json').then(r => r.json());
+  } catch (e) {
+    document.getElementById('missing').textContent =
+      'Could not load assets/maps/first.json — check the file is there.';
+    return;
+  }
+
+  const worldW = map.width * TILE, worldH = map.height * TILE;
+
+  // which tiles are actually used (so we never try to load unused/missing images)
+  const used = new Set();
+  for (const L of map.layers)
+    if (L.type === 'tilelayer')
+      for (const raw of L.data) if (raw) used.add(raw & GID_MASK);
+
+  // gid -> { key, url, file }
+  const gidInfo = {};
+  for (const ts of map.tilesets)
+    for (const t of (ts.tiles || [])) {
+      const gid = ts.firstgid + t.id;
+      if (!used.has(gid)) continue;
+      const base = t.image.split('/').pop().split('\\').pop();
+      const file = OVERRIDES[base] || base;
+      gidInfo[gid] = { key: 't' + gid, url: 'assets/tiles/' + file, file };
+    }
+
+  const failed = new Set();
+  let player, cursors, keys, spawn = { x: 6 * TILE, y: 1100 };
+  const solids = [];
+
+  new Phaser.Game({
+    type: Phaser.AUTO,
+    parent: document.body,
+    backgroundColor: '#6db3e8',
+    scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
+    physics: { default: 'arcade', arcade: { gravity: { y: 1500 }, debug: false } },
+    scene: { preload, create, update },
+  });
+
+  function preload() {
+    this.load.on('loaderror', f => failed.add(f.key));
+    for (const gid in gidInfo) this.load.image(gidInfo[gid].key, gidInfo[gid].url);
+  }
+
+  function create() {
+    const scene = this;
+
+    // spawn point from the "characters" object layer
+    for (const L of map.layers)
+      if (L.type === 'objectgroup' && L.objects && L.objects[0])
+        spawn = { x: L.objects[0].x, y: L.objects[0].y };
+
+    // place every tile layer (depth = layer order, so decor sits over ground like in Tiled)
+    map.layers.forEach((L, li) => {
+      if (L.type !== 'tilelayer') return;
+      const collide = (L.name === 'ground');
+      for (let i = 0; i < L.data.length; i++) {
+        const raw = L.data[i]; if (!raw) continue;
+        const gid = raw & GID_MASK, flipH = !!(raw & FLIP_H);
+        const col = i % L.width, row = Math.floor(i / L.width);
+        const info = gidInfo[gid];
+        if (info && !failed.has(info.key)) {
+          const img = scene.add.image(col * TILE, (row + 1) * TILE, info.key)
+            .setOrigin(0, 1).setDepth(li);
+          if (flipH) img.setFlipX(true);
+        }
+        if (collide) {
+          const r = scene.add.rectangle(col * TILE + TILE / 2, row * TILE + TILE / 2, TILE, TILE);
+          scene.physics.add.existing(r, true);
+          solids.push(r);
+        }
+      }
+    });
+
+    // player box
+    player = scene.add.rectangle(spawn.x, spawn.y - 40, 70, 96, 0xff5a3c)
+      .setStrokeStyle(4, 0xffffff).setDepth(1000);
+    scene.physics.add.existing(player);
+    player.body.setMaxVelocity(520, 1500).setCollideWorldBounds(true);
+    scene.physics.world.setBounds(0, 0, worldW, worldH);
+    scene.physics.add.collider(player, solids);
+
+    // camera
+    scene.cameras.main.setBounds(0, 0, worldW, worldH);
+    scene.cameras.main.startFollow(player, true, 0.1, 0.1);
+    scene.cameras.main.setZoom(0.55);
+
+    cursors = scene.input.keyboard.createCursorKeys();
+    keys = scene.input.keyboard.addKeys({ a: 'A', d: 'D', w: 'W', space: 'SPACE', r: 'R' });
+
+    // surface any missing files so you know what to fix
+    if (failed.size) {
+      const list = [...failed].map(k => {
+        const g = k.replace(/^t/, '');
+        return gidInfo[g] ? gidInfo[g].file : k;
+      });
+      document.getElementById('missing').innerHTML = '\u26A0 Missing images: ' + list.join(', ');
+    }
+  }
+
+  function update() {
+    if (!player) return;
+    const left = cursors.left.isDown || keys.a.isDown;
+    const right = cursors.right.isDown || keys.d.isDown;
+    player.body.setVelocityX(left ? -390 : right ? 390 : 0);
+
+    const onGround = player.body.blocked.down || player.body.touching.down;
+    const jump = Phaser.Input.Keyboard.JustDown(cursors.up)
+      || Phaser.Input.Keyboard.JustDown(keys.w)
+      || Phaser.Input.Keyboard.JustDown(keys.space);
+    if (jump && onGround) player.body.setVelocityY(-820);
+
+    if (Phaser.Input.Keyboard.JustDown(keys.r) || player.y > worldH + 200)
+      player.body.reset(spawn.x, spawn.y - 40);
+  }
+})();
+</script>
+</body>
+</html>
