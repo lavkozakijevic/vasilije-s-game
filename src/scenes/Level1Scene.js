@@ -55,8 +55,9 @@ export class Level1Scene extends Phaser.Scene {
   create() {
     this._resetState();
 
-    const SW = this.scale.width;
-    const SH = this.scale.height;
+    const ZOOM = 0.55;
+    const SW = this.scale.width  / ZOOM;
+    const SH = this.scale.height / ZOOM;
 
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H + 260);
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
@@ -77,6 +78,9 @@ export class Level1Scene extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     this.cameras.main.setDeadzone(240, 400);
+    this.cameras.main.setZoom(0.55);
+    // Snap immediately so tiles are visible before the lerp settles
+    this.cameras.main.centerOn(this.player.x, this.player.y);
 
     const best = this.saveData.bestTime;
     const bestLine = best ? `\nBest time: ${this._fmtTime(best)}` : '';
