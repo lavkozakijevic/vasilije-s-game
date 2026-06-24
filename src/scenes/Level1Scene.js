@@ -56,8 +56,9 @@ export class Level1Scene extends Phaser.Scene {
     this._resetState();
 
     const ZOOM = 0.55;
-    const SW = this.scale.width  / ZOOM;
-    const SH = this.scale.height / ZOOM;
+    // Use renderer dimensions — more reliable than scale.width during create()
+    const SW = this.renderer.width  / ZOOM;
+    const SH = this.renderer.height / ZOOM;
 
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H + 260);
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
@@ -292,25 +293,26 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildMenu(SW, SH) {
+    const IZ = 1 / 0.55;
     this.menu.dim   = this.add.rectangle(SW / 2, SH / 2, SW, SH, 0x000000, 0.55)
       .setScrollFactor(0).setDepth(60).setVisible(false);
-    this.menu.title = this.add.text(SW / 2, 120, 'Choose your hero',
-      { fontFamily: 'Trebuchet MS', fontSize: '20px', color: '#fff' })
+    this.menu.title = this.add.text(SW / 2, 120 * IZ, 'Choose your hero',
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(20 * IZ) + 'px', color: '#fff' })
       .setOrigin(0.5).setScrollFactor(0).setDepth(61).setVisible(false);
     this.menu.cards = [];
-    const cw = 140, gap = 12, total = cw * 6 + gap * 5, sx = SW / 2 - total / 2;
+    const cw = 140 * IZ, gap = 12 * IZ, total = cw * 6 + gap * 5, sx = SW / 2 - total / 2;
     ORDER.forEach((k, i) => {
       const x = sx + i * (cw + gap) + cw / 2, y = SH / 2;
-      const card = this.add.rectangle(x, y, cw, 150, 0x132219, 0.98)
+      const card = this.add.rectangle(x, y, cw, 150 * IZ, 0x132219, 0.98)
         .setStrokeStyle(3, HEROES[k].color).setScrollFactor(0).setDepth(61)
         .setInteractive({ useHandCursor: true }).setVisible(false);
-      const dot = this.add.circle(x, y - 34, 20, HEROES[k].color)
+      const dot = this.add.circle(x, y - 34 * IZ, 20 * IZ, HEROES[k].color)
         .setScrollFactor(0).setDepth(62).setVisible(false);
-      const nm  = this.add.text(x, y + 16, HEROES[k].name,
-        { fontFamily: 'Trebuchet MS', fontSize: '16px', color: '#fff' })
+      const nm  = this.add.text(x, y + 16 * IZ, HEROES[k].name,
+        { fontFamily: 'Trebuchet MS', fontSize: Math.round(16 * IZ) + 'px', color: '#fff' })
         .setOrigin(0.5).setScrollFactor(0).setDepth(62).setVisible(false);
-      const ky  = this.add.text(x, y + 44, `press ${i + 1}`,
-        { fontFamily: 'Trebuchet MS', fontSize: '11px', color: '#8fa593' })
+      const ky  = this.add.text(x, y + 44 * IZ, `press ${i + 1}`,
+        { fontFamily: 'Trebuchet MS', fontSize: Math.round(11 * IZ) + 'px', color: '#8fa593' })
         .setOrigin(0.5).setScrollFactor(0).setDepth(62).setVisible(false);
       card.on('pointerdown', () => { this._swap(k); this._toggleMenu(); });
       this.menu.cards.push({ k, card, dot, nm, ky });
@@ -524,18 +526,23 @@ export class Level1Scene extends Phaser.Scene {
 
   _loseHard(title) {
     if (this.over) return; this.over = true; this.physics.pause();
-    const SW = this.scale.width, SH = this.scale.height;
+    const ZOOM = 0.55;
+    const SW = this.renderer.width / ZOOM, SH = this.renderer.height / ZOOM;
     this._showPanel(SW, SH, title, '\nPress R to try again', 0xff5a3c);
   }
 
   _showPanel(SW, SH, title, body, accent = 0xffe27a) {
+    const IZ = 1 / 0.55;
     const o = [];
     o.push(this.add.rectangle(SW / 2, SH / 2, SW, SH, 0x06100a, 0.78).setScrollFactor(0).setDepth(70));
-    o.push(this.add.rectangle(SW / 2, SH / 2, 560, 280, 0x102018, 0.98).setStrokeStyle(3, accent).setScrollFactor(0).setDepth(71));
-    o.push(this.add.text(SW / 2, SH / 2 - 86, title,
-      { fontFamily: 'Trebuchet MS', fontSize: '30px', color: '#fff', fontStyle: 'bold' }).setOrigin(0.5).setScrollFactor(0).setDepth(72));
-    o.push(this.add.text(SW / 2, SH / 2 + 14, body,
-      { fontFamily: 'Trebuchet MS', fontSize: '15px', color: '#cfe0d2', align: 'center', lineSpacing: 6 }).setOrigin(0.5).setScrollFactor(0).setDepth(72));
+    o.push(this.add.rectangle(SW / 2, SH / 2, 560 * IZ, 280 * IZ, 0x102018, 0.98)
+      .setStrokeStyle(3, accent).setScrollFactor(0).setDepth(71));
+    o.push(this.add.text(SW / 2, SH / 2 - 86 * IZ, title,
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(30 * IZ) + 'px', color: '#fff', fontStyle: 'bold' })
+      .setOrigin(0.5).setScrollFactor(0).setDepth(72));
+    o.push(this.add.text(SW / 2, SH / 2 + 14 * IZ, body,
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(15 * IZ) + 'px', color: '#cfe0d2', align: 'center', lineSpacing: 6 })
+      .setOrigin(0.5).setScrollFactor(0).setDepth(72));
     if (title.includes('HEROES')) this.hud.start = o;
   }
 
