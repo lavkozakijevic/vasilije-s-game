@@ -256,34 +256,36 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _buildHUD(SW, SH) {
+    const IZ = 1 / 0.55; // inverse zoom: converts screen px to world units
     this.hud.hearts = this.add.graphics().setScrollFactor(0).setDepth(40);
-    this.hud.timer  = this.add.text(SW / 2, 16, '10:00',
-      { fontFamily: 'Trebuchet MS', fontSize: '18px', color: '#e8efe6' })
+    this.hud.timer  = this.add.text(SW / 2, 16 * IZ, '10:00',
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(18 * IZ) + 'px', color: '#e8efe6' })
       .setOrigin(0.5, 0).setScrollFactor(0).setDepth(40);
-    this.hud.saves = this.add.text(SW / 2, 40, '',
-      { fontFamily: 'Trebuchet MS', fontSize: '12px', color: '#ffd23f' })
+    this.hud.saves = this.add.text(SW / 2, 42 * IZ, '',
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(12 * IZ) + 'px', color: '#ffd23f' })
       .setOrigin(0.5, 0).setScrollFactor(0).setDepth(40);
-    this.hud.dmg = this.add.text(SW - 14, 14, '',
-      { fontFamily: 'Trebuchet MS', fontSize: '14px', color: '#ffd23f' })
+    this.hud.dmg = this.add.text(SW - 14 * IZ, 14 * IZ, '',
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(14 * IZ) + 'px', color: '#ffd23f' })
       .setOrigin(1, 0).setScrollFactor(0).setDepth(40);
 
     this.hud.bar = [];
-    const bw = 150, gap = 6, total = bw * 6 + gap * 5, sx = SW / 2 - total / 2, by = SH - 34;
+    const bw = 150 * IZ, gap = 6 * IZ, total = bw * 6 + gap * 5;
+    const sx = SW / 2 - total / 2, by = SH - 34 * IZ;
     ORDER.forEach((k, i) => {
       const x = sx + i * (bw + gap);
-      const box = this.add.rectangle(x + bw / 2, by + 14, bw, 26, 0x0c1812, 0.85)
+      const box = this.add.rectangle(x + bw / 2, by + 14 * IZ, bw, 26 * IZ, 0x0c1812, 0.85)
         .setStrokeStyle(2, HEROES[k].color).setScrollFactor(0).setDepth(40);
-      this.add.circle(x + 14, by + 14, 6, HEROES[k].color).setScrollFactor(0).setDepth(41);
-      this.add.text(x + 26, by + 14, `${i + 1} ${HEROES[k].name}`,
-        { fontFamily: 'Trebuchet MS', fontSize: '12px', color: '#e8efe6' })
+      this.add.circle(x + 14 * IZ, by + 14 * IZ, 6 * IZ, HEROES[k].color).setScrollFactor(0).setDepth(41);
+      this.add.text(x + 26 * IZ, by + 14 * IZ, `${i + 1} ${HEROES[k].name}`,
+        { fontFamily: 'Trebuchet MS', fontSize: Math.round(12 * IZ) + 'px', color: '#e8efe6' })
         .setOrigin(0, 0.5).setScrollFactor(0).setDepth(41);
       this.hud.bar.push({ k, box });
     });
 
-    this.hud.hintBg = this.add.rectangle(SW / 2, 66, 560, 28, 0x0c1812, 0.6)
+    this.hud.hintBg = this.add.rectangle(SW / 2, 66 * IZ, 560 * IZ, 28 * IZ, 0x0c1812, 0.6)
       .setScrollFactor(0).setDepth(40).setVisible(false);
-    this.hud.hint = this.add.text(SW / 2, 66, '',
-      { fontFamily: 'Trebuchet MS', fontSize: '14px', color: '#cfe0d2' })
+    this.hud.hint = this.add.text(SW / 2, 66 * IZ, '',
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(14 * IZ) + 'px', color: '#cfe0d2' })
       .setOrigin(0.5).setScrollFactor(0).setDepth(41);
 
     this._drawHearts(); this._refreshBar(); this._refreshDmg(); this._refreshSaves();
@@ -330,7 +332,6 @@ export class Level1Scene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   _applyHero(k) {
-    this.cur = k;
     const SPRITE_MAP = {
       fire:   { tex: 'hero_fire',   feetY: 295, cx: 156 },
       water:  { tex: 'hero_water',  feetY: 295, cx: 158 },
@@ -339,11 +340,23 @@ export class Level1Scene extends Phaser.Scene {
       poison: { tex: 'hero_poison', feetY: 292, cx: 154 },
       rubber: { tex: 'hero_rubber', feetY: 280, cx: 150 },
     };
+    // Save feet world position before changing body so we can restore it
+    const prevBottom = this.player?.body ? this.player.body.bottom : null;
+    this.cur = k;
     const s = SPRITE_MAP[k];
     if (s) {
       this.player.setTexture(s.tex).setDisplaySize(120, 120).clearTint();
       const bw = 156, bh = 222;
       this.player.body.setSize(bw, bh).setOffset(Math.round(s.cx - bw / 2), s.feetY - bh);
+      // Correct player y so feet stay at the same world position after body offset changes
+      if (prevBottom !== null) {
+        const newBottom = this.player.body.bottom;
+        const dy = newBottom - prevBottom;
+        if (Math.abs(dy) > 0.5) {
+          this.player.y -= dy;
+          this.player.body.y -= dy;
+        }
+      }
     } else {
       this.player.setTexture('hero').setDisplaySize(30, 42).setTint(HEROES[k].color);
       this.player.body.setSize(28, 40).setOffset(1, 1);
@@ -453,11 +466,13 @@ export class Level1Scene extends Phaser.Scene {
 
   _drawHearts() {
     const g = this.hud.hearts; g.clear();
+    const IZ = 1 / 0.55;
     for (let i = 0; i < this.maxHp; i++) {
-      const x = 22 + i * 26, y = 22;
+      const x = (22 + i * 26) * IZ, y = 22 * IZ;
       g.fillStyle(i < this.hp ? 0xff4d5e : 0x33403a, 1);
-      g.fillCircle(x - 4, y - 2, 6); g.fillCircle(x + 4, y - 2, 6);
-      g.fillTriangle(x - 9, y, x + 9, y, x, y + 10);
+      g.fillCircle(x - 4 * IZ, y - 2 * IZ, 6 * IZ);
+      g.fillCircle(x + 4 * IZ, y - 2 * IZ, 6 * IZ);
+      g.fillTriangle(x - 9 * IZ, y, x + 9 * IZ, y, x, y + 10 * IZ);
     }
   }
 
