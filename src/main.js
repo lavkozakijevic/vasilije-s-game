@@ -1,9 +1,8 @@
 import { Level1Scene } from './scenes/Level1Scene.js';
-import { W, H } from './config.js';
 
 const config = {
   type: Phaser.AUTO,
-  parent: 'game',
+  parent: document.body,
   backgroundColor: '#14241a',
   pixelArt: true,
   roundPixels: true,
