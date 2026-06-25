@@ -56,9 +56,9 @@ export class Level1Scene extends Phaser.Scene {
     this._resetState();
 
     const ZOOM = 0.55;
-    // Use renderer dimensions — more reliable than scale.width during create()
-    const SW = this.renderer.width  / ZOOM;
-    const SH = this.renderer.height / ZOOM;
+    // Use actual viewport size so HUD fills the visible window
+    const SW = window.innerWidth  / ZOOM;
+    const SH = window.innerHeight / ZOOM;
 
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H + 260);
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
@@ -527,7 +527,7 @@ export class Level1Scene extends Phaser.Scene {
   _loseHard(title) {
     if (this.over) return; this.over = true; this.physics.pause();
     const ZOOM = 0.55;
-    const SW = this.renderer.width / ZOOM, SH = this.renderer.height / ZOOM;
+    const SW = window.innerWidth / ZOOM, SH = window.innerHeight / ZOOM;
     this._showPanel(SW, SH, title, '\nPress R to try again', 0xff5a3c);
   }
 
