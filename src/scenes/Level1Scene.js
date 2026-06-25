@@ -56,9 +56,10 @@ export class Level1Scene extends Phaser.Scene {
     this._resetState();
 
     const ZOOM = 0.55;
-    // Use actual viewport size so HUD fills the visible window
-    const SW = window.innerWidth  / ZOOM;
-    const SH = window.innerHeight / ZOOM;
+    // Real viewport pixels. scrollFactor(0) HUD objects are still scaled by the
+    // camera zoom about the screen centre, so positions go through _hpx/_hpy.
+    const VW = window.innerWidth, VH = window.innerHeight;
+    this._hcx = VW / 2; this._hcy = VH / 2; this._hiz = 1 / ZOOM;
 
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H + 260);
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
@@ -69,8 +70,8 @@ export class Level1Scene extends Phaser.Scene {
     this._buildTilemap();
     this._buildPlayer();
     this._buildNPCs();
-    this._buildHUD(SW, SH);
-    this._buildMenu(SW, SH);
+    this._buildHUD(VW, VH);
+    this._buildMenu(VW, VH);
     this._bindInput();
 
     this.physics.add.collider(this.player, this.platforms);
@@ -85,7 +86,7 @@ export class Level1Scene extends Phaser.Scene {
 
     const best = this.saveData.bestTime;
     const bestLine = best ? `\nBest time: ${this._fmtTime(best)}` : '';
-    this._showPanel(SW, SH, 'ELEMENTAL HEROES',
+    this._showPanel(VW, VH, 'ELEMENTAL HEROES',
       `LEVEL 1 — The Jungle\nReach the end of the map.\nEvery obstacle has one hero that beats it.${bestLine}\n\nPress any key or tap to begin`);
     this.physics.pause();
   }
@@ -256,62 +257,64 @@ export class Level1Scene extends Phaser.Scene {
     this._applyHero('fire');
   }
 
-  _buildHUD(SW, SH) {
-    const IZ = 1 / 0.55; // inverse zoom: converts screen px to world units
+  // VW, VH are real viewport pixels. Positions go through _hpx/_hpy (zoom-aware),
+  // sizes are multiplied by IZ so they render at the intended screen pixel size.
+  _buildHUD(VW, VH) {
+    const IZ = this._hiz, px = v => this._hpx(v), py = v => this._hpy(v);
     this.hud.hearts = this.add.graphics().setScrollFactor(0).setDepth(40);
-    this.hud.timer  = this.add.text(SW / 2, 16 * IZ, '10:00',
+    this.hud.timer  = this.add.text(px(VW / 2), py(16), '10:00',
       { fontFamily: 'Trebuchet MS', fontSize: Math.round(18 * IZ) + 'px', color: '#e8efe6' })
       .setOrigin(0.5, 0).setScrollFactor(0).setDepth(40);
-    this.hud.saves = this.add.text(SW / 2, 42 * IZ, '',
+    this.hud.saves = this.add.text(px(VW / 2), py(42), '',
       { fontFamily: 'Trebuchet MS', fontSize: Math.round(12 * IZ) + 'px', color: '#ffd23f' })
       .setOrigin(0.5, 0).setScrollFactor(0).setDepth(40);
-    this.hud.dmg = this.add.text(SW - 14 * IZ, 14 * IZ, '',
+    this.hud.dmg = this.add.text(px(VW - 14), py(14), '',
       { fontFamily: 'Trebuchet MS', fontSize: Math.round(14 * IZ) + 'px', color: '#ffd23f' })
       .setOrigin(1, 0).setScrollFactor(0).setDepth(40);
 
     this.hud.bar = [];
-    const bw = 150 * IZ, gap = 6 * IZ, total = bw * 6 + gap * 5;
-    const sx = SW / 2 - total / 2, by = SH - 34 * IZ;
+    const bwS = 150, gapS = 6, totalS = bwS * 6 + gapS * 5;
+    const sxS = VW / 2 - totalS / 2, byS = VH - 34;
     ORDER.forEach((k, i) => {
-      const x = sx + i * (bw + gap);
-      const box = this.add.rectangle(x + bw / 2, by + 14 * IZ, bw, 26 * IZ, 0x0c1812, 0.85)
+      const xS = sxS + i * (bwS + gapS);
+      const box = this.add.rectangle(px(xS + bwS / 2), py(byS + 14), bwS * IZ, 26 * IZ, 0x0c1812, 0.85)
         .setStrokeStyle(2, HEROES[k].color).setScrollFactor(0).setDepth(40);
-      this.add.circle(x + 14 * IZ, by + 14 * IZ, 6 * IZ, HEROES[k].color).setScrollFactor(0).setDepth(41);
-      this.add.text(x + 26 * IZ, by + 14 * IZ, `${i + 1} ${HEROES[k].name}`,
+      this.add.circle(px(xS + 14), py(byS + 14), 6 * IZ, HEROES[k].color).setScrollFactor(0).setDepth(41);
+      this.add.text(px(xS + 26), py(byS + 14), `${i + 1} ${HEROES[k].name}`,
         { fontFamily: 'Trebuchet MS', fontSize: Math.round(12 * IZ) + 'px', color: '#e8efe6' })
         .setOrigin(0, 0.5).setScrollFactor(0).setDepth(41);
       this.hud.bar.push({ k, box });
     });
 
-    this.hud.hintBg = this.add.rectangle(SW / 2, 66 * IZ, 560 * IZ, 28 * IZ, 0x0c1812, 0.6)
+    this.hud.hintBg = this.add.rectangle(px(VW / 2), py(66), 560 * IZ, 28 * IZ, 0x0c1812, 0.6)
       .setScrollFactor(0).setDepth(40).setVisible(false);
-    this.hud.hint = this.add.text(SW / 2, 66 * IZ, '',
+    this.hud.hint = this.add.text(px(VW / 2), py(66), '',
       { fontFamily: 'Trebuchet MS', fontSize: Math.round(14 * IZ) + 'px', color: '#cfe0d2' })
       .setOrigin(0.5).setScrollFactor(0).setDepth(41);
 
     this._drawHearts(); this._refreshBar(); this._refreshDmg(); this._refreshSaves();
   }
 
-  _buildMenu(SW, SH) {
-    const IZ = 1 / 0.55;
-    this.menu.dim   = this.add.rectangle(SW / 2, SH / 2, SW, SH, 0x000000, 0.55)
+  _buildMenu(VW, VH) {
+    const IZ = this._hiz, px = v => this._hpx(v), py = v => this._hpy(v);
+    this.menu.dim   = this.add.rectangle(this._hcx, this._hcy, VW * IZ, VH * IZ, 0x000000, 0.55)
       .setScrollFactor(0).setDepth(60).setVisible(false);
-    this.menu.title = this.add.text(SW / 2, 120 * IZ, 'Choose your hero',
+    this.menu.title = this.add.text(px(VW / 2), py(120), 'Choose your hero',
       { fontFamily: 'Trebuchet MS', fontSize: Math.round(20 * IZ) + 'px', color: '#fff' })
       .setOrigin(0.5).setScrollFactor(0).setDepth(61).setVisible(false);
     this.menu.cards = [];
-    const cw = 140 * IZ, gap = 12 * IZ, total = cw * 6 + gap * 5, sx = SW / 2 - total / 2;
+    const cwS = 140, gapS = 12, totalS = cwS * 6 + gapS * 5, sxS = VW / 2 - totalS / 2;
     ORDER.forEach((k, i) => {
-      const x = sx + i * (cw + gap) + cw / 2, y = SH / 2;
-      const card = this.add.rectangle(x, y, cw, 150 * IZ, 0x132219, 0.98)
+      const xS = sxS + i * (cwS + gapS) + cwS / 2, yS = VH / 2;
+      const card = this.add.rectangle(px(xS), py(yS), cwS * IZ, 150 * IZ, 0x132219, 0.98)
         .setStrokeStyle(3, HEROES[k].color).setScrollFactor(0).setDepth(61)
         .setInteractive({ useHandCursor: true }).setVisible(false);
-      const dot = this.add.circle(x, y - 34 * IZ, 20 * IZ, HEROES[k].color)
+      const dot = this.add.circle(px(xS), py(yS - 34), 20 * IZ, HEROES[k].color)
         .setScrollFactor(0).setDepth(62).setVisible(false);
-      const nm  = this.add.text(x, y + 16 * IZ, HEROES[k].name,
+      const nm  = this.add.text(px(xS), py(yS + 16), HEROES[k].name,
         { fontFamily: 'Trebuchet MS', fontSize: Math.round(16 * IZ) + 'px', color: '#fff' })
         .setOrigin(0.5).setScrollFactor(0).setDepth(62).setVisible(false);
-      const ky  = this.add.text(x, y + 44 * IZ, `press ${i + 1}`,
+      const ky  = this.add.text(px(xS), py(yS + 44), `press ${i + 1}`,
         { fontFamily: 'Trebuchet MS', fontSize: Math.round(11 * IZ) + 'px', color: '#8fa593' })
         .setOrigin(0.5).setScrollFactor(0).setDepth(62).setVisible(false);
       card.on('pointerdown', () => { this._swap(k); this._toggleMenu(); });
@@ -468,13 +471,13 @@ export class Level1Scene extends Phaser.Scene {
 
   _drawHearts() {
     const g = this.hud.hearts; g.clear();
-    const IZ = 1 / 0.55;
+    const IZ = this._hiz, px = v => this._hpx(v), py = v => this._hpy(v);
     for (let i = 0; i < this.maxHp; i++) {
-      const x = (22 + i * 26) * IZ, y = 22 * IZ;
+      const xs = 22 + i * 26, ys = 22; // screen pixels
       g.fillStyle(i < this.hp ? 0xff4d5e : 0x33403a, 1);
-      g.fillCircle(x - 4 * IZ, y - 2 * IZ, 6 * IZ);
-      g.fillCircle(x + 4 * IZ, y - 2 * IZ, 6 * IZ);
-      g.fillTriangle(x - 9 * IZ, y, x + 9 * IZ, y, x, y + 10 * IZ);
+      g.fillCircle(px(xs - 4), py(ys - 2), 6 * IZ);
+      g.fillCircle(px(xs + 4), py(ys - 2), 6 * IZ);
+      g.fillTriangle(px(xs - 9), py(ys), px(xs + 9), py(ys), px(xs), py(ys + 10));
     }
   }
 
@@ -526,22 +529,21 @@ export class Level1Scene extends Phaser.Scene {
 
   _loseHard(title) {
     if (this.over) return; this.over = true; this.physics.pause();
-    const ZOOM = 0.55;
-    const SW = window.innerWidth / ZOOM, SH = window.innerHeight / ZOOM;
-    this._showPanel(SW, SH, title, '\nPress R to try again', 0xff5a3c);
+    this._showPanel(window.innerWidth, window.innerHeight, title, '\nPress R to try again', 0xff5a3c);
   }
 
-  _showPanel(SW, SH, title, body, accent = 0xffe27a) {
-    const IZ = 1 / 0.55;
+  _showPanel(VW, VH, title, body, accent = 0xffe27a) {
+    const IZ = this._hiz, px = v => this._hpx(v), py = v => this._hpy(v);
     const o = [];
-    o.push(this.add.rectangle(SW / 2, SH / 2, SW, SH, 0x06100a, 0.78).setScrollFactor(0).setDepth(70));
-    o.push(this.add.rectangle(SW / 2, SH / 2, 560 * IZ, 280 * IZ, 0x102018, 0.98)
+    o.push(this.add.rectangle(this._hcx, this._hcy, VW * IZ, VH * IZ, 0x06100a, 0.78)
+      .setScrollFactor(0).setDepth(70));
+    o.push(this.add.rectangle(px(VW / 2), py(VH / 2), 560 * IZ, 280 * IZ, 0x102018, 0.98)
       .setStrokeStyle(3, accent).setScrollFactor(0).setDepth(71));
-    o.push(this.add.text(SW / 2, SH / 2 - 86 * IZ, title,
+    o.push(this.add.text(px(VW / 2), py(VH / 2 - 86), title,
       { fontFamily: 'Trebuchet MS', fontSize: Math.round(30 * IZ) + 'px', color: '#fff', fontStyle: 'bold' })
       .setOrigin(0.5).setScrollFactor(0).setDepth(72));
-    o.push(this.add.text(SW / 2, SH / 2 + 14 * IZ, body,
-      { fontFamily: 'Trebuchet MS', fontSize: Math.round(15 * IZ) + 'px', color: '#cfe0d2', align: 'center', lineSpacing: 6 })
+    o.push(this.add.text(px(VW / 2), py(VH / 2 + 14), body,
+      { fontFamily: 'Trebuchet MS', fontSize: Math.round(15 * IZ) + 'px', color: '#cfe0d2', align: 'center', lineSpacing: 6 * IZ })
       .setOrigin(0.5).setScrollFactor(0).setDepth(72));
     if (title.includes('HEROES')) this.hud.start = o;
   }
@@ -570,6 +572,12 @@ export class Level1Scene extends Phaser.Scene {
       { fontFamily: 'Trebuchet MS', fontSize: '14px', color: c, fontStyle: 'bold' }).setOrigin(0.5).setDepth(9);
     this.tweens.add({ targets: t, y: y - 32, alpha: 0, duration: 720, onComplete: () => t.destroy() });
   }
+
+  // Screen-pixel -> world position for a scrollFactor(0) object under camera zoom.
+  // The camera scales fixed objects about the screen centre, so an element meant
+  // for screen pixel p must be placed at centre + (p - centre) * (1/zoom).
+  _hpx(p) { return this._hcx + (p - this._hcx) * this._hiz; }
+  _hpy(p) { return this._hcy + (p - this._hcy) * this._hiz; }
 
   _jp(key) { return Phaser.Input.Keyboard.JustDown(key); }
 
