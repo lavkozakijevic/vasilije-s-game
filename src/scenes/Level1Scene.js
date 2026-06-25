@@ -350,7 +350,7 @@ export class Level1Scene extends Phaser.Scene {
     this.cur = k;
     const s = SPRITE_MAP[k];
     if (s) {
-      this.player.setTexture(s.tex).setDisplaySize(120, 120).clearTint();
+      this.player.setTexture(s.tex).setDisplaySize(170, 170).clearTint();
       const bw = 156, bh = 222;
       this.player.body.setSize(bw, bh).setOffset(Math.round(s.cx - bw / 2), s.feetY - bh);
       // Correct player y so feet stay at the same world position after body offset changes
