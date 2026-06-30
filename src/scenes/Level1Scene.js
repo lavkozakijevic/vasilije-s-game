@@ -19,10 +19,12 @@ export class Level1Scene extends Phaser.Scene {
     // NPC sprites
     this.load.image('blacksmith',  'assets/sprites/blacksmith.png');
     this.load.image('d_ice',     'assets/sprites/ice-dragon.png');
+    this.load.image('d_fire',    'assets/sprites/fire-dragon.png');
     this.load.image('d_water',   'assets/sprites/water-dragon.png');
     this.load.image('d_poison',  'assets/sprites/poison-dragon.png');
     this.load.image('d_acid',    'assets/sprites/acid-dragon.png');
     this.load.image('d_regular', 'assets/sprites/regular-dragon.png');
+    this.load.image('d_master',  'assets/sprites/master-dragon.png');
 
     // tilemap
     this.load.json('mapdata', 'assets/maps/first.json');
@@ -165,14 +167,32 @@ export class Level1Scene extends Phaser.Scene {
       }
     });
 
-    // One solid physics strip: ground layer solid from col 0 to col 80
-    const gSC = 0, gEC = 80;
-    const gW  = (gEC - gSC + 1) * TILE;
-    const gX  = gSC * TILE + gW / 2;
-    const gY  = LOW + TILE / 2;
-    const strip = this.add.rectangle(gX, gY, gW, TILE, 0, 0);
-    this.physics.add.existing(strip, true);
-    this.platforms.push(strip);
+    // Build solid collision strips from the ground layer. Water tiles (gids 9/10)
+    // are non-solid, so ponds become real pits the player must jump across.
+    const WATER = new Set([9, 10]);
+    const ground = mapData.layers.find(l => l.name === 'ground');
+    const solid = new Array(mapCols).fill(false);
+    if (ground) {
+      for (let c = 0; c < mapCols; c++) {
+        for (const r of [22, 23]) {
+          const gid = ground.data[r * mapCols + c] & GID_MASK;
+          if (gid && !WATER.has(gid)) { solid[c] = true; break; }
+        }
+      }
+    }
+    // Coalesce contiguous solid columns into single rectangles
+    let runStart = -1;
+    const addStrip = (sc, ec) => {
+      const w = (ec - sc + 1) * TILE;
+      const x = sc * TILE + w / 2;
+      const strip = this.add.rectangle(x, LOW + TILE, w, TILE * 2, 0, 0);
+      this.physics.add.existing(strip, true);
+      this.platforms.push(strip);
+    };
+    for (let c = 0; c <= mapCols; c++) {
+      if (c < mapCols && solid[c]) { if (runStart < 0) runStart = c; }
+      else if (runStart >= 0) { addStrip(runStart, c - 1); runStart = -1; }
+    }
 
     // Kill net at the bottom
     const net = this.add.rectangle(WORLD_W / 2, WORLD_H + 200, WORLD_W, 40, 0, 0);
@@ -184,25 +204,31 @@ export class Level1Scene extends Phaser.Scene {
   // Objects are Tiled text objects — match by text content (case-insensitive).
   _buildNPCs() {
     const mapData = this.cache.json.get('mapdata');
-    const DRAGON_TEX = {
-      ice: 'd_ice', fire: 'd_regular', water: 'd_water',
-      poison: 'd_poison', acid: 'd_acid', regular: 'd_regular',
+    // variant -> { texture, enemy type token used by HEROES[].kills / COUNTER }
+    const DRAGON = {
+      ice:    { tex: 'd_ice',    type: 'ice'     },
+      fire:   { tex: 'd_fire',   type: 'fireD'   },
+      water:  { tex: 'd_water',  type: 'waterD'  },
+      poison: { tex: 'd_poison', type: 'poisonD' },
+      acid:   { tex: 'd_acid',   type: 'acidD'   },
     };
     for (const layer of mapData.layers) {
       if (layer.type !== 'objectgroup') continue;
       for (const obj of (layer.objects || [])) {
         // text objects store the content in obj.text.text; name field may be empty
         const label = (obj.name || obj.text?.text || '').toLowerCase();
-        const wx = obj.x, wy = obj.y;
+        const wx = obj.x;
 
-        if (label.includes('blacksmith')) {
+        if (label.includes('boss')) {
+          this._spawnBoss(wx, LOW - 150);
+        } else if (label.includes('blacksmith')) {
           // display at LOW so it sits on the ground (wy from Tiled is the top edge)
           this._spawnStatic('blacksmith', wx, LOW, 170);
         } else if (label.includes('dragon')) {
           const variant = ['ice','fire','water','poison','acid']
-            .find(v => label.includes(v)) || 'regular';
-          const tex = DRAGON_TEX[variant] || 'd_regular';
-          this._spawnDragon(wx, LOW - 85, tex, variant);
+            .find(v => label.includes(v)) || 'ice';
+          const d = DRAGON[variant];
+          this._spawnDragon(wx, LOW - 85, d.tex, d.type);
         }
       }
     }
@@ -232,6 +258,25 @@ export class Level1Scene extends Phaser.Scene {
     e.type = type;
     e.behavior = 'patrol';
     e.minX = x - 80; e.maxX = x + 80; e.dir = 1;
+    return e;
+  }
+
+  _spawnBoss(x, y) {
+    const tex = this.textures.exists('d_master') ? 'd_master' : 'd_regular';
+    const e = this.enemies.create(x, y, tex);
+    e.setDisplaySize(360, 360);
+    const src = this.textures.get(tex).getSourceImage();
+    const scale = src.width / 360;
+    e.body.setSize(Math.round(220 * scale), Math.round(200 * scale))
+      .setOffset(Math.round((src.width - 220 * scale) / 2), Math.round(140 * scale));
+    e.body.setAllowGravity(false);
+    e.setImmovable(true).setDepth(3);
+    e.type = 'boss';
+    e.isBoss = true;
+    e.hp = 12;
+    e.behavior = 'patrol';
+    e.minX = x - 220; e.maxX = x + 220; e.dir = -1;
+    this.boss = e;
     return e;
   }
 
@@ -419,6 +464,14 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   _resolveHit(e, killList) {
+    if (e.isBoss) {
+      // The boss takes damage from any attack; defeating it wins the level.
+      e.hp -= 1;
+      this._flash(e.x, e.y - 40, 0xffe27a);
+      if (e.hp <= 0) { this._floatText(e.x, e.y - 60, 'DEFEATED!', '#ffd23f'); e.destroy(); this.boss = null; this._win(); }
+      else { this._floatText(e.x, e.y - 60, `${e.hp}`, '#ffd23f'); this.cameras.main.shake(80, 0.004); }
+      return;
+    }
     if (killList.includes(e.type)) { this._killEnemy(e); }
     else { this._floatText(e.x, e.y - 26, `Use ${COUNTER[e.type] || '?'}!`, '#ff8a6c'); }
   }
@@ -532,6 +585,14 @@ export class Level1Scene extends Phaser.Scene {
     this._showPanel(window.innerWidth, window.innerHeight, title, '\nPress R to try again', 0xff5a3c);
   }
 
+  _win() {
+    if (this.over) return; this.over = true; this.physics.pause();
+    const elapsed = Math.max(0, Math.round(600 - this.timeLeft));
+    saveSystem.saveTime(elapsed);
+    this._showPanel(window.innerWidth, window.innerHeight, 'VICTORY',
+      `You slew the Master Dragon!\nTime: ${this._fmtTime(elapsed)}\n\nPress R to play again`, 0x7ad14a);
+  }
+
   _showPanel(VW, VH, title, body, accent = 0xffe27a) {
     const IZ = this._hiz, px = v => this._hpx(v), py = v => this._hpy(v);
     const o = [];
@@ -610,10 +671,16 @@ export class Level1Scene extends Phaser.Scene {
     this.hud         = {};
     this.menu        = {};
     this.checkpoints = [
-      { x: 765,  y: LOW - 80 },
-      { x: 2000, y: LOW - 80 },
-      { x: 4500, y: LOW - 80 },
-      { x: 7000, y: LOW - 80 },
+      { x: 765,   y: LOW - 80 },
+      { x: 4000,  y: LOW - 80 },
+      { x: 7000,  y: LOW - 80 },
+      { x: 10500, y: LOW - 80 },
+      { x: 13000, y: LOW - 80 },
+      { x: 16500, y: LOW - 80 },
+      { x: 19800, y: LOW - 80 },
+      { x: 22500, y: LOW - 80 },
+      { x: 25500, y: LOW - 80 },
+      { x: 28500, y: LOW - 80 },
     ];
     this.cp = 0;
     this.saveData = saveSystem.load();

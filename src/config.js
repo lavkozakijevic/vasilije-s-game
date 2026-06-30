@@ -1,7 +1,7 @@
 export const W = 960;
 export const H = 540;
 export const TILE = 128;           // tilemap cell size in pixels
-export const WORLD_W = 14080;      // 110 * TILE
+export const WORLD_W = 30720;      // 240 * TILE
 export const WORLD_H = 3072;       // 24 * TILE
 export const LOW = 2816;           // row 22 * TILE — top surface of ground tiles
 export const HIGH = 2560;          // row 20 * TILE (placeholder for upper ledges)
