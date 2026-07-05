@@ -26,6 +26,11 @@ export class Level1Scene extends Phaser.Scene {
     this.load.image('d_regular', 'assets/sprites/regular-dragon.png');
     this.load.image('d_master',  'assets/sprites/master-dragon.png');
 
+    // parallax forest background (back = far, front = near)
+    this.load.image('bg_back',  'assets/sprites/1-2-back.png');
+    this.load.image('bg_mid',   'assets/sprites/1-2-mid.png');
+    this.load.image('bg_front', 'assets/sprites/1-2-front.png');
+
     // tilemap
     this.load.json('mapdata', 'assets/maps/first.json');
     const TILE_FILES = {
@@ -69,6 +74,7 @@ export class Level1Scene extends Phaser.Scene {
     this.enemies = this.physics.add.group();
     this.shots   = this.physics.add.group();
 
+    this._buildBackground(VW, VH);
     this._buildTilemap();
     this._buildPlayer();
     this._buildNPCs();
@@ -94,6 +100,7 @@ export class Level1Scene extends Phaser.Scene {
   }
 
   update(time, delta) {
+    this._updateBackground();
     if (!this.started) {
       if (this._anyKey() || this.input.activePointer.isDown) this._startGame();
       return;
@@ -141,6 +148,40 @@ export class Level1Scene extends Phaser.Scene {
   // -------------------------------------------------------------------------
   // Build helpers
   // -------------------------------------------------------------------------
+
+  // Parallax forest: three tileSprites pinned to the camera (scrollFactor 0),
+  // scrolled via tilePosition each frame so far layers drift slower than near ones.
+  _buildBackground(VW, VH) {
+    const IZ = this._hiz;
+    const w = VW * IZ, h = VH * IZ;         // world size that fills the zoomed viewport
+    const LAYERS = [
+      { key: 'bg_back',  fx: 0.15, depth: -50 },
+      { key: 'bg_mid',   fx: 0.35, depth: -49 },
+      { key: 'bg_front', fx: 0.55, depth: -48 },
+    ];
+    this.bg = [];
+    for (const L of LAYERS) {
+      if (!this.textures.exists(L.key)) continue;
+      const ts = this.add.tileSprite(this._hcx, this._hcy, w, h, L.key)
+        .setScrollFactor(0).setDepth(L.depth);
+      // scale the texture so its full height fills the view; tile horizontally
+      const src = this.textures.get(L.key).getSourceImage();
+      const scale = h / src.height;
+      ts.tileScaleX = scale; ts.tileScaleY = scale;
+      ts.fx = L.fx; ts.tsrc = src;
+      this.bg.push(ts);
+    }
+  }
+
+  _updateBackground() {
+    if (!this.bg) return;
+    const cam = this.cameras.main;
+    for (const ts of this.bg) {
+      ts.tilePositionX = (cam.scrollX * ts.fx) / ts.tileScaleX;
+      // gentle vertical drift so tall areas reveal more sky/canopy
+      ts.tilePositionY = (cam.scrollY * ts.fx * 0.5) / ts.tileScaleY;
+    }
+  }
 
   _buildTilemap() {
     const GID_MASK = 0x1FFFFFFF;
