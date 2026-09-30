@@ -211,6 +211,19 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         ST.forEach(s => { if (s.wakeT < 0 || s.woke) return; if (++s.wakeT >= 36) { s.woke = true;
           ROSTER.push({ id: 'k_' + s.el, el: s.el, name: EH_KNIGHTS[s.el], kid: false }); fx('i_' + s.el, 4, 12, s.x, s.y, 32);
           say(`${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story('l1_knight_' + s.el); } });
+        // the puppy runs on the ground like the heroes: gravity, landing, hops over walls and pits (the eagle will just fly)
+        const pupStep = (vx, wantUp, dropDown) => {
+          const land = y => { const ty = Math.floor((y + 32) / 32); for (const t of [ty, ty + 1]) { const g = surface(PUP.x + 16, t); if (g == null || (dropDown && EH_PLAT.has(tileAt(PUP.x + 16, t * 32)))) continue; if (y + 32 >= g - 1 && y + 32 <= g + 8) return g; } return null; };
+          const d = Math.sign(vx), ax = d < 0 ? PUP.x + 6 : PUP.x + 26;
+          if (vx && !EH_SOLID.has(tileAt(ax + vx, PUP.y + 20)) && !EH_SOLID.has(tileAt(ax + vx, PUP.y + 6))) PUP.x += vx;
+          const g0 = PUP.vy >= 0 ? land(PUP.y) : null; PUP.gr = g0 != null;
+          if (PUP.gr) { PUP.y = g0 - 32; PUP.vy = 0;
+            const wall = d && (EH_SOLID.has(tileAt(ax + d * 6, PUP.y + 20)) || EH_SOLID.has(tileAt(ax + d * 6, PUP.y + 6)));
+            const gap = d && (() => { const fx2 = PUP.x + 16 + d * 36; for (let t = Math.floor((PUP.y + 32) / 32); t < MH; t++) { const id = tileAt(fx2, t * 32); if (id === 31 || id === 32) return true; if (surface(fx2, t) != null) return false; } return true; })();   // a pit or water: hop it; a ledge: just drop down
+            if (wantUp) PUP.vy = -10.5; else if (wall || gap) PUP.vy = -8.5; }
+          else { PUP.vy = Math.min(8, PUP.vy + 0.45); if (PUP.vy < 0 && EH_SOLID.has(tileAt(PUP.x + 16, PUP.y + PUP.vy))) PUP.vy = 0; }
+          PUP.y += PUP.vy;
+        };
         if (PUP) {
           PUP.t++;
           const isOwner = ROSTER[H.hero].id === PUP.owner;
@@ -218,26 +231,22 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
               if (isOwner) { PUP.st = 'follow'; story('l1_puppy'); } else if (!PUP.hinted) { PUP.hinted = true; say(`THE PUPPY WAITS FOR ${PUP.ownerName} · PRESS ${PUP.ownerKey}`); } } }
           else if (!isOwner && PUP.st !== 'gone') {   // not the owner: run off the left edge of the screen
             if (PUP.st !== 'away') { PUP.st = 'away'; PUP.vy = 0; }
-            PUP.barkT = 0; PUP.face = -1; PUP.x -= 3.2;
-            // runs along the ground: falls off ledges, hops over walls and gaps (the eagle will just fly)
-            const land = y => { const ty = Math.floor((y + 32) / 32); for (const t of [ty, ty + 1]) { const g = surface(PUP.x + 16, t); if (g != null && y + 32 >= g - 1 && y + 32 <= g + 8) return g; } return null; };
-            const g0 = land(PUP.y); PUP.gr = g0 != null && PUP.vy >= 0;
-            if (PUP.gr) { PUP.y = g0 - 32; PUP.vy = 0;
-              const wall = EH_SOLID.has(tileAt(PUP.x - 4, PUP.y + 16)) || EH_SOLID.has(tileAt(PUP.x - 4, PUP.y + 4)), gap = (() => { for (let t = Math.floor((PUP.y + 32) / 32); t < MH; t++) { const id = tileAt(PUP.x - 20, t * 32); if (id === 31 || id === 32) return true; if (surface(PUP.x - 20, t) != null) return false; } return true; })();   // a pit or water: hop it; a ledge: just drop down
-              if (wall || gap) PUP.vy = -8.5; }
-            if (!PUP.gr) { PUP.vy = Math.min(8, PUP.vy + 0.45); if (EH_SOLID.has(tileAt(PUP.x + 2, PUP.y + 20))) PUP.x += 3.2; }
-            PUP.y += PUP.vy; PUP.anim = PUP.gr ? 'run' : 'jump';
+            PUP.barkT = 0; PUP.face = -1;
+            pupStep(-3.2, false);
             if (PUP.x < cam - 48) PUP.st = 'gone';
           }
           else if (!isOwner) { /* gone: off screen until the owner is back */ }
           else {
             if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; for (let t = Math.max(0, Math.floor(H.y / 32)); t < MH; t++) { const g = surface(PUP.x + 16, t); if (g != null) { PUP.y = g - 32; break; } } }   // re-enter standing on the ground   // owner is back: run in from the left
-            PUP.st = 'follow';
+            PUP.st = 'follow'; if (PUP.vy == null) { PUP.vy = 0; PUP.stuck = 0; }
             const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 700 || Math.abs(H.y - PUP.y) > 200;
-            if (far) { PUP.x = tx; PUP.y = H.y; }
-            const sp = Math.abs(dx) > 80 ? 3.6 : 2.4; PUP.x += Math.max(-sp, Math.min(sp, dx * 0.12)); PUP.y += (H.y - PUP.y) * 0.18;
+            if (far || (PUP.stuck = PUP.stuck || 0, PUP.stuck = Math.abs(dx) > 60 || H.y + 16 - PUP.y < -40 ? PUP.stuck + 1 : 0) > 240) { PUP.x = tx; PUP.y = H.y; PUP.vy = 0; PUP.stuck = 0; }   // lost or stuck: catch up
+            const sp = Math.abs(dx) > 80 ? 3.6 : 2.4, vx = Math.abs(dx) > 6 ? Math.max(-sp, Math.min(sp, dx * 0.12)) : 0;
+            // hop up after the owner when he is higher up and close by; drop through one-way ledges when he is below
+            const hf = H.y + 48 - (PUP.y + 32), up = H.ground && hf < -20 && Math.abs(H.x - PUP.x) < 110, down = H.ground && hf > 40;   // hf: owner's feet vs the puppy's
+            pupStep(vx, up, down);
             if (Math.abs(dx) > 2) PUP.face = Math.sign(dx);
-            PUP.anim = Math.abs(H.y - PUP.y) > 6 || !H.ground ? 'jump' : Math.abs(dx) > 6 ? 'run' : 'idle';
+            PUP.anim = !PUP.gr ? 'jump' : vx ? 'run' : 'idle';
             if (PUP.barkT > 0) { if (++PUP.barkT > 24) PUP.barkT = 0; if (PUP.barkT === 18) GM.forEach(g => { if (!g.got && Math.hypot(g.x - PUP.x, g.y - PUP.y) < 140) fx('fx_heart', 5, 14, g.x - 8, g.y - 8, 32); }); }
             else if (--PUP.cool <= 0 && GM.some(g => !g.got && Math.hypot(g.x - PUP.x, g.y - PUP.y) < 140)) { PUP.barkT = 1; PUP.cool = 240; }
           }
