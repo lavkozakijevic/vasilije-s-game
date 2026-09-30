@@ -1,0 +1,118 @@
+{
+ "id": "hero_konstantin",
+ "type": "hero_kid",
+ "name": "Konstantin",
+ "age": 13,
+ "element": "light",
+ "power": "Sun lance",
+ "sharesPowerWith": "hero_light",
+ "heightPx": 26,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 11,
+  "y": 6,
+  "w": 10,
+  "h": 25
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_konstantin_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_konstantin_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_konstantin_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_konstantin_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_konstantin_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_konstantin_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_konstantin_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_konstantin_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "respawn": {
+   "file": "hero_konstantin_respawn.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "../../light/fx_light_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "speedPxPerSec": 250,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 30,
+    "y": 16,
+    "note": "relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "../../light/fx_light_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center"
+  }
+ },
+ "icon": {
+  "file": "../../../../ui/icon_element_light.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "colors": {
+  "hair": "#5a3a24",
+  "clothes": "#8a7f8e",
+  "trim": "#ffc23d",
+  "pendant": "#ffc23d"
+ },
+ "palette": "elemental16.hex"
+}

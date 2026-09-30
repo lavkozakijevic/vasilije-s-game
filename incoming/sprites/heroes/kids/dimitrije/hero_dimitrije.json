@@ -1,0 +1,118 @@
+{
+ "id": "hero_dimitrije",
+ "type": "hero_kid",
+ "name": "Dimitrije",
+ "age": 7,
+ "element": "air",
+ "power": "Gale crescent",
+ "sharesPowerWith": "hero_air",
+ "heightPx": 20,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 11,
+  "y": 12,
+  "w": 10,
+  "h": 19
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_dimitrije_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_dimitrije_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_dimitrije_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_dimitrije_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_dimitrije_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_dimitrije_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_dimitrije_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_dimitrije_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "respawn": {
+   "file": "hero_dimitrije_respawn.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "../../air/fx_air_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "speedPxPerSec": 250,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 28,
+    "y": 22,
+    "note": "relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "../../air/fx_air_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center"
+  }
+ },
+ "icon": {
+  "file": "../../../../ui/icon_element_air.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "colors": {
+  "hair": "#ffc23d",
+  "clothes": "#ffc23d",
+  "trim": "#6fae3e",
+  "pendant": "#6fae3e"
+ },
+ "palette": "elemental16.hex"
+}

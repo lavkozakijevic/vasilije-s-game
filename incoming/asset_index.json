@@ -1,0 +1,2175 @@
+{
+ "game": "Elemental Heroes",
+ "palette": "palette/elemental16.hex",
+ "tile": 32,
+ "view": [
+  640,
+  360
+ ],
+ "convention": "horizontal strips, equal frames, no padding, facing right",
+ "assets": [
+  {
+   "file": "backgrounds/forest/bg_forest_arena_near.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.7, replaces bg_forest_near in the boss arena"
+  },
+  {
+   "file": "backgrounds/forest/fg_forest_branches.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "foreground, parallax 1.2, drawn above hero + tiles"
+  },
+  {
+   "file": "cutscenes/intro/intro_01_village_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_01_village_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_02_kitchen_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_02_kitchen_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_02_kitchen_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_03_living_room_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_03_living_room_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_fg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_05_blackout_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_05_blackout_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_06_empty_chair_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_06_empty_chair_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_07_stones_box_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_07_stones_box_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_07_stones_box_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_08_kids_face_off_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_08_kids_face_off_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_08_kids_face_off_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_title.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "mockups/mock_forest_boss_arena.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "Elder Rotroot tell + seed throw; thorn gates sealed; boss bar"
+  },
+  {
+   "file": "mockups/mock_forest_canopy.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "section mock: bounce climb, canopy, rope bridge, hollow log, crumble planks, Mothwing, Sporecap"
+  },
+  {
+   "file": "mockups/mock_story_cast.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/blightwarden/boss_blightwarden_attack.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/blightwarden/boss_blightwarden_death.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 8,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/blightwarden/boss_blightwarden_hurt.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/blightwarden/boss_blightwarden_idle.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/forest/blightwarden/boss_blightwarden_telegraph.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/boss_rotroot_charge.png",
+   "width": 256,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/boss_rotroot_death.png",
+   "width": 512,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 8,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/boss_rotroot_hurt.png",
+   "width": 128,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/boss_rotroot_idle.png",
+   "width": 256,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/boss_rotroot_move.png",
+   "width": 384,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/boss_rotroot_tell.png",
+   "width": 192,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 3,
+   "fps": 6,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/boss_rotroot_throw.png",
+   "width": 320,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/fx_seed_impact.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/fx_seed_projectile.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "notes": "spins; arcing throw"
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/prop_thorn_gate_closed.png",
+   "width": 32,
+   "height": 96,
+   "frameWidth": 32,
+   "frameHeight": 96,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "solid wall; seals arena"
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/prop_thorn_gate_opening.png",
+   "width": 192,
+   "height": 96,
+   "frameWidth": 32,
+   "frameHeight": 96,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "play on boss death, then remove collider"
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/ui_bossbar_fill.png",
+   "width": 8,
+   "height": 8,
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "tile horizontally inside frame fill area"
+  },
+  {
+   "file": "sprites/bosses/forest/elder_rotroot/ui_bossbar_frame.png",
+   "width": 208,
+   "height": 16,
+   "frameWidth": 208,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "fill area x20 y4 w184 h8"
+  },
+  {
+   "file": "sprites/enemies/forest/mothwing/enemy_mothwing_attack.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/mothwing/enemy_mothwing_death.png",
+   "width": 160,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/mothwing/enemy_mothwing_fly.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/enemies/forest/mothwing/enemy_mothwing_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/rotroot/enemy_rotroot_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/rotroot/enemy_rotroot_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/rotroot/enemy_rotroot_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/rotroot/enemy_rotroot_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/enemies/forest/rotroot/enemy_rotroot_move.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/enemies/forest/sporecap/enemy_sporecap_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/sporecap/enemy_sporecap_death.png",
+   "width": 160,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/sporecap/enemy_sporecap_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/sporecap/enemy_sporecap_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/enemies/forest/sporecap/fx_spore_burst.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/enemies/forest/sporecap/fx_spore_projectile.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/fx/fx_dust_jump.png",
+   "width": 128,
+   "height": 16,
+   "frameWidth": 32,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 16,
+   "loop": false,
+   "notes": "anchor bottom-center at feet"
+  },
+  {
+   "file": "sprites/fx/fx_dust_land.png",
+   "width": 128,
+   "height": 16,
+   "frameWidth": 32,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 16,
+   "loop": false,
+   "notes": "anchor bottom-center at feet"
+  },
+  {
+   "file": "sprites/fx/fx_hero_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "fire version; per-hero versions live in each hero folder"
+  },
+  {
+   "file": "sprites/fx/fx_hit_spark.png",
+   "width": 48,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 3,
+   "fps": 18,
+   "loop": false,
+   "notes": "centered on hit point"
+  },
+  {
+   "file": "sprites/fx/fx_splash_water.png",
+   "width": 160,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 14,
+   "loop": false,
+   "notes": "bottom-center on water surface"
+  },
+  {
+   "file": "sprites/heroes/air/fx_air_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/air/hero_air_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/earth/fx_earth_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/earth/hero_earth_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/fire/fx_fire_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/fire/hero_fire_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/ice/fx_ice_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/ice/hero_ice_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/light/fx_light_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/light/hero_light_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/lightning/fx_lightning_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/lightning/hero_lightning_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/shadow/fx_shadow_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/shadow/hero_shadow_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/water/fx_water_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "embers re-forming the hero at a checkpoint"
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/water/hero_water_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/items/fx_pickup_coin.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/items/fx_pickup_heart.png",
+   "width": 160,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 14,
+   "loop": false,
+   "notes": "centered on pickup"
+  },
+  {
+   "file": "sprites/items/item_coin_spin.png",
+   "width": 96,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 6,
+   "fps": 9,
+   "loop": true
+  },
+  {
+   "file": "sprites/items/item_gem_forest.png",
+   "width": 96,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "notes": "worth 5 coins; 3 per level, hidden"
+  },
+  {
+   "file": "sprites/items/item_heart_pickup.png",
+   "width": 96,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "notes": "restores 1 heart"
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_captive.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_cheer.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_hug.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_wag_finger.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_walk.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/props/forest/prop_checkpoint_shrine_activate.png",
+   "width": 192,
+   "height": 64,
+   "frameWidth": 32,
+   "frameHeight": 64,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "play once on touch, then switch to lit"
+  },
+  {
+   "file": "sprites/props/forest/prop_checkpoint_shrine_idle.png",
+   "width": 32,
+   "height": 64,
+   "frameWidth": 32,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "unlit; trigger zone = whole sprite"
+  },
+  {
+   "file": "sprites/props/forest/prop_checkpoint_shrine_lit.png",
+   "width": 128,
+   "height": 64,
+   "frameWidth": 32,
+   "frameHeight": 64,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/props/forest/prop_exit_arch.png",
+   "width": 256,
+   "height": 96,
+   "frameWidth": 64,
+   "frameHeight": 96,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "notes": "level end trigger: inner opening x15-48, y20-94"
+  },
+  {
+   "file": "tilesets/forest/tileset_forest.png",
+   "width": 256,
+   "height": 352,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 0,
+   "loop": false,
+   "notes": "ids 0-81, 8 columns, no margin/spacing"
+  },
+  {
+   "file": "ui/icon_boss_skull.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/icon_checkpoint.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/icon_gem.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_baba_vera_stern.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_baba_vera_warm.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_baba_vera_worried.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_okej.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_katarina_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_katarina_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_katarina_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_air_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_earth_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_fire_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_ice_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_light_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_lightning_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_shadow_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_water_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_konstantin_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_konstantin_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_konstantin_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mrak_menacing.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mrak_sad.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mrak_surprised.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_vasilije_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_vasilije_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_vasilije_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_bossbar_fill.png",
+   "width": 8,
+   "height": 8,
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_bossbar_frame.png",
+   "width": 208,
+   "height": 16,
+   "frameWidth": 208,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "fill area x20 y4 w184 h8"
+  },
+  {
+   "file": "ui/ui_dialogue_box.png",
+   "width": 24,
+   "height": 24,
+   "frameWidth": 24,
+   "frameHeight": 24,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_name_tag.png",
+   "width": 32,
+   "height": 16,
+   "frameWidth": 32,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_note_paper.png",
+   "width": 320,
+   "height": 200,
+   "frameWidth": 320,
+   "frameHeight": 200,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_skip_button.png",
+   "width": 160,
+   "height": 20,
+   "frameWidth": 80,
+   "frameHeight": 20,
+   "frames": 2,
+   "fps": 0,
+   "loop": false,
+   "notes": "frame 0 normal, frame 1 hover"
+  }
+ ]
+}

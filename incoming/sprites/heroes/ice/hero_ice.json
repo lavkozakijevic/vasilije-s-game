@@ -1,0 +1,113 @@
+{
+ "id": "hero_ice",
+ "type": "hero",
+ "name": "Rime",
+ "element": "ice",
+ "power": "Ice shard",
+ "signatureColor": "#7fd4e8",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 8,
+  "w": 12,
+  "h": 23
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_ice_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_ice_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_ice_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_ice_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_ice_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_ice_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_ice_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_ice_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "fx_ice_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "speedPxPerSec": 250,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 26,
+    "y": 10,
+    "note": "relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "fx_ice_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center"
+  },
+  "respawn": {
+   "file": "fx_ice_respawn.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "note": "play at checkpoint, then switch to idle"
+  }
+ },
+ "icon": {
+  "file": "icon_element_ice.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "palette": "elemental16.hex"
+}

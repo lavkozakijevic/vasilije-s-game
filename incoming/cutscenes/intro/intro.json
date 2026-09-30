@@ -1,0 +1,171 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "artScale": 2,
+ "note": "Layers are full-frame 640x360 PNGs with transparency, drawn bottom to top in the listed order. Art is 320x180 doubled; move layers in whole 2px steps to keep the pixel grid.",
+ "layerOrder": [
+  "bg",
+  "chars",
+  "fg",
+  "fx",
+  "title"
+ ],
+ "scenes": [
+  {
+   "id": "intro_01_village",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_01_village_bg.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_01_village_fx.png"
+    }
+   ],
+   "motion": "slow pan right toward the lit house; snow drifts down"
+  },
+  {
+   "id": "intro_02_kitchen",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_02_kitchen_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "intro_02_kitchen_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_02_kitchen_fx.png"
+    }
+   ],
+   "motion": "kids layer slides in from the left; steam rises"
+  },
+  {
+   "id": "intro_03_living_room",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_03_living_room_bg.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_03_living_room_fx.png"
+    }
+   ],
+   "motion": "slow pan left to right across the room"
+  },
+  {
+   "id": "intro_04_window",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_04_window_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "intro_04_window_chars.png"
+    },
+    {
+     "name": "fg",
+     "file": "intro_04_window_fg.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_04_window_fx.png"
+    }
+   ],
+   "motion": "shadow layer rises from below (y +40 to 0); lightning flashes on the fx layer"
+  },
+  {
+   "id": "intro_05_blackout",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_05_blackout_bg.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_05_blackout_fx.png"
+    }
+   ],
+   "motion": "hold black 0.6s, flash fx layer on for 2 frames, off, on"
+  },
+  {
+   "id": "intro_06_empty_chair",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_06_empty_chair_bg.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_06_empty_chair_fx.png"
+    }
+   ],
+   "motion": "slow push along the yarn trail toward the door; snow blows in"
+  },
+  {
+   "id": "intro_07_stones_box",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_07_stones_box_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "intro_07_stones_box_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_07_stones_box_fx.png"
+    }
+   ],
+   "motion": "stones pulse: toggle fx layer every 0.4s"
+  },
+  {
+   "id": "intro_08_kids_face_off",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_08_kids_face_off_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "intro_08_kids_face_off_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_08_kids_face_off_fx.png"
+    }
+   ],
+   "motion": "left pair slides in from the left, right pair from the right"
+  },
+  {
+   "id": "intro_09_into_the_forest",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "intro_09_into_the_forest_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "intro_09_into_the_forest_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "intro_09_into_the_forest_fx.png"
+    },
+    {
+     "name": "title",
+     "file": "intro_09_into_the_forest_title.png"
+    }
+   ],
+   "motion": "kids run up the path; title layer drops in after 1.5s"
+  }
+ ]
+}

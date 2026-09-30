@@ -1,0 +1,185 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "anchor": "top-left inside the dialogue box portrait slot",
+ "note": "Each portrait includes its own backing plate (Mrak: dark void plate). Speaker faces right.",
+ "portraits": [
+  {
+   "file": "portrait_konstantin_neutral.png",
+   "speaker": "Konstantin",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_konstantin_happy.png",
+   "speaker": "Konstantin",
+   "expression": "happy"
+  },
+  {
+   "file": "portrait_konstantin_ali_vera.png",
+   "speaker": "Konstantin",
+   "expression": "ali_vera"
+  },
+  {
+   "file": "portrait_katarina_neutral.png",
+   "speaker": "Katarina",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_katarina_happy.png",
+   "speaker": "Katarina",
+   "expression": "happy"
+  },
+  {
+   "file": "portrait_katarina_ali_vera.png",
+   "speaker": "Katarina",
+   "expression": "ali_vera"
+  },
+  {
+   "file": "portrait_vasilije_neutral.png",
+   "speaker": "Vasilije",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_vasilije_happy.png",
+   "speaker": "Vasilije",
+   "expression": "happy"
+  },
+  {
+   "file": "portrait_vasilije_ali_vera.png",
+   "speaker": "Vasilije",
+   "expression": "ali_vera"
+  },
+  {
+   "file": "portrait_dimitrije_neutral.png",
+   "speaker": "Dimitrije",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_dimitrije_happy.png",
+   "speaker": "Dimitrije",
+   "expression": "happy"
+  },
+  {
+   "file": "portrait_dimitrije_ali_vera.png",
+   "speaker": "Dimitrije",
+   "expression": "ali_vera"
+  },
+  {
+   "file": "portrait_dimitrije_okej.png",
+   "speaker": "Dimitrije",
+   "expression": "okej"
+  },
+  {
+   "file": "portrait_baba_vera_warm.png",
+   "speaker": "Baba Vera",
+   "expression": "warm"
+  },
+  {
+   "file": "portrait_baba_vera_stern.png",
+   "speaker": "Baba Vera",
+   "expression": "stern"
+  },
+  {
+   "file": "portrait_baba_vera_worried.png",
+   "speaker": "Baba Vera",
+   "expression": "worried"
+  },
+  {
+   "file": "portrait_mrak_menacing.png",
+   "speaker": "Mrak",
+   "expression": "menacing"
+  },
+  {
+   "file": "portrait_mrak_surprised.png",
+   "speaker": "Mrak",
+   "expression": "surprised"
+  },
+  {
+   "file": "portrait_mrak_sad.png",
+   "speaker": "Mrak",
+   "expression": "sad"
+  },
+  {
+   "file": "portrait_knight_fire_neutral.png",
+   "speaker": "Cinder",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_knight_water_neutral.png",
+   "speaker": "Brine",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_knight_earth_neutral.png",
+   "speaker": "Basalt",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_knight_air_neutral.png",
+   "speaker": "Wisp",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_knight_ice_neutral.png",
+   "speaker": "Rime",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_knight_lightning_neutral.png",
+   "speaker": "Jolt",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_knight_shadow_neutral.png",
+   "speaker": "Umbra",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_knight_light_neutral.png",
+   "speaker": "Aurel",
+   "expression": "neutral"
+  }
+ ],
+ "ui": {
+  "dialogueBox": {
+   "file": "../ui_dialogue_box.png",
+   "width": 24,
+   "height": 24,
+   "nineSlice": {
+    "left": 8,
+    "right": 8,
+    "top": 8,
+    "bottom": 8
+   },
+   "centerFill": "repeat",
+   "textColor": "#e8e0d0",
+   "textInset": {
+    "x": 10,
+    "y": 10
+   },
+   "portraitSlot": {
+    "x": 10,
+    "y": 10,
+    "w": 64,
+    "h": 64
+   }
+  },
+  "nameTag": {
+   "file": "../ui_name_tag.png",
+   "width": 32,
+   "height": 16,
+   "nineSlice": {
+    "left": 6,
+    "right": 6,
+    "top": 0,
+    "bottom": 0
+   },
+   "textColor": "#e8e0d0",
+   "textOffsetY": 5,
+   "placement": "overlaps the top edge of the box, 12px from the portrait"
+  }
+ },
+ "palette": "../../palette/elemental16.hex"
+}

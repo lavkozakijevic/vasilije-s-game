@@ -1,0 +1,59 @@
+{
+ "id": "npc_baba_vera",
+ "type": "npc",
+ "name": "Baba Vera",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet"
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 6,
+  "w": 13,
+  "h": 25,
+  "note": "talk trigger; she never takes damage"
+ },
+ "animations": {
+  "idle": {
+   "file": "npc_baba_vera_idle.png",
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "walk": {
+   "file": "npc_baba_vera_walk.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  "wag_finger": {
+   "file": "npc_baba_vera_wag_finger.png",
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "captive": {
+   "file": "npc_baba_vera_captive.png",
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "hug": {
+   "file": "npc_baba_vera_hug.png",
+   "frames": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "cheer": {
+   "file": "npc_baba_vera_cheer.png",
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  }
+ },
+ "palette": "elemental16.hex"
+}
