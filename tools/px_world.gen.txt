@@ -1,0 +1,104 @@
+// Elemental Heroes pixel generator: forest tileset, backgrounds. Requires px_core.js.
+function dirtPix(x,y,s){const h=hash(x,y,s);return h<.07?AMBER:h>.93?PLUM:BARK;}
+function pebbles(g,s,n=3){const r=rng(s*7+3);for(let i=0;i<n;i++){const px=3+Math.floor(r()*25),py=9+Math.floor(r()*18);if(g.get(px,py)<0||g.get(px+1,py+1)<0)continue;g.set(px,py,STONE);g.set(px+1,py,SLATE);g.set(px,py+1,PLUM);g.set(px+1,py+1,PLUM);}}
+function terrain(o,s=1){const g=new G(32,32),x0=o.l?1:0,x1=o.r?30:31,y0=o.t?1:0,y1=o.b?30:31,R=3;
+const cut=(x,y,cx,cy)=>Math.hypot(x-cx,y-cy)>R+.3;
+for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
+if(o.t&&o.l&&x<x0+R&&y<y0+R&&cut(x,y,x0+R,y0+R))continue;if(o.t&&o.r&&x>x1-R&&y<y0+R&&cut(x,y,x1-R,y0+R))continue;
+if(o.b&&o.l&&x<x0+R&&y>y1-R&&cut(x,y,x0+R,y1-R))continue;if(o.b&&o.r&&x>x1-R&&y>y1-R&&cut(x,y,x1-R,y1-R))continue;
+let c=dirtPix(x,y,s);const gy=y-y0,gh=4+Math.floor(hash(x,0,5)*2);const grass=o.t&&gy<=gh;
+if(o.t){if(gy===0)c=LEAF;else if(gy<=gh)c=MOSS;else if(gy===gh+1||(gy===gh+2&&hash(x,1,9)<.4))c=PINE;}
+if(o.t&&o.l&&x<=x0+1&&gy<=gh+3)c=x===x0&&gy<=gh?LEAF:MOSS;
+if(o.t&&o.r&&x>=x1-1&&gy<=gh+3)c=MOSS;
+if(!grass){if(o.l&&x===x0&&c===BARK)c=AMBER;if(o.r&&x===x1)c=PLUM;if(o.r&&x===x1-1&&(x+y)%2===0)c=PLUM;if(o.b&&y===y1)c=PLUM;if(o.b&&y===y1-1&&(x+y)%2===0)c=PLUM;}
+g.set(x,y,c);}
+pebbles(g,s);g.outline(INK);
+if(o.t)for(let x=x0+2;x<=x1-2;x++){const h=hash(x,3,s);if(h<.22){g.set(x,0,MOSS);if(g.get(x-1,0)===INK&&h<.08)g.set(x-1,0,LEAF);}}
+return g;}
+function inner(dir){const g=terrain({},4);
+if(dir==='nw'){g.set(0,0,INK);g.set(1,0,AMBER);for(let x=0;x<=3;x++)for(let y=1;y<=3;y++)g.set(x,y,MOSS);g.set(0,1,LEAF);g.set(1,1,LEAF);g.rect(0,4,3,1,PINE);}
+if(dir==='ne'){g.set(31,0,INK);g.set(30,0,PLUM);for(let x=28;x<=31;x++)for(let y=1;y<=3;y++)g.set(x,y,MOSS);g.set(31,1,LEAF);g.set(30,1,LEAF);g.rect(29,4,3,1,PINE);}
+if(dir==='sw'){g.set(0,31,INK);g.set(1,31,AMBER);g.set(0,30,PLUM);}
+if(dir==='se'){g.set(31,31,INK);g.set(30,31,PLUM);g.set(31,30,PLUM);}
+return g;}
+function slope(up){const g=new G(32,32);for(let y=0;y<32;y++)for(let x=0;x<32;x++){const xx=up?x:31-x,s=32-xx;if(y<s)continue;const gy=y-s;let c=dirtPix(x,y,6);if(gy===0)c=LEAF;else if(gy<=4)c=MOSS;else if(gy===5)c=PINE;g.set(x,y,c);}return g.outline(INK);}
+function variantRoots(){const g=terrain({},7);for(let k=0;k<3;k++){let x=4+k*10,y=0;g.set(x,y,BARK);for(let i=0;i<32;i++){y++;x+=hash(i,k,3)<.3?1:hash(i,k,4)<.3?-1:0;g.set(x,y,AMBER);g.set(x+1,y,BARK);}}return g;}
+function variantStones(){const g=terrain({},8);g.ell(12,18,6,4,SLATE);g.ell(11,17,4,2.5,STONE);g.ell(24,9,3,2,SLATE);g.set(23,8,STONE);g.ell(22,26,3,2,SLATE);g.set(21,25,STONE);return g;}
+function plank(part){const g=new G(32,32),x0=part==='l'?1:0,x1=part==='r'?30:31;
+for(let y=2;y<=8;y++)for(let x=x0;x<=x1;x++){let c=BARK;if(y===2)c=AMBER;if(y===8)c=PLUM;if(y>2&&y<8&&hash(x,y,11)<.12)c=AMBER;if((x===x0&&part==='l')||(x===x1&&part==='r'))c=y===2?AMBER:BARK;g.set(x,y,c);}
+if(part==='m'){g.set(0,3,PLUM);g.set(0,4,PLUM);}
+const nail=part==='l'?5:part==='r'?26:15;g.set(nail,4,STONE);g.set(nail,6,STONE);
+if(part!=='m'){const px=part==='l'?4:26;g.rect(px,9,2,5,PLUM);g.line(px,13,part==='l'?px+6:px-6,9,PLUM,1);}
+return g.outline(INK);}
+function stoneBlock(s,moss=true){const g=new G(32,32);for(let y=1;y<=30;y++)for(let x=1;x<=30;x++){let c=SLATE;if(y===1||x===1)c=STONE;if(y===30||x===30)c=PLUM;
+const row=y<11?0:y<21?1:2;if(y===11||y===21)c=PLUM;const vx=row===1?[9,22]:[16];if(vx.includes(x)&&y!==11&&y!==21)c=PLUM;if((y===12||y===22)&&c===SLATE)c=STONE;if(vx.map(v=>v+1).includes(x)&&c===SLATE)c=STONE;if(c===SLATE&&hash(x,y,s)<.05)c=PLUM;g.set(x,y,c);}
+if(moss)for(let x=1;x<=30;x++){const d=Math.floor(hash(x,1,s+2)*4)-1;for(let y=1;y<=d;y++)g.set(x,y,y===1?LEAF:MOSS);}
+return g.outline(INK);}
+function cracked(){const g=stoneBlock(12);let x=24,y=1;for(let i=0;i<16;i++){g.set(x,y,INK);y++;x+=i%3===0?-1:i%3===1?-2:0;}g.set(x+1,y,INK);g.line(14,11,6,20,INK);g.line(15,16,21,25,INK);g.set(7,21,PLUM);g.set(22,26,PLUM);return g;}
+function spikes(){const g=new G(32,32);for(let k=0;k<4;k++){const cx=k*8+4;for(let y=17;y<=28;y++){const hw=Math.floor((y-17)*3.5/11);for(let x=cx-hw;x<=cx+hw;x++)g.set(x,y,x<cx?STONE:x===cx?STONE:SLATE);}g.set(cx,17,BONE);g.set(cx,18,BONE);}g.rect(1,29,30,2,PLUM);g.rect(1,29,30,1,SLATE);return g.outline(INK);}
+function thorns(seed,hang=false){const g=new G(32,32),r=rng(seed);for(let k=0;k<3;k++){const ph=r()*6,amp=2+r()*3,base=hang?4+k*5:18+k*4;for(let x=0;x<32;x++){const y=hang?Math.round(base+x*0)+0:Math.round(base+Math.sin(x/5+ph)*amp);if(hang){const yy=x,xx=Math.round(8+k*8+Math.sin(yy/4+ph)*2);g.rect(xx,yy,2,1,PINE);g.set(xx,yy,MOSS);if(yy%6===k*2)g.set(xx-1,yy,BONE);if(yy%6===k*2+3)g.set(xx+2,yy,BONE);if(yy===20+k*3)g.rect(xx,yy,2,2,EMBER);}else{g.rect(x,y,1,2,PINE);g.set(x,y,MOSS);if(x%5===k)g.set(x,y-1,BONE);if(x%7===k+2)g.set(x,y+2,BONE);}}}
+if(!hang)[[6,22],[19,20],[27,25]].forEach(([x,y])=>{g.rect(x,y,2,2,EMBER);g.set(x,y,FLAME);});
+return g.outline(INK);}
+function vent(){const g=stoneBlock(21,false);g.rect(9,1,14,4,INK);g.rect(10,2,12,2,EMBER);for(let x=10;x<22;x+=3)g.set(x+1,2,FLAME);g.rect(9,5,14,1,PLUM);return g;}
+function waterPix(x,y){const b=BAYER[y&3][x&3];if(hash(x,y,31)<.012)return FROST;return b<3?PLUM:TIDE;}
+function waterBody(){const g=new G(32,32);for(let y=0;y<32;y++)for(let x=0;x<32;x++)g.set(x,y,waterPix(x,y));return g;}
+function waterSurf(f){const g=new G(32,32);for(let x=0;x<32;x++){const sn=Math.sin(2*Math.PI*x/32+f*Math.PI/2),s=5+Math.round(1.5*sn);for(let y=s;y<32;y++)g.set(x,y,y===s?(sn>.75?BONE:FROST):y===s+1&&sn>.3?FROST:waterPix(x,y));}return g;}
+function flameCol(f){const g=new G(32,32);for(let y=31;y>=0;y--){const t=(31-y)/32,w=Math.max(0,6.5*(1-t*.9)+(hash(y>>1,f,41)-.5)*3-(t>.8?3:0)),sx=Math.round(Math.sin(y/4+f*1.5)*1.5*t);if(w<.5){if(hash(y,f,43)<.25)g.set(16+sx+Math.round((hash(y,f,44)-.5)*6),y,FLAME);continue;}
+for(let x=Math.round(16+sx-w);x<=Math.round(16+sx+w);x++){const d=Math.abs(x-16-sx)/w;g.set(x,y,d<.3?(y>24?BONE:GOLD):d<.7?FLAME:EMBER);}}return g;}
+// decor
+function deco(fn){const g=new G(32,32);fn(g);return g.outline(INK);}
+const DECOR={
+tuft:g=>{[[10,20,MOSS],[13,16,LEAF],[15,22,MOSS],[18,17,LEAF],[21,21,MOSS],[12,24,PINE]].forEach(([x,y,c],i)=>g.line(x+(i%2?1:-1),30,x,y,c));},
+fern:g=>{for(let k=-3;k<=3;k++){const ex=16+k*4,ey=16+Math.abs(k)*3;g.line(16,30,ex,ey,MOSS);for(let s=1;s<4;s++){const px=Math.round(16+(ex-16)*s/4),py=Math.round(30+(ey-30)*s/4);g.set(px-1,py-1,LEAF);g.set(px+1,py-1,MOSS);}}},
+mushroom:g=>{g.rect(10,22,3,9,BONE);g.set(12,22,STONE);g.rect(12,24,1,7,STONE);g.ell(11,21,6,3,EMBER);g.ell(10,20,4,2,FLAME);g.set(8,20,BONE);g.set(13,19,BONE);g.set(11,22,BONE);g.rect(21,26,2,5,BONE);g.ell(21,25,3,2,EMBER);g.set(20,24,FLAME);g.set(22,24,BONE);},
+rock:g=>{g.ell(16,25,10,6,SLATE);g.ell(13,23,6,3,STONE);g.ell(19,28,7,2,PLUM);g.set(10,22,BONE);for(let x=9;x<22;x++)if(hash(x,0,51)<.6)g.set(x,19+Math.round(hash(x,1,51)),MOSS);g.set(12,19,LEAF);},
+sign:g=>{g.rect(15,18,2,13,BARK);g.set(15,18,AMBER);g.rect(5,9,22,10,AMBER);g.rect(5,17,22,2,BARK);g.rect(26,9,1,10,BARK);g.rect(9,13,11,1,INK);g.set(19,12,INK);g.set(18,11,INK);g.set(19,14,INK);g.set(18,15,INK);g.set(6,10,BONE);},
+bushL:g=>{g.ell(26,24,12,7,PINE);g.ell(24,21,9,6,MOSS);g.ell(21,19,4,3,LEAF);[[14,22],[19,25],[28,18],[31,23]].forEach(([x,y])=>g.set(x,y,LEAF));},
+bushR:g=>{g.ell(5,24,12,7,PINE);g.ell(6,22,8,5,MOSS);g.ell(3,19,4,3,MOSS);g.set(2,18,LEAF);[[9,20],[14,24],[1,23]].forEach(([x,y])=>g.set(x,y,LEAF));g.rect(6,23,2,2,EMBER);g.set(6,23,FLAME);},
+flowers:g=>{[[8,21,GOLD],[15,17,BONE],[22,22,VOID],[27,19,GOLD]].forEach(([x,y,c])=>{g.line(x,30,x,y+1,MOSS);g.set(x+1,y+5,LEAF);g.set(x,y,c===BONE?GOLD:AMBER);g.set(x-1,y,c);g.set(x+1,y,c);g.set(x,y-1,c);g.set(x,y+1,c);});},
+stump:g=>{for(let y=18;y<=30;y++)for(let x=9;x<=22;x++)g.set(x,y,x===9?AMBER:x===22||(x-9)%4===3?PLUM:BARK);g.ell(15,18,6,1.5,AMBER);g.rect(13,18,5,1,BARK);g.rect(7,29,3,2,BARK);g.rect(22,29,3,2,BARK);g.rect(9,19,5,2,MOSS);g.set(9,19,LEAF);},
+lantern:g=>{g.rect(15,12,2,19,PLUM);g.set(15,12,SLATE);g.rect(12,30,8,1,PLUM);g.rect(17,8,6,1,PLUM);g.rect(21,9,1,2,SLATE);g.rect(19,11,6,8,INK);g.rect(20,12,4,6,GOLD);g.rect(21,13,2,4,BONE);g.rect(20,17,4,1,FLAME);g.rect(19,10,6,1,SLATE);g.rect(19,19,6,1,SLATE);},
+log:g=>{g.rect(3,21,24,9,BARK);g.rect(3,21,24,1,AMBER);g.rect(3,29,24,1,PLUM);for(let x=5;x<25;x+=5)g.rect(x,24,3,1,PLUM);g.ell(27,25,3,4.5,AMBER);g.ell(27,25,1.5,2.5,BARK);g.set(27,25,AMBER);g.rect(8,20,6,1,MOSS);g.set(8,20,LEAF);},
+skull:g=>{g.ell(12,24,5,4,BONE);g.rect(9,27,7,3,BONE);g.rect(9,24,2,2,INK);g.rect(13,24,2,2,INK);g.set(12,27,PLUM);g.rect(10,29,1,1,PLUM);g.rect(13,29,1,1,PLUM);g.set(15,22,STONE);g.ell(14,26,3,2,BONE);g.rect(9,24,2,2,INK);g.rect(13,24,2,2,INK);g.line(20,29,28,26,BONE);g.set(19,29,BONE);g.set(19,28,BONE);g.set(28,25,BONE);g.set(29,26,BONE);},
+glowcap:g=>{[[9,20,4],[17,15,5],[25,22,3]].forEach(([x,y,r])=>{g.rect(x-1,y,2,31-y,BONE);g.rect(x,y+1,1,30-y,STONE);g.ell(x,y,r,r*.6,VOID);g.set(x-1,y-1,FROST);g.set(x+1,y,FROST);g.set(x-r+1,y,FROST);});},
+vines:g=>{[[6,20],[13,28],[21,14],[27,24]].forEach(([x,len],k)=>{for(let y=0;y<len;y++){const xx=Math.round(x+Math.sin(y/5+k)*1.5);g.set(xx,y,y%2?PINE:MOSS);if(y%5===k%3)g.set(xx+1,y,LEAF);if(y%5===(k+2)%5)g.set(xx-1,y,MOSS);}});},
+rune:g=>{for(let y=6;y<=30;y++){const hw=y<10?4+(y-6):8;for(let x=16-hw;x<=16+hw-1;x++)g.set(x,y,x<=16-hw+1?STONE:x>=16+hw-2?PLUM:SLATE);}g.set(10,10,BONE);g.line(16,12,16,24,INK);g.line(16,12,12,16,INK);g.line(16,17,20,21,INK);g.line(17,12,17,24,FLAME);g.set(16,12,GOLD);g.line(17,17,21,21,FLAME);g.rect(8,28,16,3,MOSS);g.set(9,27,LEAF);},
+tallgrass:g=>{for(let k=0;k<8;k++){const x=4+k*3+Math.round(hash(k,0,61)*2),top=6+Math.round(hash(k,1,61)*14);g.line(x,30,x+(k%2?2:-1),top,k%3===0?PINE:k%3===1?MOSS:LEAF);}}};
+function bushPair(){const g=new G(64,32);DECOR.bushL(g);const r=new G(32,32);DECOR.bushR(r);g.blit(r,32,0);g.outline(INK);const a=new G(32,32),b=new G(32,32);for(let y=0;y<32;y++)for(let x=0;x<64;x++){const v=g.get(x,y);if(v>=0)(x<32?a:b).set(x%32,y,v);}return[a,b];}
+function buildTiles(){const T=[];const [bl,br]=bushPair();
+const t=(o,s)=>terrain(o,s);
+T[0]=t({t:1,l:1},1);T[1]=t({t:1},2);T[2]=t({t:1,r:1},3);T[3]=inner('nw');T[4]=inner('ne');T[5]=slope(true);T[6]=slope(false);T[7]=t({t:1,l:1,r:1,b:1},9);
+T[8]=t({l:1},10);T[9]=t({},11);T[10]=t({r:1},12);T[11]=inner('sw');T[12]=inner('se');T[13]=variantRoots();T[14]=variantStones();T[15]=t({l:1,r:1},13);
+T[16]=t({b:1,l:1},14);T[17]=t({b:1},15);T[18]=t({b:1,r:1},16);T[19]=plank('l');T[20]=plank('m');T[21]=plank('r');
+const mp=new G(64,32);for(let y=2;y<=12;y++)for(let x=1;x<=62;x++){let c=SLATE;if(y===2||x===1)c=STONE;if(y===12||x===62)c=PLUM;if((x===21||x===42)&&y>2&&y<12)c=PLUM;mp.set(x,y,c);}
+[[10,6],[31,6],[52,6]].forEach(([x,y])=>{mp.rect(x,y,3,3,EMBER);mp.set(x+1,y+1,GOLD);mp.set(x,y,FLAME);});mp.set(2,3,BONE);mp.outline(INK);
+T[22]=new G(32,32).blit(mp,0,0);T[23]=new G(32,32).blit(mp,-32,0);
+T[24]=stoneBlock(11);T[25]=cracked();T[26]=spikes();T[27]=thorns(3);T[28]=thorns(8);T[29]=thorns(5,true);T[30]=vent();T[31]=waterBody();
+for(let f=0;f<4;f++){T[32+f]=waterSurf(f);T[36+f]=flameCol(f);}
+const D=['tuft','fern','mushroom','rock','sign',null,null,'flowers','stump','lantern','log','skull','glowcap','vines','rune','tallgrass'];
+D.forEach((k,i)=>{if(k)T[40+i]=deco(DECOR[k]);});T[45]=bl;T[46]=br;
+return T;}
+const TILE_NAMES=['ground_tl','ground_t','ground_tr','inner_nw','inner_ne','slope_up','slope_down','ground_single','ground_l','ground_c','ground_r','inner_sw','inner_se','ground_c_roots','ground_c_stones','ground_pillar','ground_bl','ground_b','ground_br','oneway_l','oneway_m','oneway_r','moving_l','moving_r','breakable','breakable_cracked','spikes','thorns_a','thorns_b','thorns_hanging','firejet_vent','water_body','water_surface_0','water_surface_1','water_surface_2','water_surface_3','firejet_flame_0','firejet_flame_1','firejet_flame_2','firejet_flame_3','deco_tuft','deco_fern','deco_mushrooms','deco_rock','deco_sign','deco_bush_l','deco_bush_r','deco_flowers','deco_stump','deco_lantern','deco_log','deco_skull','deco_glowcaps','deco_vines','deco_runestone','deco_tallgrass'];
+// ---------- BACKGROUNDS 640x360, horizontally seamless ----------
+const BW=640,BH=360,TAU=Math.PI*2;
+function bgSky(){const g=new G(BW,BH,true);const st=[[0,PLUM],[70,PLUM],[170,VOID],[250,EMBER],[300,FLAME],[361,FLAME]];
+for(let y=0;y<BH;y++){let k=0;while(st[k+1][0]<=y)k++;const [y0,a]=st[k],[y1,b]=st[k+1],t=(y-y0)/(y1-y0);for(let x=0;x<BW;x++)g.set(x,y,a===b?a:(t*16>BAYER[y&3][x&3]?b:a));}
+for(let y=0;y<130;y++)for(let x=0;x<BW;x++){const h=hash(x,y,71);if(h<.0025)g.set(x,y,BONE);else if(h<.005)g.set(x,y,STONE);}
+const mx=470,my=78;g.ell(mx,my,16,16,BONE);for(let y=-16;y<=16;y++)for(let x=-16;x<=16;x++)if(g.get(mx+x,my+y)===BONE&&x+y>12&&x*x+y*y<=260)g.set(mx+x,my+y,STONE);g.ell(mx+5,my-4,3,3,STONE);g.ell(mx-6,my+7,2,2,STONE);g.ell(mx-3,my-8,1.5,1.5,STONE);
+return g;}
+function bgFar(){const g=new G(BW,BH,true);const h=x=>Math.round(212+22*Math.sin(TAU*2*x/BW+.5)+14*Math.sin(TAU*5*x/BW+1.3)+6*Math.sin(TAU*13*x/BW+2.1));
+for(let x=0;x<BW;x++){const hy=h(x),rising=h(x+1)<hy||h(x-1)>hy;for(let y=hy;y<BH;y++)g.set(x,y,SLATE);if(h(x-1)>hy){g.set(x,hy,STONE);if(x%2)g.set(x,hy+1,STONE);}}
+const tx=150,ty=h(tx);g.rect(tx-5,ty-34,11,36,SLATE);g.rect(tx-7,ty-38,15,4,SLATE);for(let i=0;i<4;i++)g.rect(tx-7+i*4,ty-41,2,3,SLATE);g.rect(tx-5,ty-34,1,34,STONE);g.rect(tx,ty-26,1,3,GOLD);g.rect(tx+2,ty-14,1,2,GOLD);g.rect(tx+3,ty-48,2,8,SLATE);g.rect(tx+3,ty-48,1,1,STONE);
+for(let y=250;y<BH;y++)for(let x=0;x<BW;x++)if(g.get(x,y)===SLATE&&(y-250)*1.6>BAYER[y&3][x&3]+(y>260?-99:0))g.set(x,y,PLUM);
+return g;}
+function pine(g,x,base,hgt,col,lit){const tiers=4;for(let k=0;k<tiers;k++){const tt=base-hgt+k*hgt/(tiers+.6),th=hgt/(tiers-.5);for(let y=0;y<th;y++){const hw=Math.round(y*.55+k*1.2);for(let dx=-hw;dx<=hw;dx++){let c=col;if(lit&&dx===-hw&&(y+k)%2===0)c=lit;g.set(x+dx,Math.round(tt+y),c);}}}g.rect(x-1,base-2,3,4,PLUM);}
+function bgMid(){const g=new G(BW,BH,true);for(let x=0;x<BW;x++){const hy=Math.round(262+6*Math.sin(TAU*3*x/BW)+3*Math.sin(TAU*7*x/BW+1));for(let y=hy;y<BH;y++)g.set(x,y,PINE);}
+for(let i=0;i<30;i++){const x=Math.round(i*BW/30+hash(i,0,81)*12),hg=48+Math.round(hash(i,1,81)*46);pine(g,x,270,hg,PINE,MOSS);}
+for(let i=0;i<24;i++){const x=Math.round(i*BW/24+10+hash(i,2,81)*14);pine(g,x,282,30+Math.round(hash(i,3,81)*20),PINE,MOSS);}
+return g;}
+function bgNear(){const g=new G(BW,BH,true);
+[[60,22],[250,28],[420,18],[565,24]].forEach(([x,w],k)=>{for(let y=0;y<BH;y++){const flare=y>300?Math.round((y-300)*.35):0;for(let dx=-flare;dx<w+flare;dx++){let c=PLUM;if(dx<=1-flare&&(dx+y)%2===0)c=SLATE;if(dx===Math.round(w*.4)&&hash(k,y>>3,91)<.7)c=INK;if(dx===Math.round(w*.75)&&hash(k,y>>2,92)<.5)c=INK;g.set(x+dx,y,c);}}
+for(let v=0;v<3;v++){const vx=x-6+v*(w/2+5),len=40+Math.round(hash(k,v,93)*60);for(let y=20;y<len;y++){g.set(Math.round(vx+Math.sin(y/7+v)*2),y,y%3?PINE:MOSS);}}});
+for(let x=0;x<BW;x+=14){const r=18+Math.round(hash(x,0,94)*14),cy=Math.round(hash(x,1,94)*14)-4;g.ell(x,cy,r,r*.7,INK);g.ell(x-3,cy+2,r*.7,r*.45,PINE);for(let i=0;i<5;i++)g.set(x-r*.6+Math.round(hash(x,i,95)*r),cy+Math.round(hash(x,i+9,95)*r*.4),MOSS);}
+for(let x=0;x<BW;x+=18){const r=14+Math.round(hash(x,2,96)*12);g.ell(x,352,r,r*.6,INK);g.ell(x-2,350,r*.7,r*.35,PINE);g.set(x-r*.5,346,MOSS);}
+return g;}

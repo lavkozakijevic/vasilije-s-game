@@ -1,0 +1,11 @@
+/* Hard-edged pixel effects only: stepped outlines, bevels, offset drop shadows. No blur, no soft gradients. */
+:root{
+--pixel-outline:0 calc(var(--px)*-1) 0 0 var(--eh-ink),0 var(--px) 0 0 var(--eh-ink),calc(var(--px)*-1) 0 0 0 var(--eh-ink),var(--px) 0 0 0 var(--eh-ink);
+--bevel-raised:inset var(--px) var(--px) 0 0 var(--bevel-light),inset calc(var(--px)*-1) calc(var(--px)*-1) 0 0 var(--bevel-dark);
+--bevel-pressed:inset var(--px) var(--px) 0 0 var(--bevel-dark),inset calc(var(--px)*-1) calc(var(--px)*-1) 0 0 var(--bevel-light);
+--drop-hard:var(--px) var(--px) 0 0 var(--eh-ink);
+--text-outline:calc(var(--px)*-1) 0 0 var(--eh-ink),var(--px) 0 0 var(--eh-ink),0 calc(var(--px)*-1) 0 var(--eh-ink),0 var(--px) 0 var(--eh-ink);
+--step-fast:steps(2,end) 120ms; /* @kind other */
+--step-anim:steps(1,end); /* @kind other */
+--frame-ms:100ms; /* @kind other */
+}
