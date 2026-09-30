@@ -41,6 +41,11 @@ const EH_DIALOGUE = {
     { who: 'dimitrije', mood: 'happy', text: 'You can keep arguing behind me.' },
     { who: 'katarina', mood: 'happy', text: "…Honestly? He's got a point." },
   ],
+  l1_puppy: [
+    { who: 'dimitrije', mood: 'happy', text: "Hey, buddy. You're guarding Baba's yarn?" },
+    { who: 'katarina', mood: 'happy', text: "He's following her scent. A dog's nose is about ten thousand times better than ours." },
+    { who: 'dimitrije', mood: 'happy', text: "Then he's coming with me." },
+  ],
   l1_knight_air: [
     { who: 'wisp', text: 'The wind remembers you, little one. I am Wisp. Your stone woke me.' },
     { who: 'dimitrije', mood: 'happy', text: 'Cool! Want to help us find Baba?' },
@@ -75,7 +80,7 @@ const EH_DIALOGUE = {
 };
 const EH_NOTES = {
   l1: {
-    item: 'knitting needles, stuck in a tree',
+    item: 'knitting needles, stuck in a tree', itemImg: 'sprites/items/item_baba_knitting_needles.png',
     lines: ['Dimitrije, well done, my fast boy.', 'Katarina, it is cold where they are taking me.', 'Put on your socks. The warm ones.'],
     replies: [
       { who: 'katarina', mood: 'ali', text: 'Ali Vera! The warm ones are so itchy…' },
@@ -273,7 +278,8 @@ function NoteScreen({ level, onDone }) {
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,11,20,.7)' }}>
       <div style={{ position: 'absolute', top: phase === 'note' ? 90 : 40, left: 0, right: 0, display: 'grid', placeItems: 'center', gap: 16 }}>
-        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18, color: PAL.gold, textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>Found: {n.item}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>{n.itemImg && <img src={EHS_A + n.itemImg} style={{ width: 96, height: 96, imageRendering: 'pixelated', animation: 'ehBob 1.2s steps(2) infinite' }} />}
+          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18, color: PAL.gold, textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>Found: {n.item}</div></div>
         <BabaNote lines={n.lines} />
       </div>
       {phase === 'note' ? <NoteWait onNext={() => setPhase('reply')} /> : <DialogueRunner lines={n.replies} onDone={onDone} />}
@@ -419,5 +425,5 @@ function IntroCutscene({ onDone }) {
 }
 
 (function () { if (document.getElementById('eh-story-css')) return; const s = document.createElement('style'); s.id = 'eh-story-css';
-  s.textContent = '@keyframes ehBlink{0%{opacity:1}100%{opacity:0}}@keyframes ehFadeIn{from{opacity:0}to{opacity:1}}'; document.head.appendChild(s); })();
+  s.textContent = '@keyframes ehBob{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}@keyframes ehBlink{0%{opacity:1}100%{opacity:0}}@keyframes ehFadeIn{from{opacity:0}to{opacity:1}}'; document.head.appendChild(s); })();
 Object.assign(window, { IntroCutscene, DialogueRunner, NoteScreen, EH_DIALOGUE, EH_NOTES });

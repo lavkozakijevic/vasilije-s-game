@@ -11,7 +11,7 @@
  "version": "1.10",
  "tiledversion": "1.10.2",
  "nextlayerid": 9,
- "nextobjectid": 97,
+ "nextobjectid": 100,
  "layers": [
   {
    "id": 1,
@@ -3786,7 +3786,7 @@
     0,
     0,
     0,
-    27,
+    0,
     27,
     0,
     0,
@@ -8982,17 +8982,6 @@
      "visible": true
     },
     {
-     "id": 3,
-     "name": "rotroot",
-     "type": "enemy_rotroot",
-     "x": 540,
-     "y": 257,
-     "width": 32,
-     "height": 32,
-     "rotation": 0,
-     "visible": true
-    },
-    {
      "id": 5,
      "name": "coin",
      "type": "item_coin",
@@ -9990,6 +9979,39 @@
      "y": 266,
      "width": 16,
      "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 97,
+     "name": "puppy",
+     "type": "companion_puppy",
+     "x": 768,
+     "y": 257,
+     "width": 32,
+     "height": 32,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 98,
+     "name": "football",
+     "type": "prop_football",
+     "x": 40,
+     "y": 272,
+     "width": 16,
+     "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 99,
+     "name": "poster",
+     "type": "prop_poster",
+     "x": 0,
+     "y": 240,
+     "width": 32,
+     "height": 48,
      "rotation": 0,
      "visible": true
     }

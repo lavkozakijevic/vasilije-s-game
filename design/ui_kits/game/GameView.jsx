@@ -56,6 +56,9 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         ...['dust_jump','dust_land','splash_water','hit_spark','hero_respawn'].map(k => load('fx_' + k, `sprites/fx/fx_${k}.png`)),
         ...['idle','activate','lit'].map(k => load('cp_' + k, `sprites/props/forest/prop_checkpoint_shrine_${k}.png`)),
         load('arch', 'sprites/props/forest/prop_exit_arch.png'),
+        ...EH_ELEMENTS.map(el => load('st_' + el, `sprites/statues/statue_knight_${el}.png`)), load('st_awaken', 'sprites/statues/fx_statue_awaken.png'),
+        ...['idle', 'run', 'jump', 'special'].map(k => load('pup_' + k, `sprites/companions/companion_puppy/companion_puppy_${k}.png`)),
+        load('yarn', 'sprites/items/item_yarn_ball.png'), load('ball', 'sprites/props/prop_football.png'), load('poster', 'sprites/props/prop_poster_karate_badass.png'),
         ...EH_COUSINS.flatMap(c => [...Object.keys(EH_HERO), 'respawn'].map(k => load(`h_${c.id}_${k}`, `sprites/heroes/kids/${c.id}/hero_${c.id}_${k}.png`))),
         ...EH_ELEMENTS.flatMap(el => [
           ...Object.keys(EH_HERO).map(k => load(`h_k_${el}_${k}`, `sprites/heroes/${el}/hero_${el}_${k}.png`)),
@@ -85,7 +88,12 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
       const ROSTER = EH_COUSINS.map(c => ({ ...c }));
       const H = { ...spawn, vx: 0, vy: 0, face: 1, ground: true, attackT: 0, hurtT: 0, inv: 0, landT: 0, dead: 0, hp: 4, coins: 0, fired: false, hero: ROSTER.findIndex(r => r.id === EH_STAR), swapT: 0 };
       // Hearth Knight statues: touching one wakes the knight, who joins the roster
-      const ST = ents.filter(o => o.type === 'knight_statue').map(o => ({ el: o.name, x: o.x, y: o.y, woke: false }));
+      const ST = ents.filter(o => o.type === 'knight_statue').map(o => ({ el: o.name, x: o.x, y: o.y, woke: false, wakeT: -1 }));
+      // puppy (Dimitrije's companion): waits on Baba's yarn, then follows the party and barks near hidden gems
+      const po = ents.find(o => o.type === 'companion_puppy');
+      const PUP = po ? { x: po.x, y: po.y, st: 'wait', face: -1, anim: 'idle', t: 0, barkT: 0, cool: 120 } : null;
+      const bo2 = ents.find(o => o.type === 'prop_football'), BALL = bo2 ? { x: bo2.x, y: bo2.y, sx: bo2.x, sy: bo2.y, vx: 0, vy: 0, roll: 0 } : null;
+      const poster = ents.find(o => o.type === 'prop_poster');
       let toast = null; const say = text => { toast = { text, t: 0 }; };
       const heroBox = () => ({ x: H.x + 10, y: H.y + 8, w: 12, h: 23 });
       // enemies share one list; kind decides behaviour, hitbox and sprites
@@ -179,7 +187,10 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           else { H.y = ny; H.ground = false; }
           if (H.vy < 0 && EH_SOLID.has(tileAt(H.x + 16, H.y + 8))) { H.vy = 0; }
           // hazards / water / exit
-          if (EH_HAZ.has(tileAt(H.x + 16, H.y + 26)) || EH_HAZ.has(tileAt(H.x + 16, H.y + 16))) hurt(H.face);
+          // spikes/brambles (26-28) only hurt what lands on or walks into them (feet level, not while rising);
+          // hanging thorns (29) and fire-jet flames (36) hurt on any touch
+          const feetHaz = tileAt(H.x + 16, H.y + 30), bodyHaz = [tileAt(H.x + 16, H.y + 16), tileAt(H.x + 16, H.y + 26)];
+          if ((H.vy >= 0 && feetHaz >= 26 && feetHaz <= 28) || bodyHaz.some(t => t === 29 || t === 36)) hurt(H.face);
           const tw = tileAt(H.x + 16, H.y + 28);
           if (tw === 31 || tw === 32) { fx('fx_splash_water', 5, 14, H.x, GROUND_Y - 32, 32); H.inv = 0; hurt(1); if (!H.dead) Object.assign(H, safe, { vx: 0, vy: 0, inv: 70 }); }
           if (H.y > 380) { H.hp = 0; H.dead = 1; }
@@ -192,11 +203,36 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           GM.forEach(g => { if (!g.got && near(g)) { g.got = true; H.coins += 5; fx('fx_heart', 5, 14, g.x - 8, g.y - 8, 32); } });
           HP.forEach(h => { if (!h.got && H.hp < 4 && near(h)) { h.got = true; H.hp = 4; fx('fx_heart', 5, 14, h.x - 8, h.y - 8, 32); } });
           CP.forEach(c => { if (c.st === 'idle' && overlap(heroBox(), { x: c.x, y: c.y, w: 32, h: 64 })) { c.st = 'activate'; c.t = 0; activeCP = c; } });
-          ST.forEach(s => { if (!s.woke && overlap(heroBox(), { x: s.x + 6, y: s.y + 4, w: 20, h: 28 })) { s.woke = true;
-            ROSTER.push({ id: 'k_' + s.el, el: s.el, name: EH_KNIGHTS[s.el], kid: false }); fx('rs_' + s.el, 6, 10, s.x, s.y, 32); fx('i_' + s.el, 4, 12, s.x, s.y, 32);
-            say(`${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story('l1_knight_' + s.el); } });
+          ST.forEach(s => { if (s.wakeT < 0 && overlap(heroBox(), { x: s.x + 6, y: s.y + 4, w: 20, h: 28 })) s.wakeT = 0; });
         }
         CP.forEach(c => { c.t++; if (c.st === 'activate' && c.t >= 36) c.st = 'lit'; });
+        // fx_statue_awaken: 6 frames at 10fps; the knight replaces the statue on frame 3 and joins when it ends
+        ST.forEach(s => { if (s.wakeT < 0 || s.woke) return; if (++s.wakeT >= 36) { s.woke = true;
+          ROSTER.push({ id: 'k_' + s.el, el: s.el, name: EH_KNIGHTS[s.el], kid: false }); fx('i_' + s.el, 4, 12, s.x, s.y, 32);
+          say(`${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story('l1_knight_' + s.el); } });
+        if (PUP) {
+          PUP.t++;
+          if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) { PUP.st = 'follow'; story('l1_puppy'); } }
+          else {
+            const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 260 || Math.abs(H.y - PUP.y) > 200;
+            if (far) { PUP.x = tx; PUP.y = H.y; }
+            PUP.x += Math.max(-2.4, Math.min(2.4, dx * 0.12)); PUP.y += (H.y - PUP.y) * 0.18;
+            if (Math.abs(dx) > 2) PUP.face = Math.sign(dx);
+            PUP.anim = Math.abs(H.y - PUP.y) > 6 || !H.ground ? 'jump' : Math.abs(dx) > 6 ? 'run' : 'idle';
+            if (PUP.barkT > 0) { if (++PUP.barkT > 24) PUP.barkT = 0; if (PUP.barkT === 18) GM.forEach(g => { if (!g.got && Math.hypot(g.x - PUP.x, g.y - PUP.y) < 140) fx('fx_heart', 5, 14, g.x - 8, g.y - 8, 32); }); }
+            else if (--PUP.cool <= 0 && GM.some(g => !g.got && Math.hypot(g.x - PUP.x, g.y - PUP.y) < 140)) { PUP.barkT = 1; PUP.cool = 240; }
+          }
+        }
+        if (BALL) {   // Easter egg: a football the cousins can kick around
+          if (overlap(heroBox(), { x: BALL.x + 2, y: BALL.y + 2, w: 12, h: 12 }) && Math.abs(BALL.vx) < 3.5) { BALL.vx = 4.2 * (Math.sign(BALL.x + 8 - H.x - 16) || H.face); BALL.vy = -3.2; }
+          BALL.vy = Math.min(7, BALL.vy + 0.35); const nx = BALL.x + BALL.vx, ahead = BALL.vx > 0 ? nx + 16 : nx;
+          if (EH_SOLID.has(tileAt(ahead, BALL.y + 8))) BALL.vx *= -0.5; else BALL.x = nx;
+          const ty = Math.floor((BALL.y + 16 + BALL.vy) / 32), s2 = BALL.vy >= 0 ? surface(BALL.x + 8, ty) : null;
+          if (s2 != null && BALL.y + 16 + BALL.vy >= s2) { BALL.y = s2 - 16; BALL.vy = Math.abs(BALL.vy) > 2 ? -BALL.vy * 0.4 : 0; BALL.vx *= 0.97; } else BALL.y += BALL.vy;
+          if (BALL.x < 0 || BALL.x > LW - 16) { BALL.x = Math.max(0, Math.min(LW - 16, BALL.x)); BALL.vx *= -0.5; }
+          BALL.roll += BALL.vx; if (Math.abs(BALL.vx) < 0.05) BALL.vx = 0;
+          if (BALL.y > 380 || tileAt(BALL.x + 8, BALL.y + 12) === 31) Object.assign(BALL, { x: BALL.sx, y: BALL.sy, vx: 0, vy: 0 });
+        }
         // ---- enemies ----
         E.forEach(e => {
           if (e.dead) { e.dead++; if (e.kind === 'moth') e.y += 1.2; return; }
@@ -319,7 +355,14 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         drawLayer(DBL); drawLayer(GL); drawLayer(DL);
         CP.forEach(c => { if (c.st === 'idle') drawStrip(img.cp_idle, 1, 0, c.x, c.y, 32); else if (c.st === 'activate') drawStrip(img.cp_activate, 6, c.t / 6, c.x, c.y, 32); else drawStrip(img.cp_lit, 4, (tick / 7.5) % 4, c.x, c.y, 32); });
         if (ex) drawStrip(img.arch, 4, (tick / 7.5) % 4, ex.x, ex.y, 64);
-        ST.forEach(s => { if (s.woke) return; ctx.filter = 'grayscale(1) brightness(0.8)'; drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32); ctx.filter = 'none'; });
+        if (poster) drawStrip(img.poster, 1, 0, poster.x, poster.y, 32);
+        ST.forEach(s => { if (s.woke) return; const f = s.wakeT < 0 ? -1 : Math.floor(s.wakeT / 6);
+          if (f < 3) drawStrip(img['st_' + s.el], 1, 0, s.x, s.y, 32); else drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32);
+          if (f >= 0) drawStrip(img.st_awaken, 6, f, s.x, s.y, 32); });
+        if (PUP) { if (PUP.st === 'wait') drawStrip(img.yarn, 6, (tick / 6) % 6, PUP.x + 20, PUP.y + 15, 16);
+          const a = PUP.barkT > 0 ? 'special' : PUP.anim, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = a === 'special' ? PUP.barkT / 6 : a === 'jump' ? (PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
+          drawStrip(img['pup_' + a], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
+        if (BALL) drawStrip(img.ball, 4, Math.floor(Math.abs(BALL.roll) / 6) % 4, BALL.x, BALL.y, 16);
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
         GM.forEach((g, i) => { if (!g.got) drawStrip(img.gem, 6, (tick / 7.5 + i) % 6, g.x, g.y, 16); });
         HP.forEach((h, i) => { if (!h.got) drawStrip(img.heart, 6, (tick / 7.5 + i) % 6, h.x, h.y, 16); });
