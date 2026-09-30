@@ -18,7 +18,7 @@ An hour before midnight a storm blows out every light in the house, and Baba Ver
   - *make your bed*
   - *pick up your toys*
 - **"Ali Vera!"** ("But Vera!") The kids complain every time.
-- **"Okej."** Dimitrije never complains. He just says "Okej" and does it.
+- **Dimitrije gets on with it.** He rarely complains and is usually already doing what Baba asked. His "Okej" is saved for the moments that count.
 - **Kosta and Vasilije** argue all game about who is captain.
 
 ---
@@ -82,15 +82,15 @@ About 70 seconds. It plays automatically on START. A **SKIP ▶** button appears
 
 | # | Time | Scene | Text |
 |---|---|---|---|
-| 1 | 0–6s | Night. Snowy village, one warm glowing house at the forest's edge. Slow pan down. | *New Year's Eve.* |
-| 2 | 6–14s | Kitchen. Baba Vera pulls a tray of cookies out of the oven. The four kids pile in. | **Baba:** "Wash your hands before you eat!" · **Kids:** "Ali Vera!" · **Dimitrije:** "Okej." *(he's already at the sink)* |
-| 3 | 14–21s | Living room: toys everywhere, a football, a phone on a tripod (they're filming). Poster on the wall: *The Rise of the Karate Badass.* | **Baba:** "And pick up your toys!" · **Kosta & Vasilije:** "Ali Veraaa…" |
+| 1 | 0–6s | Night. Snowy village, one warm glowing house at the forest's edge. Slow pan. | *New Year's Eve, at Baba Vera's.* |
+| 2 | 6–14s | Kitchen. Baba Vera pulls a tray of cookies out of the oven. The four kids pile in. | **Baba:** "Wash your hands before you eat!" · **Kids:** "Ali Veraaa!" · **Dimitrije:** "Already did." *(he's already at the sink)* |
+| 3 | 14–21s | Living room: toys everywhere, a football, a phone on a tripod (they're filming). Poster on the wall: *The Rise of the Karate Badass.* | **Baba:** "And pick up your toys. All of them." · **Vasilije:** "They're Kosta's toys!" · **Kosta:** "Half of them are YOURS." |
 | 4 | 21–28s | Window. Storm clouds roll in and a huge shadow with a crown of thorns rises over the forest. Two cold eyes open. | |
 | 5 | 28–33s | The lights flicker… and go out. Black screen. | **Baba (off-screen):** "Children—!" |
-| 6 | 33–42s | Lights back on. Empty chair, apron, a plate of cookies, the door wide open and snow blowing in. A trail of red yarn leads into the dark forest. | |
+| 6 | 33–42s | Lights back on. Empty chair, apron, a plate of cookies, the door wide open and snow blowing in. A trail of red yarn leads into the dark forest. | *The chair was empty. Baba Vera was gone.* |
 | 7 | 42–55s | Kitchen table. Baba's wooden box opens by itself. Four stones glow: gold, frost-blue, orange and green. A note. | *(the note, see below)* |
-| 8 | 55–63s | The four kids look at each other. | **All:** "Ali Vera!" · **Dimitrije:** "…Okej." · **Kosta:** "Right. I'm captain." · **Vasilije:** "No you're NOT." · **Katarina:** "Can we just GO?" |
-| 9 | 63–70s | The kids run out into the snowy forest following the yarn. A puppy barks in the distance. Title card. | ***Elemental Heroes: The Rescue of Baba Vera*** |
+| 8 | 55–64s | The four kids look at each other. | **Katarina:** "She says follow the red yarn." · **Kosta:** "Okay. I'm the oldest, so I lead." · **Vasilije:** "No way. I'm faster, so I lead." · **Katarina:** "She JUST said no fighting!" · **Dimitrije:** "…I'll go first, then." |
+| 9 | 64–72s | The kids run out into the snowy forest following the yarn. A puppy barks in the distance. Title card. | ***Elemental Heroes: The Rescue of Baba Vera*** |
 
 **Baba's note:**
 > Mrak has taken me. Don't be scared.
@@ -107,15 +107,22 @@ About 70 seconds. It plays automatically on START. A **SKIP ▶** button appears
 Dialogue lines are short so they fit a pixel dialogue box with a character portrait.
 
 ### Level 1 · The Whispering Forest: Dimitrije
-**Start**
-- **Katarina:** "Red yarn! It's Baba's."
-- **Kosta:** "Everyone follow me."
-- **Vasilije:** "Why *you*?"
-- **Dimitrije:** "Okej, I'm going." *(already running)*
+**Start: who leads?**
+- **Kosta:** "Right. Everyone stay behind me."
+- **Vasilije:** "Why you? I'm way faster."
+- **Kosta:** "Because I'm the oldest."
+- **Vasilije:** "That's not even a rule!"
+- **Katarina:** "Baba said no arguing. It was literally the last thing she wrote."
+- **Dimitrije:** "Then I'll lead."
+- **Kosta & Vasilije:** "YOU?"
+- **Dimitrije:** "Baba said find her, not argue. You two are arguing. So I'll take us through the forest."
+- **Dimitrije:** "You can keep arguing behind me."
+- **Katarina:** "…Honestly? He's got a point."
 
 **Companion: the puppy.** A small puppy sits on the yarn, growling at a Rotroot.
-- **Dimitrije:** "Good boy! Want to come?" *(woof!)*
-- **Katarina:** "He's following Baba's scent. Dogs smell about ten thousand times better than we do."
+- **Dimitrije:** "Hey, buddy. You're guarding Baba's yarn?" *(woof!)*
+- **Katarina:** "He's following her scent. A dog's nose is about ten thousand times better than ours."
+- **Dimitrije:** "Then he's coming with me."
 
 **Knights**
 - **Wisp:** "The wind remembers you, little one. I am Wisp. Your stone woke me."
@@ -123,13 +130,16 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 
 **Elder Rotroot (mid-boss)**
 - **Elder Rotroot:** "ROOTS CRUSH SMALL FEET!"
-- **Dimitrije:** "Okej. Try it."
+- **Dimitrije:** "My feet are small. They're also fast."
+- **Vasilije:** "Get him, Dimi!"
 
 **Before the Blightwarden**
-- **Vasilije:** "My legs are dead."
-- **Kosta:** "Take five, everyone."
-- **Dimitrije:** "Okej. …I'll go ahead."
-- **Blightwarden:** "The old woman is gone, whelps. Mrak's birds took her over the mountains."
+- **Vasilije:** "My legs are dead. How are you not tired?"
+- **Dimitrije:** "Football. Every day."
+- **Kosta:** "Fine… you lead. But just this level."
+- **Dimitrije:** "Okej."
+- **Blightwarden:** "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains."
+- **Katarina:** "Over the mountains… that's where it snows."
 
 **Dimitrije lands the final blow.**
 
@@ -139,8 +149,10 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 > Put on your socks. The warm ones.
 > — Baba
 
-- **Katarina:** "Ali Vera…"
-- **Dimitrije:** "Okej." *(already putting on socks)*
+- **Katarina:** "Ali Vera! The warm ones are so itchy…"
+- **Dimitrije:** "I packed extra. Here."
+- **Vasilije:** "Wait. Why didn't she say well done to ME?"
+- **Kosta:** "Because Dimitrije did the whole level."
 
 ### Level 2 · The Frostfang Peaks: Katarina
 **Start**
@@ -227,7 +239,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 - **Kosta:** *(pulls off the captain's armband)* "Vasilije, you lead. I've got your back."
 - **Vasilije:** "…Together. On three!"
 - **Katarina:** "One!"
-- **Dimitrije:** "Okej!"
+- **Dimitrije:** "Two!"
 - **All:** "THREE!"
 
 **Kosta lands the final blow, with all four together.**
@@ -246,7 +258,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 3. Midnight. Fireworks over the snowy yard. The kids play football, and Mrak is in goal (badly).
    - **Baba:** "Make your beds before you sleep!"
    - **All:** "Ali Veraaa!"
-   - **Dimitrije:** "Okej."
+   - **Dimitrije:** *(already in bed)* "Night, Baba."
 4. Credits, styled like one of their films:
    - ***From the makers of "The Rise of the Karate Badass"***
    - ***Directed by Konstantin, Katarina, Vasilije and Dimitrije***

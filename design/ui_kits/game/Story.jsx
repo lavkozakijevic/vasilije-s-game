@@ -26,42 +26,57 @@ const SPRITE_PORTRAIT = {
 // ---------------------------------------------------------------- script
 const EH_DIALOGUE = {
   l1_start: [
-    { who: 'katarina', mood: 'happy', text: "Red yarn! It's Baba's." },
-    { who: 'kosta', text: 'Everyone follow me.' },
-    { who: 'vasilije', mood: 'ali', text: 'Why YOU?' },
-    { who: 'dimitrije', mood: 'okej', text: "Okej, I'm going." },
+    { who: 'kosta', text: 'Right. Everyone stay behind me.' },
+    { who: 'vasilije', mood: 'ali', text: "Why you? I'm way faster." },
+    { who: 'kosta', text: "Because I'm the oldest." },
+    { who: 'vasilije', mood: 'ali', text: "That's not even a rule!" },
+    { who: 'katarina', mood: 'ali', text: 'Baba said no arguing. It was literally the last thing she wrote.' },
+    { who: 'dimitrije', text: "Then I'll lead." },
+    { who: 'kosta_vasilije', mood: 'ali', text: 'YOU?' },
+    { who: 'dimitrije', text: 'Baba said find her, not argue. You two are arguing. So I’ll take us through the forest.' },
+    { who: 'dimitrije', mood: 'happy', text: 'You can keep arguing behind me.' },
+    { who: 'katarina', mood: 'happy', text: "…Honestly? He's got a point." },
   ],
   l1_elder: [
     { who: 'elder', text: 'ROOTS CRUSH SMALL FEET!' },
-    { who: 'dimitrije', mood: 'okej', text: 'Okej. Try it.' },
+    { who: 'dimitrije', text: 'My feet are small. They’re also fast.' },
+    { who: 'vasilije', mood: 'happy', text: 'Get him, Dimi!' },
   ],
   l1_blight: [
-    { who: 'vasilije', mood: 'ali', text: 'My legs are dead.' },
-    { who: 'kosta', text: 'Take five, everyone.' },
-    { who: 'dimitrije', mood: 'okej', text: "Okej. …I'll go ahead." },
-    { who: 'blightwarden', text: "The old woman is gone, whelps. Mrak's birds took her over the mountains." },
+    { who: 'vasilije', mood: 'ali', text: 'My legs are dead. How are you not tired?' },
+    { who: 'dimitrije', mood: 'happy', text: 'Football. Every day.' },
+    { who: 'kosta', text: 'Fine… you lead. But just this level.' },
+    { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
+    { who: 'blightwarden', text: "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains." },
+    { who: 'katarina', text: 'Over the mountains… that’s where it snows.' },
   ],
 };
 const EH_NOTES = {
   l1: {
     item: 'knitting needles, stuck in a tree',
     lines: ['Dimitrije, well done, my fast boy.', 'Katarina, it is cold where they are taking me.', 'Put on your socks. The warm ones.'],
-    replies: [{ who: 'katarina', mood: 'ali', text: 'Ali Vera…' }, { who: 'dimitrije', mood: 'okej', text: 'Okej.' }],
+    replies: [
+      { who: 'katarina', mood: 'ali', text: 'Ali Vera! The warm ones are so itchy…' },
+      { who: 'dimitrije', mood: 'happy', text: 'I packed extra. Here.' },
+      { who: 'vasilije', mood: 'ali', text: 'Wait. Why didn’t she say well done to ME?' },
+      { who: 'kosta', text: 'Because Dimitrije did the whole level.' },
+    ],
   },
 };
 const INTRO_NOTE = ['Mrak has taken me. Don’t be scared.', 'Each of you has a stone, and everything you need.', 'Follow my red yarn and bring me home before midnight.',
   'Share the cookies. Put on your socks.', 'And no fighting over who is captain. Kosta, Vasilije, I mean you.'];
 // scene: duration (s) and timed lines { at, who, mood, text } ; who null = narration caption
 const INTRO = [
-  { d: 6,  lines: [{ at: 1.0, who: null, text: "New Year's Eve." }] },
-  { d: 8,  lines: [{ at: 1.0, who: 'baba', mood: 'stern', text: 'Wash your hands before you eat!' }, { at: 3.6, who: 'all', text: 'Ali Vera!' }, { at: 5.6, who: 'dimitrije', mood: 'okej', text: 'Okej.' }] },
-  { d: 7,  lines: [{ at: 1.0, who: 'baba', mood: 'stern', text: 'And pick up your toys!' }, { at: 3.8, who: 'kosta_vasilije', mood: 'ali', text: 'Ali Veraaa…' }] },
+  { d: 6,  lines: [{ at: 1.0, who: null, text: "New Year's Eve, at Baba Vera's." }] },
+  { d: 8,  lines: [{ at: 1.0, who: 'baba', mood: 'stern', text: 'Wash your hands before you eat!' }, { at: 3.4, who: 'all', text: 'Ali Veraaa!' }, { at: 5.6, who: 'dimitrije', mood: 'happy', text: 'Already did.' }] },
+  { d: 8,  lines: [{ at: 0.8, who: 'baba', mood: 'stern', text: 'And pick up your toys. All of them.' }, { at: 3.2, who: 'vasilije', mood: 'ali', text: "They're Kosta's toys!" }, { at: 5.4, who: 'kosta', mood: 'ali', text: 'Half of them are YOURS.' }] },
   { d: 7,  lines: [] },
   { d: 5,  lines: [{ at: 2.2, who: 'baba', mood: 'worried', text: 'Children—!' }] },
-  { d: 9,  lines: [{ at: 2.0, who: null, text: 'Baba Vera was gone.' }] },
+  { d: 9,  lines: [{ at: 2.0, who: null, text: 'The chair was empty. Baba Vera was gone.' }] },
   { d: 13, lines: [], note: 1.5 },
-  { d: 8,  lines: [{ at: 0.6, who: 'all', text: 'Ali Vera!' }, { at: 2.2, who: 'dimitrije', mood: 'okej', text: '…Okej.' }, { at: 3.8, who: 'kosta', text: "Right. I'm captain." },
-                   { at: 5.4, who: 'vasilije', mood: 'ali', text: "No you're NOT." }, { at: 6.6, who: 'katarina', mood: 'ali', text: 'Can we just GO?' }] },
+  { d: 9,  lines: [{ at: 0.6, who: 'katarina', text: 'She says follow the red yarn.' }, { at: 2.4, who: 'kosta', text: "Okay. I'm the oldest, so I lead." },
+                   { at: 4.2, who: 'vasilije', mood: 'ali', text: "No way. I'm faster, so I lead." }, { at: 6.0, who: 'katarina', mood: 'ali', text: 'She JUST said no fighting!' },
+                   { at: 7.6, who: 'dimitrije', text: '…I’ll go first, then.' }] },
   { d: 7,  lines: [], title: 3.0 },
 ];
 
