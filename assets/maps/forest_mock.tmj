@@ -11,7 +11,7 @@
  "version": "1.10",
  "tiledversion": "1.10.2",
  "nextlayerid": 9,
- "nextobjectid": 81,
+ "nextobjectid": 83,
  "layers": [
   {
    "id": 1,
@@ -6513,6 +6513,28 @@
      "y": 118,
      "width": 16,
      "height": 16,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 81,
+     "name": "air",
+     "type": "knight_statue",
+     "x": 512,
+     "y": 257,
+     "width": 32,
+     "height": 32,
+     "rotation": 0,
+     "visible": true
+    },
+    {
+     "id": 82,
+     "name": "earth",
+     "type": "knight_statue",
+     "x": 1344,
+     "y": 225,
+     "width": 32,
+     "height": 32,
      "rotation": 0,
      "visible": true
     }
