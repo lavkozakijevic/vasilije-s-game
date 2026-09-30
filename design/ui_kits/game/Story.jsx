@@ -452,6 +452,15 @@ function useStoryKeys(handler) {
     window.addEventListener('keydown', k, true); return () => window.removeEventListener('keydown', k, true);
   }, []);
 }
+function useCutsceneLine() {
+  const [line, setLineS] = React.useState(null), [shown, setShown] = React.useState(0);
+  const hold = React.useRef(false), lineRef = React.useRef(null), shownRef = React.useRef(0); shownRef.current = shown;
+  React.useEffect(() => { setShown(0); if (!line) return; const t = setInterval(() => setShown(v => Math.min(T(line.text).length, v + 1)), 28); return () => clearInterval(t); }, [line]);
+  const setLine = ln => { lineRef.current = ln; if (ln) hold.current = true; setLineS(ln); };
+  const advance = () => { const ln = lineRef.current; if (!hold.current) return; if (ln && shownRef.current < T(ln.text).length) setShown(T(ln.text).length); else hold.current = false; };
+  const done = !!line && shown >= T(line.text).length;
+  return { line, shown, done, setLine, advance, hold };
+}
 function DialogueRunner({ lines, onDone }) {
   const [i, setI] = React.useState(0), [shown, setShown] = React.useState(0);
   const line = lines[i], done = line && shown >= T(line.text).length;
@@ -495,14 +504,15 @@ function NoteWait({ onNext }) {
 function IntroCutscene({ onDone }) {
   const cv = React.useRef(null);
   const [realTitle, setRealTitle] = React.useState(false), [hover, setHover] = React.useState(false);
-  const [line, setLine] = React.useState(null), [note, setNote] = React.useState(false), [title, setTitle] = React.useState(false), [skip, setSkip] = React.useState(false);
+  const CL = useCutsceneLine(), { line, setLine } = CL;
+  const [note, setNote] = React.useState(false), [title, setTitle] = React.useState(false), [skip, setSkip] = React.useState(false);
   const doneRef = React.useRef(false);
   const finish = () => { if (!doneRef.current) { doneRef.current = true; onDone(); } };
-  useStoryKeys(code => { if (code === 'Escape' || code === 'Enter' || code === 'NumpadEnter') finish(); });
+  useStoryKeys(code => { if (code === 'Escape' || code === 'Enter' || code === 'NumpadEnter') finish(); else CL.advance(); });
   React.useEffect(() => {
     let alive = true, raf = 0; const img = {}, real = {};
     const ld = (k, p) => new Promise(r => { const i = new Image(); i.onload = () => { img[k] = i; r(true); }; i.onerror = () => r(false); i.src = EHS_A + p; });
-    let t0 = null, ready = false; const began = performance.now(); let lastLine = null, lastNote = false, lastTitle = false;   // the clock starts once the art has loaded, so stand-ins never flash
+    let t0 = null, ready = false; const began = performance.now(); let clock = 0, lastNow = 0; let lastLine = null, lastNote = false, lastTitle = false;   // the clock starts once the art has loaded, so stand-ins never flash
     const starts = []; let acc = 0; for (const s of INTRO) { starts.push(acc); acc += s.d; } const total = acc;
     const bgs = ['sky', 'far', 'mid', 'near'].map(k => ld(k, `backgrounds/forest/bg_forest_${k}.png`));
     fetch(EHS_A + 'cutscenes/intro/intro.json').then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
@@ -590,8 +600,8 @@ function IntroCutscene({ onDone }) {
     };
     const loop = () => {
       if (!alive) return;
-      if (t0 == null) { R(PAL.ink, 0, 0, 640, 360); if (ready || performance.now() - began > 6000) t0 = performance.now(); raf = requestAnimationFrame(loop); return; }
-      const T = (performance.now() - t0) / 1000;
+      if (t0 == null) { R(PAL.ink, 0, 0, 640, 360); if (ready || performance.now() - began > 6000) { t0 = performance.now(); lastNow = t0; } raf = requestAnimationFrame(loop); return; }
+      const now = performance.now(); if (!CL.hold.current) clock += (now - lastNow) / 1000; lastNow = now; const T = clock;   // the story clock waits while a line (or Baba's note) is up
       if (T >= total) { finish(); return; }
       let n = starts.findIndex((s, i) => T >= s && (i === starts.length - 1 || T < starts[i + 1])); const t = T - starts[n], S = INTRO[n];
       g.globalAlpha = 1; R(PAL.ink, 0, 0, 640, 360);
@@ -599,7 +609,7 @@ function IntroCutscene({ onDone }) {
       else { const lift = [1, 2, 4, 5, 7].includes(n) ? 72 : 0; g.save(); g.translate(0, -lift); scenes[n](t); g.restore(); }
       const fade = Math.min(1, t / 0.4, (S.d - t) / 0.3); if (fade < 1 && n !== 4) { g.globalAlpha = 1 - Math.max(0, fade); R(PAL.ink, 0, 0, 640, 360); g.globalAlpha = 1; }
       const ln = S.lines.filter(l => l.at <= t).pop() || null; if (ln !== lastLine) { lastLine = ln; setLine(ln); }
-      const nt = S.note != null && t >= S.note; if (nt !== lastNote) { lastNote = nt; setNote(nt); }
+      const nt = S.note != null && t >= S.note; if (nt !== lastNote) { lastNote = nt; setNote(nt); if (nt) CL.hold.current = true; }
       const tt = S.title != null && t >= S.title && (!real[n] || window.EH_LANG === 'sr'); if (tt !== lastTitle) { lastTitle = tt; setTitle(tt); }
       raf = requestAnimationFrame(loop);
     };
@@ -607,15 +617,16 @@ function IntroCutscene({ onDone }) {
     return () => { alive = false; cancelAnimationFrame(raf); clearTimeout(setT); };
   }, []);
   return (
-    <div style={{ position: 'absolute', inset: 0, background: PAL.ink }}>
+    <div style={{ position: 'absolute', inset: 0, background: PAL.ink }} onClick={() => CL.advance()}>
       <canvas ref={cv} width={640} height={360} style={{ width: 1280, height: 720, imageRendering: 'pixelated', display: 'block' }} />
-      {note && <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', animation: 'ehFadeIn .6s' }}><BabaNote lines={INTRO_NOTE} /></div>}
+      {note && <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', animation: 'ehFadeIn .6s' }}><BabaNote lines={INTRO_NOTE} />
+        <div style={{ position: 'absolute', right: 40, bottom: 32, fontFamily: 'var(--font-ui)', fontSize: 18, color: PAL.gold, textShadow: 'var(--text-outline)', animation: 'ehBlink 1s steps(2) infinite' }}>SPACE ▶</div></div>}
       {title && <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', animation: 'ehFadeIn 1s' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 110, lineHeight: 1, color: PAL.gold, textShadow: `-6px 0 0 ${PAL.ink},6px 0 0 ${PAL.ink},0 -6px 0 ${PAL.ink},0 6px 0 ${PAL.ink},6px 12px 0 ${PAL.ember}` }}>{T('Elemental Heroes')}</div>
           <div style={{ fontFamily: 'var(--font-ui)', fontSize: 30, color: PAL.bone, textShadow: 'var(--text-outline)', textTransform: 'uppercase', marginTop: 18 }}>{T('The Rescue of Baba Vera')}</div>
         </div></div>}
-      <DialogueBox line={line} pos={line && [1, 7].includes(INTRO.findIndex(sc => sc.lines.includes(line))) ? 'top' : 'bottom'} />
+      <DialogueBox line={line} shown={CL.shown} done={CL.done} interactive pos={line && [1, 7].includes(INTRO.findIndex(sc => sc.lines.includes(line))) ? 'top' : 'bottom'} />
       {skip && <button onClick={finish} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} aria-label="Skip intro"
         style={{ position: 'absolute', right: 28, top: 24, width: 160, height: 40, padding: 0, border: 'none', cursor: 'pointer', animation: 'ehFadeIn .4s', imageRendering: 'pixelated',
           background: `url(${EHS_A}ui/ui_skip_button.png) ${hover ? '-160px' : '0'} 0 / 320px 40px no-repeat` }}>
@@ -642,14 +653,15 @@ const ENDING = [
 ];
 function EndingCutscene({ onDone }) {
   const cv = React.useRef(null);
-  const [line, setLine] = React.useState(null), [credits, setCredits] = React.useState(null), [skip, setSkip] = React.useState(false), [hover, setHover] = React.useState(false);
+  const CL = useCutsceneLine(), { line, setLine } = CL;
+  const [credits, setCredits] = React.useState(null), [skip, setSkip] = React.useState(false), [hover, setHover] = React.useState(false);
   const doneRef = React.useRef(false);
   const finish = () => { if (!doneRef.current) { doneRef.current = true; onDone && onDone(); } };
-  useStoryKeys(code => { if (code === 'Escape' || code === 'Enter' || code === 'NumpadEnter') finish(); });
+  useStoryKeys(code => { if (code === 'Escape' || code === 'Enter' || code === 'NumpadEnter') finish(); else CL.advance(); });
   React.useEffect(() => {
     let alive = true, raf = 0; const img = {};
     const ld = (k, p) => new Promise(r => { const i = new Image(); i.onload = () => { img[k] = i; r(true); }; i.onerror = () => r(false); i.src = EHS_A + p; });
-    let t0 = null, ready = false; const began = performance.now(); let lastLine = null, lastCred = null;
+    let t0 = null, ready = false; const began = performance.now(); let clock = 0, lastNow = 0; let lastLine = null, lastCred = null;
     const starts = []; let acc = 0; for (const s of ENDING) { starts.push(acc); acc += s.d; } const total = acc;
     fetch(EHS_A + 'cutscenes/ending/ending.json').then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
       Promise.all(!j ? [] : j.scenes.slice(0, ENDING.length).flatMap((sc, n) => sc.layers.map(l => ld(`L${n}_${l.name}`, 'cutscenes/ending/' + l.file)))).then(() => { ready = true; });
@@ -672,8 +684,8 @@ function EndingCutscene({ onDone }) {
     const loop = () => {
       if (!alive) return;
       g.fillStyle = PAL.ink;
-      if (t0 == null) { g.fillRect(0, 0, 640, 360); if (ready || performance.now() - began > 6000) t0 = performance.now(); raf = requestAnimationFrame(loop); return; }
-      const T = (performance.now() - t0) / 1000;
+      if (t0 == null) { g.fillRect(0, 0, 640, 360); if (ready || performance.now() - began > 6000) { t0 = performance.now(); lastNow = t0; } raf = requestAnimationFrame(loop); return; }
+      const now = performance.now(); if (!CL.hold.current) clock += (now - lastNow) / 1000; lastNow = now; const T = clock;   // the story clock waits while a line (or Baba's note) is up
       if (T >= total) { finish(); return; }
       const n = starts.findIndex((st, i) => T >= st && (i === starts.length - 1 || T < starts[i + 1])), t = T - starts[n], S = ENDING[n];
       g.globalAlpha = 1; g.fillRect(0, 0, 640, 360); draw(n, t);
@@ -687,7 +699,7 @@ function EndingCutscene({ onDone }) {
   }, []);
   const credStyle = { position: 'absolute', left: 0, right: 0, top: 110, textAlign: 'center', fontFamily: 'var(--font-ui)', color: PAL.bone, textShadow: 'var(--text-outline)', animation: 'ehFadeIn .8s' };
   return (
-    <div style={{ position: 'absolute', inset: 0, background: PAL.ink }}>
+    <div style={{ position: 'absolute', inset: 0, background: PAL.ink }} onClick={() => CL.advance()}>
       <canvas ref={cv} width={640} height={360} style={{ width: 1280, height: 720, imageRendering: 'pixelated', display: 'block' }} />
       {credits === 'makers' && <div key="m" style={credStyle}>
         <div style={{ fontSize: 26, color: PAL.gold }}>{T('FROM THE MAKERS OF')}</div>
@@ -695,7 +707,7 @@ function EndingCutscene({ onDone }) {
       {credits === 'directed' && <div key="d" style={credStyle}>
         <div style={{ fontSize: 30, color: PAL.gold }}>{T('DIRECTED BY')}</div>
         <div style={{ fontSize: 34, marginTop: 30, lineHeight: 1.5 }}>{T('KONSTANTIN, KATARINA,')}<br />{T('VASILIJE AND DIMITRIJE')}</div></div>}
-      <DialogueBox line={line} pos="top" />
+      <DialogueBox line={line} shown={CL.shown} done={CL.done} interactive pos="top" />
       {skip && <button onClick={finish} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} aria-label="Skip ending"
         style={{ position: 'absolute', right: 28, bottom: 24, width: 160, height: 40, padding: 0, border: 'none', cursor: 'pointer', animation: 'ehFadeIn .4s', imageRendering: 'pixelated',
           background: `url(${EHS_A}ui/ui_skip_button.png) ${hover ? '-160px' : '0'} 0 / 320px 40px no-repeat` }}>
