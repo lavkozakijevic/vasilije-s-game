@@ -325,18 +325,24 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           else { PUP.vy = Math.min(7, PUP.vy + 0.35); if (PUP.vy < 0 && T.solid.has(tileAt(PUP.x + 16, PUP.y + PUP.vy))) PUP.vy = 0; }
           PUP.y += PUP.vy;
         };
+          if (PUP.st === 'follow' && T.solid.has(tileAt(PUP.x + 16, PUP.y + 16)) && !H.dead) { fx('fx_dust_land', 4, 12, H.x - 18 * H.face - 8, H.y + 4, 32); PUP.x = H.x - 18 * H.face; PUP.y = H.y - 1; PUP.vy = 0; }
           const isOwner = ROSTER[H.hero].id === PUP.owner && !(TRAP && TRAP.st === 'rising');   // in the trap the fox runs off to fetch the others
           if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) {
               if (isOwner) { PUP.st = 'follow'; story(LV.id + '_' + PUP.id); } else if (!PUP.hinted) { PUP.hinted = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.petWaits[PUP.id] : `THE ${PUP.id.toUpperCase()} WAITS FOR ${PUP.ownerName} · PRESS ${PUP.key}`); } } }
           else if (!isOwner && PUP.st !== 'gone') {   // not the owner: run off the left edge of the screen
             if (PUP.st !== 'away') { PUP.st = 'away'; PUP.vy = 0; }
             PUP.barkT = 0; PUP.spT = 0; PUP.face = -1;
-            pupStep(-3.2, false);
-            if (PUP.x < cam - 48) PUP.st = 'gone';
+            const px0 = PUP.x; pupStep(-3.2, false);
+            PUP.blk = PUP.x === px0 ? (PUP.blk || 0) + 1 : 0;   // blocked by a wall it can't hop: just slip away
+            if (PUP.x < cam - 48 || PUP.blk > 20) { PUP.st = 'gone'; PUP.blk = 0; }
           }
           else if (!isOwner) { /* gone: off screen until the owner is back */ }
           else {
-            if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; for (let t = Math.max(0, Math.floor(H.y / 32)); t < MH; t++) { const g = surface(PUP.x + 16, t); if (g != null) { PUP.y = g - 32; break; } } }   // re-enter standing on the ground   // owner is back: run in from the left
+            if (PUP.st === 'gone') {   // run back in from the left, standing on the open ground there nearest the hero's height
+              PUP.x = cam - 40; let best = null;
+              for (let t = 1; t < MH; t++) { const g = surface(PUP.x + 16, t); if (g != null && !T.solid.has(tileAt(PUP.x + 16, (t - 1) * 32)) && (best == null || Math.abs(g - H.y - 32) < Math.abs(best - H.y - 32))) best = g; }
+              if (best == null || Math.abs(best - H.y - 32) > 96) { PUP.x = H.x - 18 * H.face; best = H.y + 31; }   // no ground at the edge near the hero: appear beside the hero instead
+              PUP.y = best - 32; PUP.vy = 0; PUP.stuck = 0; }   // re-enter standing on the ground   // owner is back: run in from the left
             PUP.st = 'follow'; if (PUP.vy == null) { PUP.vy = 0; PUP.stuck = 0; }
             const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 700 || Math.abs(H.y - PUP.y) > 200;
             if (far || (PUP.stuck = PUP.stuck || 0, PUP.stuck = Math.abs(dx) > 60 || H.y - 1 - PUP.y < -40 ? PUP.stuck + 1 : 0) > 240) { const puff = () => { fx('fx_dust_land', 4, 12, PUP.x - 8, PUP.y + 4, 32); fx('fx_dust_land', 4, 12, PUP.x + 8, PUP.y + 4, 32); }; puff(); PUP.x = tx; PUP.y = H.y - 1; PUP.vy = 0; PUP.stuck = 0; puff(); }   // lost or stuck: catch up
