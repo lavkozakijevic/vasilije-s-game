@@ -1,0 +1,44 @@
+{
+ "id": "hazard_icicle",
+ "type": "hazard",
+ "name": "Falling icicle",
+ "biome": "peaks",
+ "frameWidth": 16,
+ "frameHeight": 32,
+ "origin": {
+  "x": 8,
+  "y": 0,
+  "note": "top-centre: hang it from a ceiling tile bottom edge"
+ },
+ "hitbox": {
+  "x": 4,
+  "y": 3,
+  "w": 8,
+  "h": 24
+ },
+ "damage": 1,
+ "frames": {
+  "hang": 0,
+  "wobble": [
+   1,
+   2,
+   3
+  ],
+  "fall": 4
+ },
+ "behavior": "hang until the hero passes below (±24px); wobble frames 1-3 at 10 fps for 0.6s; then fall (frame 4) with gravity 900px/s²; on ground contact spawn hazard_icicle_shatter (bottom-centre) and remove",
+ "shatter": {
+  "file": "hazard_icicle_shatter.png",
+  "frameWidth": 32,
+  "frameHeight": 16,
+  "frames": 4,
+  "fps": 14,
+  "loop": false,
+  "anchor": "bottom-centre"
+ },
+ "files": [
+  "hazard_icicle.png",
+  "hazard_icicle_shatter.png"
+ ],
+ "palette": "../../palette/elemental16.hex"
+}

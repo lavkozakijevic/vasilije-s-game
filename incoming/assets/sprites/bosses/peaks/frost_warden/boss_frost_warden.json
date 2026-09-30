@@ -1,0 +1,163 @@
+{
+ "id": "boss_frost_warden",
+ "type": "boss",
+ "name": "Frost Warden",
+ "biome": "peaks",
+ "frameWidth": 96,
+ "frameHeight": 96,
+ "facing": "right",
+ "note": "Draw flipped (face left) when the hero enters from the left.",
+ "origin": {
+  "x": 46,
+  "y": 95
+ },
+ "hitbox": {
+  "x": 18,
+  "y": 12,
+  "w": 58,
+  "h": 83
+ },
+ "weakpoint": {
+  "x": 41,
+  "y": 38,
+  "w": 12,
+  "h": 28,
+  "note": "crack in the chest; glows gold when exposed (telegraph, hurt, attack wind-ups). Only take damage (or double damage) while it glows."
+ },
+ "hp": 24,
+ "animations": {
+  "idle": {
+   "file": "boss_frost_warden_idle.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "telegraph": {
+   "file": "boss_frost_warden_telegraph.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 4,
+   "fps": 4,
+   "loop": true,
+   "notes": "chest crack glows gold; loop ~1s"
+  },
+  "attack_spikes": {
+   "file": "boss_frost_warden_attack_spikes.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "frame 2 = fists hit the ground"
+  },
+  "attack_breath": {
+   "file": "boss_frost_warden_attack_breath.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "notes": "spawn fx_frost_breath on frame 2, hold frames 2-4"
+  },
+  "hurt": {
+   "file": "boss_frost_warden_hurt.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "boss_frost_warden_death.png",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "notes": "hold the last frame (ice pile)"
+  }
+ },
+ "attackPattern": [
+  {
+   "name": "Ice Spike Line",
+   "sequence": [
+    "telegraph (~1s): chest crack glows",
+    "fx_warning_frost plays at 4 spots in front of the boss during telegraph",
+    "attack_spikes frame 2 = impact: spawn fx_ice_spike at each warned spot, 60ms apart, outward",
+    "spike frames 2-3 are the damaging window"
+   ],
+   "targets": "4 spots, 40px apart, starting 32px in front",
+   "cooldownSec": 2.4
+  },
+  {
+   "name": "Freezing Breath",
+   "sequence": [
+    "telegraph (~1s)",
+    "attack_breath: on frame 2 spawn fx_frost_breath with its left-centre at the mouth",
+    "breath frames 2-4 hurt; hero is slowed 50% for 1.5s on hit"
+   ],
+   "mouthOffset": {
+    "x": 69,
+    "y": 29,
+    "note": "relative to frame top-left facing right"
+   },
+   "cooldownSec": 3
+  }
+ ],
+ "phase2": "below 50% HP: 6 spikes, telegraph shortened to 0.6s, alternate attacks",
+ "onDeath": "death 8f, hold the last frame (pile of ice and snow); the red scarf item appears on the pile",
+ "fx": {
+  "iceSpike": {
+   "file": "fx_ice_spike.png",
+   "frameWidth": 32,
+   "frameHeight": 64,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "anchor": "bottom-center",
+   "hurtFrames": [
+    2,
+    3
+   ],
+   "hitbox": {
+    "x": 8,
+    "y": 6,
+    "w": 16,
+    "h": 58
+   }
+  },
+  "frostBreath": {
+   "file": "fx_frost_breath.png",
+   "frameWidth": 96,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "anchor": "left-center",
+   "hurtFrames": [
+    2,
+    3,
+    4
+   ],
+   "hitbox": {
+    "x": 0,
+    "y": 4,
+    "w": 96,
+    "h": 24
+   }
+  },
+  "warning": {
+   "file": "fx_warning_frost.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "anchor": "bottom-center",
+   "hurts": false
+  }
+ },
+ "palette": "elemental16.hex"
+}

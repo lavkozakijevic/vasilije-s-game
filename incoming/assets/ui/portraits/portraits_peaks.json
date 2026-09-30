@@ -1,0 +1,24 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "note": "additions for level 2; merge into portraits.json",
+ "portraits": [
+  {
+   "file": "portrait_frost_warden_neutral.png",
+   "speaker": "Frost Warden",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_yeti_cub_neutral.png",
+   "speaker": "Yeti Cub",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_yeti_cub_sad.png",
+   "speaker": "Yeti Cub",
+   "expression": "sad"
+  }
+ ]
+}

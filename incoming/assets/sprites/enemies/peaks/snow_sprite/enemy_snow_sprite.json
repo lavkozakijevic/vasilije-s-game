@@ -1,0 +1,81 @@
+{
+ "id": "enemy_snow_sprite",
+ "type": "enemy",
+ "name": "Snow Sprite",
+ "biome": "peaks",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 16,
+  "note": "centre (flying)"
+ },
+ "hitbox": {
+  "x": 9,
+  "y": 8,
+  "w": 14,
+  "h": 14
+ },
+ "hp": 1,
+ "behavior": "hovers (bob 4px, drifts toward the hero at 30px/s, keeps ~120px away); every 2.4s play attack and throw fx_snowball on frame 3 in an arc toward the hero (vx ~110px/s, vy -200px/s, gravity 600px/s²); the snowball pops into fx_snowball_burst on contact",
+ "animations": {
+  "fly": {
+   "file": "enemy_snow_sprite_fly.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "attack": {
+   "file": "enemy_snow_sprite_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "release the snowball on frame 3"
+  },
+  "hurt": {
+   "file": "enemy_snow_sprite_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_snow_sprite_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "fx_snowball.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 18,
+    "y": 4
+   }
+  },
+  "burst": {
+   "file": "fx_snowball_burst.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 14,
+   "loop": false
+  }
+ },
+ "palette": "elemental16.hex"
+}

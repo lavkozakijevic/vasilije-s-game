@@ -1,0 +1,66 @@
+{
+ "id": "enemy_ice_wolf",
+ "type": "enemy",
+ "name": "Ice Wolf",
+ "biome": "peaks",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 4,
+  "y": 14,
+  "w": 24,
+  "h": 17
+ },
+ "hp": 2,
+ "speedPxPerSec": 60,
+ "behavior": "patrol; when the hero is within ~96px ahead, play lunge: hold frame 0 for 0.3s, then jump toward the hero (vx 220px/s, vy -160px/s) on frames 1-2, land on frame 3, 0.8s cooldown",
+ "animations": {
+  "idle": {
+   "file": "enemy_ice_wolf_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "enemy_ice_wolf_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  "lunge": {
+   "file": "enemy_ice_wolf_lunge.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "notes": "frame 0 = telegraph (crouch, glowing eyes), hold ~0.3s"
+  },
+  "hurt": {
+   "file": "enemy_ice_wolf_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_ice_wolf_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 8,
+   "loop": false
+  }
+ },
+ "palette": "elemental16.hex"
+}

@@ -1,0 +1,1345 @@
+{
+ "type": "tileset",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "name": "peaks",
+ "tilewidth": 32,
+ "tileheight": 32,
+ "tilecount": 72,
+ "columns": 8,
+ "margin": 0,
+ "spacing": 0,
+ "image": "tileset_peaks.png",
+ "imagewidth": 256,
+ "imageheight": 288,
+ "tiles": [
+  {
+   "id": 0,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_tl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 1,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_t"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_tr"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_nw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_ne"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "slope_up"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope_dir",
+     "type": "string",
+     "value": "up"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "slope_down"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope_dir",
+     "type": "string",
+     "value": "down"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_single"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_l"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_r"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_sw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_se"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c_crystals"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c_bone"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_pillar"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_bl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_b"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_br"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ice_tl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slippery",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "friction",
+     "type": "float",
+     "value": 0.15
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ice_t"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slippery",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "friction",
+     "type": "float",
+     "value": 0.15
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ice_tr"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slippery",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "friction",
+     "type": "float",
+     "value": 0.15
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ice_c"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slippery",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "friction",
+     "type": "float",
+     "value": 0.15
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ice_single"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slippery",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "friction",
+     "type": "float",
+     "value": 0.15
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "rope_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "rope_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "rope_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_0"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 0
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_1"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 1
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_2"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 2
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_3"
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 3
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "pond_ice"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slippery",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "friction",
+     "type": "float",
+     "value": 0.15
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "water_body"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "water",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "water_surface_0"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "water",
+     "type": "bool",
+     "value": true
+    }
+   ],
+   "animation": [
+    {
+     "tileid": 36,
+     "duration": 160
+    },
+    {
+     "tileid": 37,
+     "duration": 160
+    },
+    {
+     "tileid": 38,
+     "duration": 160
+    },
+    {
+     "tileid": 39,
+     "duration": 160
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "water_surface_1"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "water",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "water_surface_2"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "water",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "water_surface_3"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "water",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ice_spikes"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_icicles_hanging"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "note",
+     "type": "string",
+     "value": "ceiling decor; for falling icicles use sprites/hazards/hazard_icicle"
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_idle"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 43,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_0"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 44,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_1"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 45,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_2"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 46,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_3"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 47,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_end_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 48,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 49,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_interior"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 50,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 51,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_end_mid"
+    }
+   ]
+  },
+  {
+   "id": 52,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_end_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 53,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_interior_glow"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 54,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cave_facade"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    }
+   ]
+  },
+  {
+   "id": 55,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "branch_l"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 56,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "branch_m"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 57,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "branch_r"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 58,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "branch_fringe"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 59,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "branch_fill"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 60,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_pine"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 61,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_rock"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 62,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_snowman"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 63,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_signpost"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 64,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_lantern"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 65,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_crystals"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 66,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_wolf_tracks"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 67,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_sled"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 68,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_yarn_branch"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 69,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_snow_tuft"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 70,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_pines_small"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  }
+ ]
+}

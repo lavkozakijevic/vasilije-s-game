@@ -1,0 +1,107 @@
+{
+ "id": "boss_yeti_cub",
+ "type": "miniboss",
+ "name": "Snow Yeti Cub",
+ "biome": "peaks",
+ "frameWidth": 64,
+ "frameHeight": 64,
+ "facing": "right",
+ "note": "Guards a bridge. Grumpy, not evil: no death, it sulks and waves.",
+ "origin": {
+  "x": 32,
+  "y": 63
+ },
+ "hitbox": {
+  "x": 14,
+  "y": 12,
+  "w": 38,
+  "h": 51
+ },
+ "hp": 8,
+ "animations": {
+  "idle": {
+   "file": "boss_yeti_cub_idle.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "walk": {
+   "file": "boss_yeti_cub_walk.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  "stomp": {
+   "file": "boss_yeti_cub_stomp.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "frame 2 = impact: shake the camera ~0.3s and drop snow"
+  },
+  "throw": {
+   "file": "boss_yeti_cub_throw.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "release fx_big_snowball on frame 2"
+  },
+  "hurt": {
+   "file": "boss_yeti_cub_hurt.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "defeat": {
+   "file": "boss_yeti_cub_defeat.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "fps": 6,
+   "loop": false,
+   "notes": "0 wobble, 1 sits down, 2-3 sulks, 4-5 waves goodbye (loop 4-5 if you like)"
+  }
+ },
+ "pattern": [
+  {
+   "move": "Stomp",
+   "sequence": "stomp; on frame 2 shake the camera, drop 3-4 falling snow clumps (fx_snowball) from the top of the screen near the hero",
+   "damage": 1
+  },
+  {
+   "move": "Big snowball",
+   "sequence": "throw; spawn fx_big_snowball on frame 2 at (46, 28) rolling toward the hero at 150px/s, bouncing once",
+   "damage": 1
+  },
+  {
+   "move": "Walk",
+   "sequence": "waddle toward the hero for 1.2s"
+  }
+ ],
+ "onDefeat": "play defeat once, then loop frames 4-5; open the bridge",
+ "fx": {
+  "bigSnowball": {
+   "file": "fx_big_snowball.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true,
+   "spawnOnThrowFrame": 2,
+   "spawnOffset": {
+    "x": 46,
+    "y": 28
+   }
+  }
+ },
+ "palette": "elemental16.hex"
+}

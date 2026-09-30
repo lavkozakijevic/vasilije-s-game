@@ -1,0 +1,80 @@
+{
+ "id": "enemy_frostling",
+ "type": "enemy",
+ "name": "Frostling",
+ "biome": "peaks",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 6,
+  "y": 11,
+  "w": 20,
+  "h": 20
+ },
+ "hp": 3,
+ "speedPxPerSec": 24,
+ "behavior": "walks and turns at ledges/walls. When a projectile approaches from the front: shield_up, then shield_hold for 1.2s; projectiles hitting the shield from the front are blocked, except fire and light, which break the shield (drop to walk and take damage). Hits from behind always damage.",
+ "shield": {
+  "hitbox": {
+   "x": 26,
+   "y": 11,
+   "w": 5,
+   "h": 20
+  },
+  "blocks": "front projectiles",
+  "brokenBy": [
+   "fire",
+   "light"
+  ]
+ },
+ "animations": {
+  "walk": {
+   "file": "enemy_frostling_walk.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  "shield_up": {
+   "file": "enemy_frostling_shield_up.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 3,
+   "fps": 12,
+   "loop": false,
+   "notes": "play when shot from the front, then shield_hold"
+  },
+  "shield_hold": {
+   "file": "enemy_frostling_shield_hold.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 6,
+   "loop": true
+  },
+  "hurt": {
+   "file": "enemy_frostling_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_frostling_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "shatters"
+  }
+ },
+ "palette": "elemental16.hex"
+}
