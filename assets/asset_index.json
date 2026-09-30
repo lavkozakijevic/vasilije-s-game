@@ -31,6 +31,136 @@
    "notes": "foreground, parallax 1.2, drawn above hero + tiles"
   },
   {
+   "file": "cutscenes/ending/ending_01_scarf_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_01_scarf_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_01_scarf_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_02_kitchen_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_02_kitchen_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_02_kitchen_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_03_fireworks_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_03_fireworks_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_03_fireworks_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_04_credits_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_04_credits_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_04_credits_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/ending/ending_04_credits_title.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
    "file": "cutscenes/intro/intro_01_village_bg.png",
    "width": 640,
    "height": 360,
@@ -486,6 +616,323 @@
    "fps": 0,
    "loop": false,
    "notes": "fill area x20 y4 w184 h8"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/boss_mrak_defeat.png",
+   "width": 1024,
+   "height": 128,
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "notes": "shrinks and dithers away; hold on an empty frame, then show mrak_small"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/boss_mrak_hurt.png",
+   "width": 256,
+   "height": 128,
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 white flash"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/boss_mrak_idle.png",
+   "width": 512,
+   "height": 128,
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/boss_mrak_phase_change.png",
+   "width": 768,
+   "height": 128,
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "notes": "burst ring on frames 2-4; switch to phase 2 after"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/boss_mrak_shadow_attack.png",
+   "width": 768,
+   "height": 128,
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "notes": "spawn fx_mrak_shadow_wave on frame 3 at the front hand, ground level"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/boss_mrak_summon.png",
+   "width": 768,
+   "height": 128,
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "notes": "phase 2; warden colours (leaf, frost, flame) orbit him"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/boss_mrak_telegraph.png",
+   "width": 512,
+   "height": 128,
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "hands gather void; play before shadow_attack"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/fx_mrak_orb.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/fx_mrak_shadow_wave.png",
+   "width": 384,
+   "height": 32,
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "notes": "travels along the ground; origin bottom-left"
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/npc_mrak_small_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/bosses/keep/mrak/npc_mrak_small_shiver.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_cheetah/companion_cheetah_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_cheetah/companion_cheetah_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/companions/companion_cheetah/companion_cheetah_run.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_cheetah/companion_cheetah_special.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/companions/companion_fire_fox/companion_fire_fox_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_fire_fox/companion_fire_fox_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/companions/companion_fire_fox/companion_fire_fox_run.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_fire_fox/companion_fire_fox_special.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_carry_katarina.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_carry_konstantin.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_carry_vasilije.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_carry.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_dive.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_fly.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_glide.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 4,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_golden_eagle/companion_golden_eagle_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_puppy/companion_puppy_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_puppy/companion_puppy_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/companions/companion_puppy/companion_puppy_run.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/companions/companion_puppy/companion_puppy_special.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false
   },
   {
    "file": "sprites/enemies/forest/mothwing/enemy_mothwing_attack.png",
@@ -1643,6 +2090,17 @@
    "loop": true
   },
   {
+   "file": "sprites/items/decal_yarn_trail.png",
+   "width": 48,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 3,
+   "fps": 0,
+   "loop": false,
+   "notes": "frames: 0 straight (left-right), 1 curve (left edge to bottom edge), 2 knot; rotate/mirror in the map for other directions"
+  },
+  {
    "file": "sprites/items/fx_pickup_coin.png",
    "width": 64,
    "height": 16,
@@ -1662,6 +2120,39 @@
    "fps": 14,
    "loop": false,
    "notes": "centered on pickup"
+  },
+  {
+   "file": "sprites/items/item_baba_family_photo.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "end of Cinderdeep Caves"
+  },
+  {
+   "file": "sprites/items/item_baba_knitting_needles.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "end of Forest"
+  },
+  {
+   "file": "sprites/items/item_baba_red_scarf.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "end of Frostfang Peaks"
   },
   {
    "file": "sprites/items/item_coin_spin.png",
@@ -1694,6 +2185,16 @@
    "fps": 8,
    "loop": true,
    "notes": "restores 1 heart"
+  },
+  {
+   "file": "sprites/items/item_yarn_ball.png",
+   "width": 96,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 6,
+   "fps": 10,
+   "loop": true
   },
   {
    "file": "sprites/npc/baba_vera/npc_baba_vera_captive.png",
@@ -1797,6 +2298,126 @@
    "fps": 8,
    "loop": true,
    "notes": "level end trigger: inner opening x15-48, y20-94"
+  },
+  {
+   "file": "sprites/props/prop_football.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "notes": "roll: advance a frame every ~6px moved"
+  },
+  {
+   "file": "sprites/props/prop_poster_karate_badass.png",
+   "width": 32,
+   "height": 48,
+   "frameWidth": 32,
+   "frameHeight": 48,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "sprites/statues/fx_statue_awaken.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "overlay on the statue; swap statue for hero on frame 3"
+  },
+  {
+   "file": "sprites/statues/statue_knight_air.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Wisp"
+  },
+  {
+   "file": "sprites/statues/statue_knight_earth.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Basalt"
+  },
+  {
+   "file": "sprites/statues/statue_knight_fire.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Cinder"
+  },
+  {
+   "file": "sprites/statues/statue_knight_ice.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Rime"
+  },
+  {
+   "file": "sprites/statues/statue_knight_light.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Aurel"
+  },
+  {
+   "file": "sprites/statues/statue_knight_lightning.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Jolt"
+  },
+  {
+   "file": "sprites/statues/statue_knight_shadow.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Umbra"
+  },
+  {
+   "file": "sprites/statues/statue_knight_water.png",
+   "width": 32,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "stone Brine"
   },
   {
    "file": "tilesets/forest/tileset_forest.png",
@@ -2141,6 +2762,17 @@
    "loop": false
   },
   {
+   "file": "ui/ui_map_marker_baba.png",
+   "width": 32,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 2,
+   "fps": 3,
+   "loop": true,
+   "notes": "draw at 2x on the map; anchor bottom-centre (8,15)"
+  },
+  {
    "file": "ui/ui_name_tag.png",
    "width": 32,
    "height": 16,
@@ -2161,6 +2793,17 @@
    "loop": false
   },
   {
+   "file": "ui/ui_sketchbook.png",
+   "width": 320,
+   "height": 240,
+   "frameWidth": 320,
+   "frameHeight": 240,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "open-book background for the creature encyclopedia; left page x 8-158, right page x 162-312, ruled every 12px from y 20"
+  },
+  {
    "file": "ui/ui_skip_button.png",
    "width": 160,
    "height": 20,
@@ -2170,6 +2813,27 @@
    "fps": 0,
    "loop": false,
    "notes": "frame 0 normal, frame 1 hover"
+  },
+  {
+   "file": "ui/ui_world_map_labels.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "transparent overlay; draw over ui_world_map"
+  },
+  {
+   "file": "ui/ui_world_map.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
   }
  ]
 }
