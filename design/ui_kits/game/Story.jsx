@@ -21,8 +21,8 @@ const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba:
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
 const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
-// vasilije's 'ali vera' portrait has both fists up; until Claude Design redraws it he uses his neutral face
-const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = { 'vasilije|ali': 'neutral' }, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
+// PORTRAIT_SKIP can stand a mood in for one that needs redrawing, e.g. { 'vasilije|ali': 'neutral' }
+const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = {}, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
 const SPRITE_PORTRAIT = {
   elder:        { src: 'sprites/bosses/forest/elder_rotroot/boss_rotroot_idle.png', crop: [6, 2, 52, 52] },
   blightwarden: { src: 'sprites/bosses/forest/blightwarden/boss_blightwarden_idle.png', crop: [18, 4, 64, 64] },

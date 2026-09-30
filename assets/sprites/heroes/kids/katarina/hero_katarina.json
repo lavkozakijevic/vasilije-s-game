@@ -3,9 +3,9 @@
  "type": "hero_kid",
  "name": "Katarina",
  "age": 11,
- "element": "ice",
- "power": "Ice shard",
- "sharesPowerWith": "hero_ice",
+ "element": "fire",
+ "power": "Fireball",
+ "sharesPowerWith": "hero_fire",
  "heightPx": 24,
  "frameWidth": 32,
  "frameHeight": 32,
@@ -79,7 +79,7 @@
  },
  "fx": {
   "projectile": {
-   "file": "../../ice/fx_ice_projectile.png",
+   "file": "../../fire/fx_fire_projectile.png",
    "frameWidth": 16,
    "frameHeight": 16,
    "frames": 4,
@@ -94,7 +94,7 @@
    }
   },
   "impact": {
-   "file": "../../ice/fx_ice_impact.png",
+   "file": "../../fire/fx_fire_impact.png",
    "frameWidth": 32,
    "frameHeight": 32,
    "frames": 4,
@@ -104,7 +104,7 @@
   }
  },
  "icon": {
-  "file": "../../../../ui/icon_element_ice.png",
+  "file": "../../../../ui/icon_element_fire.png",
   "frameWidth": 16,
   "frameHeight": 16
  },
@@ -112,7 +112,7 @@
   "hair": "#ffc23d",
   "clothes": "#2e5fa8",
   "trim": "#7fd4e8",
-  "pendant": "#7fd4e8"
+  "pendant": "#e0521f"
  },
  "palette": "elemental16.hex"
 }

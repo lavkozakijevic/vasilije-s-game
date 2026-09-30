@@ -3,9 +3,9 @@
  "type": "hero_kid",
  "name": "Vasilije",
  "age": 9,
- "element": "fire",
- "power": "Fireball",
- "sharesPowerWith": "hero_fire",
+ "element": "ice",
+ "power": "Ice shard",
+ "sharesPowerWith": "hero_ice",
  "heightPx": 22,
  "frameWidth": 32,
  "frameHeight": 32,
@@ -79,7 +79,7 @@
  },
  "fx": {
   "projectile": {
-   "file": "../../fire/fx_fire_projectile.png",
+   "file": "../../ice/fx_ice_projectile.png",
    "frameWidth": 16,
    "frameHeight": 16,
    "frames": 4,
@@ -94,7 +94,7 @@
    }
   },
   "impact": {
-   "file": "../../fire/fx_fire_impact.png",
+   "file": "../../ice/fx_ice_impact.png",
    "frameWidth": 32,
    "frameHeight": 32,
    "frames": 4,
@@ -104,7 +104,7 @@
   }
  },
  "icon": {
-  "file": "../../../../ui/icon_element_fire.png",
+  "file": "../../../../ui/icon_element_ice.png",
   "frameWidth": 16,
   "frameHeight": 16
  },
@@ -112,7 +112,7 @@
   "hair": "#ffc23d",
   "clothes": "#e0521f",
   "trim": "#ffc23d",
-  "pendant": "#ffc23d"
+  "pendant": "#7fd4e8"
  },
  "palette": "elemental16.hex"
 }
