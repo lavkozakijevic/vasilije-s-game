@@ -16,10 +16,10 @@ const CAST = {
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
-const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
+const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
 // sprite-based portraits for characters that already have art
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
-const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak',
+const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
 const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
 const SPRITE_PORTRAIT = {
@@ -77,6 +77,58 @@ const EH_DIALOGUE = {
     { who: 'blightwarden', text: "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains." },
     { who: 'katarina', text: 'Over the mountains… that’s where it snows.' },
   ],
+  // ---- Level 2 · The Frostfang Peaks (Katarina)
+  l2_start: [
+    { who: 'vasilije', mood: 'ali', text: "It's FREEZING." },
+    { who: 'katarina', text: 'Told you. Socks.' },
+    { who: 'kosta', mood: 'happy', text: 'Katarina, you know the most about mountains. You lead this one.' },
+    { who: 'vasilije', text: "Fine. But I'm second." },
+    { who: 'katarina', mood: 'happy', text: 'Deal. And careful on the shiny ice. You slide.' },
+    { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
+  ],
+  l2_cheetah: [
+    { who: 'katarina', mood: 'ali', text: 'A cheetah? Up HERE? You must be freezing.' },
+    { who: 'vasilije', mood: 'ali', text: 'Is it going to eat us?' },
+    { who: 'katarina', mood: 'happy', text: "Cheetahs almost never attack people. They can't even roar. They chirp, like birds." },
+    { who: 'katarina', mood: 'happy', text: '(she puts the warm socks on its front paws) Here. Baba’s orders.' },
+    { who: 'dimitrije', mood: 'happy', text: 'Told you I packed extra.' },
+    { who: 'kosta', text: 'How do you know everything?' },
+    { who: 'katarina', text: 'I read.' },
+    { who: 'katarina', mood: 'ali', text: "Cheetahs only eat every few days. I can't even go an hour. I'm hungry." },
+  ],
+  l2_knight_ice: [
+    { who: 'rime', text: 'Ice keeps what it loves. I will keep you safe.' },
+    { who: 'katarina', mood: 'happy', text: 'Rime! Did you know every snowflake has six sides?' },
+    { who: 'rime', text: '…I did not. Now I do.' },
+  ],
+  l2_knight_water: [
+    { who: 'brine', text: 'Where ice melts, water follows.' },
+    { who: 'vasilije', mood: 'happy', text: 'Another one for the team!' },
+    { who: 'kosta', mood: 'happy', text: 'Welcome, Brine.' },
+  ],
+  l2_yeti: [
+    { who: 'yeti', text: 'GRRR! MY BRIDGE! GO AWAY!' },
+    { who: 'vasilije', mood: 'ali', text: 'Charge!' },
+    { who: 'katarina', text: "Wait! He's only a cub. He's not mean, he's scared." },
+    { who: 'katarina', text: "Tire him out and he'll let us cross. Watch out for the snowballs!" },
+    { who: 'kosta', text: 'You heard her. Careful, everyone.' },
+  ],
+  l2_yeti_bye: [
+    { who: 'yeti', mood: 'sad', text: '…Fine. You can cross.' },
+    { who: 'yeti', mood: 'sad', text: 'Nobody ever comes up here to play with me.' },
+    { who: 'dimitrije', mood: 'happy', text: "We'll come back and play. Promise." },
+    { who: 'vasilije', mood: 'happy', text: 'Okay, stopping to think first was actually smart.' },
+  ],
+  l2_warden: [
+    { who: 'warden', text: 'Turn back, little ones, or freeze where you stand.' },
+    { who: 'katarina', text: '(flipping through her sketchbook) Wait. I drew him earlier. See the crack in his chest? That’s the weak spot!' },
+    { who: 'kosta', mood: 'happy', text: 'Hit the crack when it glows!' },
+    { who: 'vasilije', mood: 'happy', text: 'You heard her!' },
+  ],
+  l2_finish: [
+    { who: 'kosta', text: "It's cracking! Katarina, this one's yours!" },
+    { who: 'vasilije', mood: 'happy', text: 'Go on, Katarina!' },
+  ],
 };
 const EH_NOTES = {
   l1: {
@@ -90,6 +142,18 @@ const EH_NOTES = {
       { who: 'dimitrije', mood: 'happy', text: 'Thanks. Now let’s go get Baba.' },
     ],
   },
+};
+EH_NOTES.l2 = {
+  item: 'her red scarf, on the ice', itemImg: 'sprites/items/item_baba_red_scarf.png',
+  lines: ['Katarina, you are so clever.', 'Vasilije, the next place is hot.', 'Wash your hands after you touch anything down there.', 'And do NOT run in first.'],
+  replies: [
+    { who: 'kosta', mood: 'happy', text: 'Katarina, you stopped and looked. We would have just kept hitting him.' },
+    { who: 'vasilije', mood: 'happy', text: 'And the yeti. I wanted to charge. You were right.' },
+    { who: 'katarina', mood: 'happy', text: "Thanks. I'm still hungry, though." },
+    { who: 'dimitrije', mood: 'happy', text: 'I saved one cookie. We can share it.' },
+    { who: 'vasilije', mood: 'ali', text: 'Ali Vera! A hot place? I’m going first!' },
+    { who: 'kosta', mood: 'ali', text: 'Vasilije! She said do NOT run in first!' },
+  ],
 };
 const INTRO_NOTE = ['Mrak has taken me. Don’t be scared.', 'Each stone holds an element. It will give you the power to fight the monsters ahead.', 'Follow my red yarn and bring me home before midnight.',
   'Share the cookies. Put on your socks.', 'No fighting over who is captain. Kosta, Vasilije, I mean you.'];

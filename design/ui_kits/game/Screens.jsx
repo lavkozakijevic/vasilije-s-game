@@ -57,7 +57,7 @@ function ResultPanel({ kind, coins, gems, gemTotal, onRetry, onQuit, onContinue 
   const win = kind === 'complete';
   return (
     <Overlay>
-      <PixelPanel title={win ? 'Level Complete' : 'Game Over'} tone={win ? 'stone' : 'dark'} style={{ width: 440 }}>
+      <PixelPanel title={win ? 'Level Complete' : 'Game Over'} tone={win ? 'stone' : 'dark'} style={{ width: 560 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
           {win ? <CoinCounter count={coins} scale={3} src={EHK_A + 'sprites/items/item_coin_spin.png'} /> : <div style={{ fontSize: 24, textAlign: 'center' }}>The flame goes out. For now.</div>}
           {win && gemTotal > 0 && <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18 }}>GEMS {gems}/{gemTotal}</div>}

@@ -15,6 +15,8 @@ addEventListener('resize',fit);addEventListener('load',fit);new ResizeObserver(f
 function App(){
   const [screen,setScreen]=React.useState(()=>localStorage.getItem('eh_screen')==='play'?'play':'title');
   const [run,setRun]=React.useState(0);
+  const [level,setLevel]=React.useState(()=>localStorage.getItem('eh_level')||'l1');
+  React.useEffect(()=>{localStorage.setItem('eh_level',level);},[level]);
   const [hud,setHud]=React.useState({hp:4,coins:0});
   const [res,setRes]=React.useState(null);
   React.useEffect(()=>{localStorage.setItem('eh_screen',['play','paused','dialog'].includes(screen)?'play':'title');},[screen]);
@@ -22,16 +24,17 @@ function App(){
   const [dialog,setDialog]=React.useState(null);
   const restart=()=>{setRun(r=>r+1);setHud({hp:4,coins:0});setRes(null);setDialog(null);setScreen('play');};
   // story: START plays the intro (skippable), level moments open a dialogue, finishing shows Baba's note
-  const end=React.useCallback((kind,coins,x={})=>{if(kind==='complete')ehSaveLevel('l1',{coins,...x});setRes({kind,coins,...x});setScreen(s=>s==='play'?(kind==='complete'?'note':'result'):s);},[]);
+  const levelRef=React.useRef(level);levelRef.current=level;
+  const end=React.useCallback((kind,coins,x={})=>{if(kind==='complete')ehSaveLevel(levelRef.current,{coins,...x});setRes({kind,coins,...x});setScreen(s=>s==='play'?(kind==='complete'?'note':'result'):s);},[]);
   const story=React.useCallback(id=>{if(!EH_DIALOGUE[id])return;setDialog(id);setScreen(s=>s==='play'?'dialog':s);},[]);
-  if(screen==='title')return <TitleScreen onStart={()=>setScreen('intro')} onSelect={()=>setScreen('select')}/>;
-  if(screen==='select'||screen==='travel')return <WorldMap key={screen} mode={screen} onPlay={()=>restart()} onBack={setScreen}/>;
+  if(screen==='title')return <TitleScreen onStart={()=>{setLevel('l1');setScreen('intro');}} onSelect={()=>setScreen('select')}/>;
+  if(screen==='select'||screen==='travel')return <WorldMap key={screen} mode={screen} onPlay={id=>{setLevel(id);restart();}} onBack={setScreen}/>;
   if(screen==='intro')return <IntroCutscene onDone={restart}/>;
   return(<div style={{position:'absolute',inset:0}}>
-    <GameView key={run} runId={run} paused={screen!=='play'} onHud={setHud} onEnd={end} onStory={story}/>
+    <GameView key={level+run} level={level} runId={run} paused={screen!=='play'} onHud={setHud} onEnd={end} onStory={story}/>
     <Hud hp={hud.hp} coins={hud.coins} element={hud.element} name={hud.name}/>
     {screen==='dialog'&&dialog&&<DialogueRunner key={dialog} lines={EH_DIALOGUE[dialog]} onDone={()=>{setDialog(null);setScreen('play');}}/>}
-    {screen==='note'&&<NoteScreen level="l1" onDone={()=>setScreen('result')}/>}
+    {screen==='note'&&<NoteScreen level={level} onDone={()=>setScreen('result')}/>}
     {screen==='paused'&&<PauseMenu onResume={()=>setScreen('play')} onRestart={restart} onQuit={()=>setScreen('title')}/>}
     {screen==='result'&&res&&<ResultPanel kind={res.kind} coins={res.coins} gems={res.gems} gemTotal={res.gemTotal} onRetry={restart} onQuit={()=>setScreen('title')} onContinue={()=>setScreen('travel')}/>}
   </div>);

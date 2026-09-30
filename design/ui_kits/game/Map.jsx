@@ -3,10 +3,15 @@
 const EHM_A = '../../../assets/';
 const EH_LEVELS = [
   { id: 'l1', node: 'forest', name: 'The Whispering Forest', star: 'Dimitrije', ready: true },
-  { id: 'l2', node: 'peaks',  name: 'The Frostfang Peaks',   star: 'Katarina',  ready: false },
+  { id: 'l2', node: 'peaks',  name: 'The Frostfang Peaks',   star: 'Katarina',  ready: true },
   { id: 'l3', node: 'caves',  name: 'Cinderdeep Caves',      star: 'Vasilije',  ready: false },
   { id: 'l4', node: 'keep',   name: 'The Hollow Keep',       star: 'Kosta',     ready: false },
 ];
+const EH_TRAVEL = {
+  l2: ['Over the mountains…', 'Mrak’s shadow-birds carried Baba to The Frostfang Peaks.'],
+  l3: ['Down into the fire…', 'Mrak’s wardens dragged Baba deep into Cinderdeep Caves.'],
+  l4: ['To the Hollow Keep…', 'Mrak took Baba to his own grey castle.'],
+};
 // progress lives in this browser: { levels: { l1: { done, coins, gems, gemTotal } } }
 function ehProgress() { try { return JSON.parse(localStorage.getItem('eh_progress')) || { levels: {} }; } catch (e) { return { levels: {} }; } }
 function ehSaveLevel(id, r) {
@@ -44,12 +49,12 @@ function WorldMap({ mode, onPlay, onBack }) {
   const px = { imageRendering: 'pixelated', position: 'absolute', left: 0, top: 0, width: 1280, height: 720 };
   const chip = (lv, i) => {
     const n = map && map.nodes[lv.node]; if (!n) return null;
-    const r = prog.levels[lv.id] || {}, open = lv.ready && (i === 0 || (prog.levels[EH_LEVELS[i - 1].id] || {}).done || lv.ready);
+    const r = prog.levels[lv.id] || {}, open = lv.ready && (i === 0 || (prog.levels[EH_LEVELS[i - 1].id] || {}).done);
     return (
       <div key={lv.id} style={{ position: 'absolute', left: n.x * 2, top: n.y * 2 + (lv.node === 'caves' ? -110 : 18), transform: 'translateX(-50%)', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', whiteSpace: 'nowrap', background: 'rgba(20,16,28,.82)', padding: '6px 10px', border: '2px solid var(--eh-ink)' }}>
         <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>LEVEL {i + 1} · {lv.star.toUpperCase()}</div>
         {mode === 'select' && open ? <div style={{ marginTop: 6 }}><PixelButton size="sm" onClick={() => onPlay(lv.id)}>{r.done ? 'Play again' : 'Play'}</PixelButton></div>
-          : <div style={{ marginTop: 4, color: 'var(--eh-stone)' }}>{lv.ready ? '' : 'COMING SOON'}</div>}
+          : <div style={{ marginTop: 4, color: 'var(--eh-stone)' }}>{!lv.ready ? 'COMING SOON' : mode === 'select' ? `FINISH LEVEL ${i} FIRST` : ''}</div>}
         {r.done && <div style={{ marginTop: 6, fontSize: 12 }}>CLEARED · COINS ×{String(r.coins).padStart(3, '0')} · GEMS {r.gems}/{r.gemTotal}</div>}
       </div>
     );
@@ -64,9 +69,9 @@ function WorldMap({ mode, onPlay, onBack }) {
         backgroundSize: '128px 64px', backgroundPosition: `${-fr * 64}px 0`, imageRendering: 'pixelated' }} />}
       {map && EH_LEVELS.map(chip)}
       <div style={{ position: 'absolute', left: 0, right: 0, top: 24, textAlign: 'center', fontFamily: 'var(--font-display)', fontSize: 56, color: 'var(--eh-gold)', textShadow: '-4px 0 0 var(--eh-ink),4px 0 0 var(--eh-ink),0 -4px 0 var(--eh-ink),0 4px 0 var(--eh-ink)' }}>
-        {mode === 'travel' ? 'Over the mountains…' : 'Baba Vera’s trail'}</div>
+        {mode === 'travel' ? (EH_TRAVEL[cur.id] || EH_TRAVEL.l2)[0] : 'Baba Vera’s trail'}</div>
       {mode === 'travel' && <div style={{ position: 'absolute', left: 0, right: 0, top: 100, textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 26, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>
-        Mrak’s shadow-birds carried Baba to {cur.name}. {arrived && !cur.ready ? 'That level is coming soon!' : ''}</div>}
+        {(EH_TRAVEL[cur.id] || EH_TRAVEL.l2)[1]} {arrived && !cur.ready ? 'That level is coming soon!' : ''}</div>}
       <div style={{ position: 'absolute', right: 32, bottom: 28, display: 'flex', gap: 16, opacity: arrived ? 1 : 0, transition: 'opacity .3s' }}>
         {mode === 'travel' && cur.ready && <PixelButton onClick={() => onPlay(cur.id)}>Continue ▶</PixelButton>}
         {mode === 'travel' && <PixelButton variant="secondary" onClick={() => onBack('select')}>Level select</PixelButton>}
