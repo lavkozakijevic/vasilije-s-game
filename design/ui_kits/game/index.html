@@ -22,7 +22,7 @@ function App(){
   if(screen==='title')return <TitleScreen onStart={restart}/>;
   return(<div style={{position:'absolute',inset:0}}>
     <GameView key={run} runId={run} paused={screen!=='play'} onHud={setHud} onEnd={end}/>
-    <Hud hp={hud.hp} coins={hud.coins}/>
+    <Hud hp={hud.hp} coins={hud.coins} element={hud.element} name={hud.name}/>
     {screen==='paused'&&<PauseMenu onResume={()=>setScreen('play')} onRestart={restart} onQuit={()=>setScreen('title')}/>}
     {screen==='result'&&res&&<ResultPanel kind={res.kind} coins={res.coins} onRetry={restart} onQuit={()=>setScreen('title')}/>}
   </div>);

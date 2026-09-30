@@ -28,7 +28,7 @@ function TitleScreen({ onStart }) {
       </div>
       <div style={{ position: 'absolute', left: 96, bottom: 72 }}><Sprite src={EHK_A + 'sprites/heroes/fire/hero_fire_idle.png'} frames={4} fps={6} scale={6} /></div>
       <div style={{ position: 'absolute', right: 96, bottom: 72 }}><Sprite src={EHK_A + 'sprites/enemies/forest/enemy_rotroot_idle.png'} frames={4} fps={5} scale={6} flip /></div>
-      <div style={{ position: 'absolute', bottom: 24, width: '100%', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 16, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>← → move · space jump · F fire · esc pause</div>
+      <div style={{ position: 'absolute', bottom: 24, width: '100%', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 16, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>← → move · space jump · F fire · 1–8 hero · esc pause</div>
     </div>
   );
 }
@@ -70,7 +70,7 @@ function ResultPanel({ kind, coins, onRetry, onQuit }) {
   );
 }
 
-function Hud({ hp, coins }) {
+function Hud({ hp, coins, element = 'fire', name = 'Cinder' }) {
   const { HeartMeter, CoinCounter, ElementBadge } = EHK;
   return (
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -78,7 +78,10 @@ function Hud({ hp, coins }) {
         <HeartMeter value={hp} max={4} scale={2} src={EHK_A + 'ui/ui_heart_states.png'} />
         <CoinCounter count={coins} scale={2} src={EHK_A + 'sprites/items/item_coin_spin.png'} />
       </div>
-      <div style={{ position: 'absolute', right: 22, top: 22 }}><ElementBadge element="fire" scale={2} icon={EHK_A + 'ui/icon_element_fire.png'} /></div>
+      <div style={{ position: 'absolute', right: 22, top: 22, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <ElementBadge element={element} scale={2} icon={EHK_A + `sprites/heroes/${element}/icon_element_${element}.png`} />
+        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 12, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>{name.toUpperCase()}</div>
+      </div>
     </div>
   );
 }
