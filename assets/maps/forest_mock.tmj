@@ -9992,28 +9992,6 @@
      "height": 32,
      "rotation": 0,
      "visible": true
-    },
-    {
-     "id": 98,
-     "name": "football",
-     "type": "prop_football",
-     "x": 40,
-     "y": 272,
-     "width": 16,
-     "height": 16,
-     "rotation": 0,
-     "visible": true
-    },
-    {
-     "id": 99,
-     "name": "poster",
-     "type": "prop_poster",
-     "x": 0,
-     "y": 240,
-     "width": 32,
-     "height": 48,
-     "rotation": 0,
-     "visible": true
     }
    ]
   }
