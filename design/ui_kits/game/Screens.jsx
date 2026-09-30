@@ -26,7 +26,7 @@ function TitleScreen({ onStart }) {
           <PixelButton variant="secondary" disabled>Level Select</PixelButton>
         </div>
       </div>
-      <div style={{ position: 'absolute', left: 48, bottom: 72, display: 'flex', gap: 0 }}>{['konstantin', 'katarina', 'vasilije', 'dimitrije'].map(k => <Sprite key={k} src={EHK_A + `sprites/heroes/kids/${k}/hero_${k}_idle.png`} frames={4} fps={6} scale={4} />)}</div>
+      <div style={{ position: 'absolute', left: 48, bottom: 72, display: 'flex', gap: 0 }}>{['konstantin', 'katarina', 'vasilije', 'dimitrije'].map(k => <Sprite key={k} src={EHK_A + `sprites/heroes/kids/${k}/hero_${k}_idle.png`} frames={4} frame={0} scale={4} />)}</div>
       <div style={{ position: 'absolute', right: 96, bottom: 72 }}><Sprite src={EHK_A + 'sprites/enemies/forest/enemy_rotroot_idle.png'} frames={4} fps={5} scale={6} flip /></div>
       <div style={{ position: 'absolute', bottom: 24, width: '100%', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 16, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>← → move · space jump · F fire · 1–4 cousins · Q/E switch hero · esc pause</div>
     </div>

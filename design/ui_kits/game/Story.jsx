@@ -86,11 +86,11 @@ const EH_NOTES = {
     ],
   },
 };
-const INTRO_NOTE = ['Mrak has taken me. Don’t be scared.', 'Each of you has a stone, and everything you need.', 'Follow my red yarn and bring me home before midnight.',
-  'Share the cookies. Put on your socks.', 'And no fighting over who is captain. Kosta, Vasilije, I mean you.'];
+const INTRO_NOTE = ['Mrak has taken me. Don’t be scared.', 'Each stone holds an element. It will give you the power to fight the monsters ahead.', 'Follow my red yarn and bring me home before midnight.',
+  'Share the cookies. Put on your socks.', 'No fighting over who is captain. Kosta, Vasilije, I mean you.'];
 // scene: duration (s) and timed lines { at, who, mood, text } ; who null = narration caption
 const INTRO = [
-  { d: 6,  lines: [{ at: 1.0, who: null, text: "New Year's Eve, at Baba Vera's." }] },
+  { d: 6,  lines: [{ at: 1.0, who: null, text: "New Year's Eve in Ivanovo." }] },
   { d: 9,  lines: [{ at: 0.6, who: 'katarina', mood: 'happy', text: "Baba, can I have a cookie? I'm SO hungry." }, { at: 2.6, who: 'baba', mood: 'stern', text: 'Wash your hands before you eat!' },
                    { at: 4.8, who: 'all', text: 'Ali Veraaa!' }, { at: 6.8, who: 'dimitrije', mood: 'happy', text: 'Already did.' }] },
   { d: 8,  lines: [{ at: 0.8, who: 'baba', mood: 'stern', text: 'And pick up your toys. All of them.' }, { at: 3.2, who: 'vasilije', mood: 'ali', text: "They're Kosta's toys!" }, { at: 5.4, who: 'kosta', mood: 'ali', text: 'Half of them are YOURS.' }] },
@@ -98,9 +98,9 @@ const INTRO = [
   { d: 5,  lines: [{ at: 2.2, who: 'baba', mood: 'worried', text: 'Children—!' }] },
   { d: 9,  lines: [{ at: 2.0, who: null, text: 'The chair was empty. Baba Vera was gone.' }] },
   { d: 13, lines: [], note: 1.5 },
-  { d: 9,  lines: [{ at: 0.6, who: 'katarina', text: 'She says follow the red yarn.' }, { at: 2.4, who: 'kosta', text: "Okay. I'm the oldest, so I lead." },
-                   { at: 4.2, who: 'vasilije', mood: 'ali', text: "No way. I'm faster, so I lead." }, { at: 6.0, who: 'katarina', mood: 'ali', text: 'She JUST said no fighting!' },
-                   { at: 7.6, who: 'dimitrije', text: '…I’ll go first, then.' }] },
+  { d: 12, lines: [{ at: 0.6, who: 'dimitrije', mood: 'happy', text: 'Mine is green. It feels like wind.' }, { at: 2.4, who: 'katarina', text: 'Each stone is an element. Ice, fire, wind, light. That’s our power.' },
+                   { at: 5.0, who: 'kosta', text: "Okay. I'm the oldest, so I lead." }, { at: 6.8, who: 'vasilije', mood: 'ali', text: "No way. I'm faster, so I lead." },
+                   { at: 8.6, who: 'katarina', mood: 'ali', text: 'She JUST said no fighting!' }, { at: 10.4, who: 'dimitrije', text: '…I’ll go first, then.' }] },
   { d: 7,  lines: [], title: 3.0 },
 ];
 
@@ -297,12 +297,13 @@ function IntroCutscene({ onDone }) {
   React.useEffect(() => {
     let alive = true, raf = 0; const img = {}, real = {};
     const ld = (k, p) => new Promise(r => { const i = new Image(); i.onload = () => { img[k] = i; r(true); }; i.onerror = () => r(false); i.src = EHS_A + p; });
-    const t0 = performance.now(); let lastLine = null, lastNote = false, lastTitle = false;
+    let t0 = null, ready = false; const began = performance.now(); let lastLine = null, lastNote = false, lastTitle = false;   // the clock starts once the art has loaded, so stand-ins never flash
     const starts = []; let acc = 0; for (const s of INTRO) { starts.push(acc); acc += s.d; } const total = acc;
-    ['sky', 'far', 'mid', 'near'].forEach(k => ld(k, `backgrounds/forest/bg_forest_${k}.png`));
+    const bgs = ['sky', 'far', 'mid', 'near'].map(k => ld(k, `backgrounds/forest/bg_forest_${k}.png`));
     fetch(EHS_A + 'cutscenes/intro/intro.json').then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
-      if (!j) return; j.scenes.slice(0, INTRO.length).forEach((sc, n) =>
+      const scenes = !j ? [] : j.scenes.slice(0, INTRO.length).map((sc, n) =>
         Promise.all(sc.layers.map(l => ld(`L${n}_${l.name}`, 'cutscenes/intro/' + l.file))).then(ok => { if (ok[0]) real[n] = true; if (n === INTRO.length - 1 && img[`L${n}_title`]) setRealTitle(true); }));
+      Promise.all([...bgs, ...scenes]).then(() => { ready = true; });
     });
     const setT = setTimeout(() => alive && setSkip(true), 1000);
     const g = cv.current.getContext('2d'); g.imageSmoothingEnabled = false;
@@ -383,7 +384,9 @@ function IntroCutscene({ onDone }) {
       else if (n === 8) { d(L('bg')); d(L('chars'), 0, -Math.min(16, t * 4) - 2 * (Math.floor(t * 8) % 2)); d(L('fx')); if (t > 1.5) d(L('title'), 0, -Math.max(0, 80 - (t - 1.5) * 200)); }
     };
     const loop = () => {
-      if (!alive) return; const T = (performance.now() - t0) / 1000;
+      if (!alive) return;
+      if (t0 == null) { R(PAL.ink, 0, 0, 640, 360); if (ready || performance.now() - began > 6000) t0 = performance.now(); raf = requestAnimationFrame(loop); return; }
+      const T = (performance.now() - t0) / 1000;
       if (T >= total) { finish(); return; }
       let n = starts.findIndex((s, i) => T >= s && (i === starts.length - 1 || T < starts[i + 1])); const t = T - starts[n], S = INTRO[n];
       g.globalAlpha = 1; R(PAL.ink, 0, 0, 640, 360);
