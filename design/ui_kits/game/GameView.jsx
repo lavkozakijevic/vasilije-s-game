@@ -195,7 +195,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           const tw = tileAt(H.x + 16, H.y + 28);
           if (tw === 31 || tw === 32) { fx('fx_splash_water', 5, 14, H.x, GROUND_Y - 32, 32); H.inv = 0; hurt(1); if (!H.dead) Object.assign(H, safe, { vx: 0, vy: 0, inv: 70 }); }
           if (H.y > 380) { H.hp = 0; H.dead = 1; }
-          if (ex && (!BOSS || BOSS.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins);
+          if (ex && (!BOSS || BOSS.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins, { gems: GM.filter(g => g.got).length, gemTotal: GM.length });
         }
         // ---- pickups / checkpoints ----
         const near = (o, w = 16) => Math.abs(H.x + 16 - (o.x + w / 2)) < 14 && Math.abs(H.y + 20 - (o.y + 8)) < 18;

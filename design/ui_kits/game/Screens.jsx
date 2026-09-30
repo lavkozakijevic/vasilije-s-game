@@ -13,7 +13,7 @@ function ParallaxBackdrop({ dim }) {
   );
 }
 
-function TitleScreen({ onStart }) {
+function TitleScreen({ onStart, onSelect }) {
   const { PixelButton, Sprite } = EHK;
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
@@ -23,7 +23,7 @@ function TitleScreen({ onStart }) {
         <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>The Rescue of Baba Vera · World 1: The Forest</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 21, alignItems: 'center', marginTop: 48 }}>
           <PixelButton size="lg" onClick={onStart}>Start</PixelButton>
-          <PixelButton variant="secondary" disabled>Level Select</PixelButton>
+          <PixelButton variant="secondary" onClick={onSelect}>Level Select</PixelButton>
         </div>
       </div>
       <div style={{ position: 'absolute', left: 48, bottom: 72, display: 'flex', gap: 0 }}>{['konstantin', 'katarina', 'vasilije', 'dimitrije'].map(k => <Sprite key={k} src={EHK_A + `sprites/heroes/kids/${k}/hero_${k}_idle.png`} frames={4} frame={0} scale={4} />)}</div>
@@ -52,7 +52,7 @@ function PauseMenu({ onResume, onRestart, onQuit }) {
   );
 }
 
-function ResultPanel({ kind, coins, onRetry, onQuit }) {
+function ResultPanel({ kind, coins, gems, gemTotal, onRetry, onQuit, onContinue }) {
   const { PixelPanel, PixelButton, CoinCounter } = EHK;
   const win = kind === 'complete';
   return (
@@ -60,8 +60,10 @@ function ResultPanel({ kind, coins, onRetry, onQuit }) {
       <PixelPanel title={win ? 'Level Complete' : 'Game Over'} tone={win ? 'stone' : 'dark'} style={{ width: 440 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
           {win ? <CoinCounter count={coins} scale={3} src={EHK_A + 'sprites/items/item_coin_spin.png'} /> : <div style={{ fontSize: 24, textAlign: 'center' }}>The flame goes out. For now.</div>}
+          {win && gemTotal > 0 && <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18 }}>GEMS {gems}/{gemTotal}</div>}
           <div style={{ display: 'flex', gap: 21 }}>
-            <PixelButton onClick={onRetry}>{win ? 'Play again' : 'Retry'}</PixelButton>
+            {win && onContinue && <PixelButton onClick={onContinue}>Continue ▶</PixelButton>}
+            <PixelButton variant={win ? 'secondary' : 'primary'} onClick={onRetry}>{win ? 'Play again' : 'Retry'}</PixelButton>
             <PixelButton variant="secondary" onClick={onQuit}>Title</PixelButton>
           </div>
         </div>
