@@ -346,7 +346,7 @@ function ehResolvePortrait(who, mood) {
   return ehPortraitCache[key];
 }
 function ehPreloadPortraits() {
-  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines)];
+  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : [])];
   for (const l of lines) { if (!l.who) continue; const who = l.who === 'all' ? KIDS : l.who === 'kosta_vasilije' ? ['kosta', 'vasilije'] : [l.who];
     for (const w of who) ehResolvePortrait(w, l.mood || (l.who === 'all' ? 'ali' : 'neutral')); }
 }
@@ -574,7 +574,87 @@ function IntroCutscene({ onDone }) {
   );
 }
 
+// ---------------------------------------------------------------- ending cutscene (after Mrak; watch-only, skippable)
+// Claude Design panels in cutscenes/ending (bg, chars, fx, + title on the credits), lines from the story bible section 6.
+const ENDING = [
+  { d: 14, top: true, lines: [{ at: 1.0, who: 'mrak', mood: 'sad', text: 'I only wanted… somewhere warm.' },
+    { at: 3.4, who: 'baba', mood: 'warm', text: "Then come home with us. It's New Year's Eve. Nobody should be alone tonight." },
+    { at: 7.0, who: 'mrak', mood: 'surprised', text: '…Ali Vera—' },
+    { at: 8.8, who: 'baba', mood: 'stern', text: "No 'ali'. Wash your hands. There are cookies." },
+    { at: 11.4, who: 'all', mood: 'ali', text: 'HE SAID IT!' }] },
+  { d: 10, top: true, lines: [{ at: 0.8, who: 'katarina', mood: 'happy', text: '(mouth full) Finally. I was SO hungry.' },
+    { at: 3.6, who: 'baba', mood: 'stern', text: 'Did you wash your hands?' },
+    { at: 6.2, who: 'katarina', mood: 'ali', text: '…Ali Vera.' }] },
+  { d: 10, top: true, lines: [{ at: 1.0, who: 'baba', mood: 'stern', text: 'Make your beds before you sleep!' },
+    { at: 3.6, who: 'all', mood: 'ali', text: 'Ali Veraaa!' },
+    { at: 6.0, who: 'dimitrije', mood: 'happy', text: '(already in bed) Night, Baba.' }] },
+  { d: 12, credits: true, lines: [] },
+];
+function EndingCutscene({ onDone }) {
+  const cv = React.useRef(null);
+  const [line, setLine] = React.useState(null), [credits, setCredits] = React.useState(null), [skip, setSkip] = React.useState(false), [hover, setHover] = React.useState(false);
+  const doneRef = React.useRef(false);
+  const finish = () => { if (!doneRef.current) { doneRef.current = true; onDone && onDone(); } };
+  useStoryKeys(code => { if (code === 'Escape' || code === 'Enter' || code === 'NumpadEnter') finish(); });
+  React.useEffect(() => {
+    let alive = true, raf = 0; const img = {};
+    const ld = (k, p) => new Promise(r => { const i = new Image(); i.onload = () => { img[k] = i; r(true); }; i.onerror = () => r(false); i.src = EHS_A + p; });
+    let t0 = null, ready = false; const began = performance.now(); let lastLine = null, lastCred = null;
+    const starts = []; let acc = 0; for (const s of ENDING) { starts.push(acc); acc += s.d; } const total = acc;
+    fetch(EHS_A + 'cutscenes/ending/ending.json').then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
+      Promise.all(!j ? [] : j.scenes.slice(0, ENDING.length).flatMap((sc, n) => sc.layers.map(l => ld(`L${n}_${l.name}`, 'cutscenes/ending/' + l.file)))).then(() => { ready = true; });
+    });
+    const setT = setTimeout(() => alive && setSkip(true), 1000);
+    const g = cv.current.getContext('2d'); g.imageSmoothingEnabled = false;
+    const d = (im, x = 0, y = 0) => im && g.drawImage(im, Math.round(x / 2) * 2, Math.round(y / 2) * 2);
+    // motions from cutscenes/ending/README.md, moved in whole 2px steps
+    const draw = (n, t) => {
+      const L = k => img[`L${n}_${k}`];
+      if (n === 0) {   // slow push in toward Baba and Mrak; dust drifts in the moonbeam
+        const z = 1 + Math.min(0.08, t * 0.006), w = 640 * z, h = 360 * z, ox = (640 - w) / 2, oy = (360 - h) * 0.75;
+        for (const k of ['bg', 'chars']) if (L(k)) g.drawImage(L(k), Math.round(ox), Math.round(oy), Math.round(w), Math.round(h));
+        if (L('fx')) { g.globalAlpha = 1; g.drawImage(L('fx'), Math.round(ox), Math.round(oy - (t * 6) % 12), Math.round(w), Math.round(h)); } }
+      else if (n === 1) { d(L('bg')); d(L('chars'), 0, Math.floor(t * 2) % 2 ? -2 : 0); d(L('fx'), 0, -2 * (Math.floor(t * 3) % 3)); }   // everyone chatting; steam rises
+      else if (n === 2) { d(L('bg')); if (Math.floor(t * 5) % 7 < 5) d(L('fx')); d(L('chars'), 0, Math.floor(t * 8) % 2 ? -2 : 0); }   // fireworks burst by burst, kids run in place
+      else { d(L('bg')); if (Math.floor(t * 3) % 2 === 0) d(L('fx')); d(L('chars'));   // credits: stones pulse, the title slides up (English art; Serbian is drawn as text)
+        if (window.EH_LANG !== 'sr' && t > 4.2) d(L('title'), 0, Math.max(0, 60 - (t - 4.2) * 120)); }
+    };
+    const loop = () => {
+      if (!alive) return;
+      g.fillStyle = PAL.ink;
+      if (t0 == null) { g.fillRect(0, 0, 640, 360); if (ready || performance.now() - began > 6000) t0 = performance.now(); raf = requestAnimationFrame(loop); return; }
+      const T = (performance.now() - t0) / 1000;
+      if (T >= total) { finish(); return; }
+      const n = starts.findIndex((st, i) => T >= st && (i === starts.length - 1 || T < starts[i + 1])), t = T - starts[n], S = ENDING[n];
+      g.globalAlpha = 1; g.fillRect(0, 0, 640, 360); draw(n, t);
+      const fade = Math.min(1, t / 0.5, (S.d - t) / 0.5); if (fade < 1) { g.globalAlpha = 1 - Math.max(0, fade); g.fillRect(0, 0, 640, 360); g.globalAlpha = 1; }
+      const ln = S.lines.filter(l => l.at <= t).pop() || null; if (ln !== lastLine) { lastLine = ln; setLine(ln); }
+      const cr = !S.credits ? null : t < 4.2 ? 'makers' : window.EH_LANG === 'sr' ? 'directed' : null; if (cr !== lastCred) { lastCred = cr; setCredits(cr); }
+      raf = requestAnimationFrame(loop);
+    };
+    loop();
+    return () => { alive = false; cancelAnimationFrame(raf); clearTimeout(setT); };
+  }, []);
+  const credStyle = { position: 'absolute', left: 0, right: 0, top: 110, textAlign: 'center', fontFamily: 'var(--font-ui)', color: PAL.bone, textShadow: 'var(--text-outline)', animation: 'ehFadeIn .8s' };
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: PAL.ink }}>
+      <canvas ref={cv} width={640} height={360} style={{ width: 1280, height: 720, imageRendering: 'pixelated', display: 'block' }} />
+      {credits === 'makers' && <div key="m" style={credStyle}>
+        <div style={{ fontSize: 26, color: PAL.gold }}>{T('FROM THE MAKERS OF')}</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 72, lineHeight: 1.1, marginTop: 14, color: PAL.gold, textShadow: `-4px 0 0 ${PAL.ink},4px 0 0 ${PAL.ink},0 -4px 0 ${PAL.ink},0 4px 0 ${PAL.ink},4px 8px 0 ${PAL.ember}` }}>The Rise of the Karate Badass</div></div>}
+      {credits === 'directed' && <div key="d" style={credStyle}>
+        <div style={{ fontSize: 30, color: PAL.gold }}>{T('DIRECTED BY')}</div>
+        <div style={{ fontSize: 34, marginTop: 30, lineHeight: 1.5 }}>{T('KONSTANTIN, KATARINA,')}<br />{T('VASILIJE AND DIMITRIJE')}</div></div>}
+      <DialogueBox line={line} pos="top" />
+      {skip && <button onClick={finish} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} aria-label="Skip ending"
+        style={{ position: 'absolute', right: 28, bottom: 24, width: 160, height: 40, padding: 0, border: 'none', cursor: 'pointer', animation: 'ehFadeIn .4s', imageRendering: 'pixelated',
+          background: `url(${EHS_A}ui/ui_skip_button.png) ${hover ? '-160px' : '0'} 0 / 320px 40px no-repeat` }}>
+          {window.EH_LANG === 'sr' && <span style={{ position: 'absolute', inset: 2, display: 'grid', placeItems: 'center', background: hover ? PAL.slate : PAL.plum, color: PAL.bone, fontFamily: 'var(--font-ui)', fontSize: 16 }}>PRESKOČI ▶</span>}</button>}
+    </div>
+  );
+}
+
 (function () { if (document.getElementById('eh-story-css')) return; const s = document.createElement('style'); s.id = 'eh-story-css';
   s.textContent = '@keyframes ehBob{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}@keyframes ehBlink{0%{opacity:1}100%{opacity:0}}@keyframes ehFadeIn{from{opacity:0}to{opacity:1}}'; document.head.appendChild(s); })();
 ehPreloadPortraits();
-Object.assign(window, { IntroCutscene, DialogueRunner, NoteScreen, EH_DIALOGUE, EH_NOTES });
+Object.assign(window, { IntroCutscene, EndingCutscene, ENDING, DialogueRunner, NoteScreen, EH_DIALOGUE, EH_NOTES });
