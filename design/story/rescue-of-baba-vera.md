@@ -26,7 +26,7 @@ The players are the real kids, so nobody is ever the butt of the joke. Teasing s
   - *pick up your toys*
 - **"Ali Vera!"** ("But Vera!") The kids complain every time.
 - **Dimitrije gets on with it.** He rarely complains and is usually already doing what Baba asked. His "Okej" is saved for the moments that count.
-- **Kosta and Vasilije** argue all game about who is captain.
+- **Kosta and Vasilije** argue about who should be captain. Nobody is captain yet; the team hasn't decided. The story's answer, which the kids reach on their own by level 3: whoever's level it is leads, and in the end they don't need a captain at all.
 
 ---
 
@@ -36,9 +36,9 @@ The players are the real kids, so nobody is ever the butt of the joke. Teasing s
 
 | | Star of | Age | Element | Companion | Looks | Personality |
 |---|---|---|---|---|---|---|
-| **Konstantin (Kosta)** | Level 4 · The Hollow Keep | 13 | **Light**: Aurel's powers (the halo) | Golden eagle | Brown hair, sweatshirt and sweatpants | The eldest, and captain (he says). Competes with Vasilije. Learns to share the lead. |
+| **Konstantin (Kosta)** | Level 4 · The Hollow Keep | 13 | **Light**: Aurel's powers (the halo) | Golden eagle | Brown hair, sweatshirt and sweatpants | The eldest. Thinks the oldest should be captain. Competes with Vasilije. Learns to share the lead. |
 | **Katarina** | Level 2 · The Frostfang Peaks | 11 | **Ice**: Rime's powers | Snow leopard | Golden hair, t-shirt and sweatpants, carries a sketchbook | The smartest. Knows everything about animals, explores, researches, draws everything she sees. |
-| **Vasilije** | Level 3 · Cinderdeep Caves | 9 | **Fire**: Cinder's powers | Fire fox (orange) | Dark golden hair, **orange** clothes | Bold, fast, always first in. Wants to prove he's captain. Loves orange and foxes. |
+| **Vasilije** | Level 3 · Cinderdeep Caves | 9 | **Fire**: Cinder's powers | Fire fox (orange) | Dark golden hair, **orange** clothes | Bold, fast, always first in. Wants to be captain. Loves orange and foxes. |
 | **Dimitrije** | Level 1 · The Whispering Forest | 7 | **Air**: Wisp's powers | Puppy | Blond hair, t-shirt and shorts | The youngest and most agile. Works hard, never complains: "Okej." |
 
 **Companions** join in their child's level and follow that child from then on:
@@ -194,7 +194,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 ### Level 3 · Cinderdeep Caves: Vasilije
 **Start**
 - **Vasilije:** "Captain Vasilije, going in!"
-- **Kosta:** "You're not captain!"
+- **Kosta:** "Nobody voted for you!"
 
 **Companion: the fire fox**
 - **Vasilije:** "An ORANGE fox. That's MY fox."
@@ -204,7 +204,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **The trap.** Vasilije charges ahead alone, a gate slams, and lava starts rising.
 - **Vasilije:** "…Guys? GUYS?"
 - *(The fox runs off and comes back with the others.)*
-- **Kosta:** "Need a hand, captain?"
+- **Kosta:** "Need a hand?"
 - **Vasilije:** "…Maybe we need everybody."
 - **Kosta:** "Maybe."
 
@@ -219,11 +219,13 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Baba's note** (found with the family photo, all four kids in it):
 > Vasilije, I am proud of you.
 > Kosta, it is dark where I am now. You will know what to do.
-> Make your bed before you come. And share the captain's armband.
+> Make your bed before you come. And you two, stop fighting over who is captain.
 > — Baba
 
 - **Kosta:** "Ali Vera…"
-- **Vasilije:** "Share it? …Okay. Deal. We lead together."
+- **Vasilije:** "…Maybe we don't need a captain. Whoever's level it is, leads."
+- **Kosta:** "Deal. And the next one's mine."
+- **Vasilije:** "I know. I've got your back."
 
 ### Level 4 · The Hollow Keep: Konstantin
 **Start.** The keep sits on top of a sheer cliff. A golden eagle lands in front of Kosta.
@@ -244,7 +246,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Phase 3: Together**
 - **Mrak:** "Four little children. What can you do?"
 - *(Kosta and Vasilije start arguing about who leads. Mrak laughs.)*
-- **Kosta:** *(pulls off the captain's armband)* "Vasilije, you lead. I've got your back."
+- **Kosta:** "Wait. We don't need a captain. We never did." *(to Vasilije)* "Lead it with me?"
 - **Vasilije:** "…Together. On three!"
 - **Katarina:** "One!"
 - **Dimitrije:** "Two!"

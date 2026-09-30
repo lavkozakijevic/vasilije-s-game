@@ -19,7 +19,7 @@ on frame 3), hurt 2, death 6, respawn 6. They are CHILDREN in their everyday clo
 armored. Their element shows as a glowing stone pendant, element-coloured trim and the element
 effect on the attack. Show age through height (knights are ~24px tall):
 - Konstantin (13): ~26px. Brown hair, sweatshirt and sweatpants. Element LIGHT (bone/gold
-  accents, a faint halo glow on the attack, like Aurel). The eldest, confident "captain" pose.
+  accents, a faint halo glow on the attack, like Aurel). The eldest, confident pose.
 - Katarina (11): ~24px. Golden hair, t-shirt and sweatpants, a small sketchbook tucked under
   her arm in idle. Element ICE (frost accents, like Rime). Curious, clever.
 - Vasilije (9): ~22px. Dark golden hair, ORANGE t-shirt or hoodie (his favourite colour).
