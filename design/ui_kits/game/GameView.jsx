@@ -156,7 +156,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           const L1 = keys.ArrowLeft || keys.KeyA, R1 = keys.ArrowRight || keys.KeyD;
           if (H.hurtT <= 0) { H.vx = (R1 ? 1.8 : 0) - (L1 ? 1.8 : 0); if (H.vx) H.face = Math.sign(H.vx); if (H.attackT > 0 && H.ground) H.vx *= 0.3; }
           if (jumpBuf > 0) jumpBuf--;
-          if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
+          if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; H.jumpT = tick; H.jumpV = -8.3; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
           if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0) { H.attackT = 24; H.fired = false; }
           if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
           if (wantHero >= 0 && wantHero < ROSTER.length && wantHero !== H.hero) { H.hero = wantHero; H.swapT = 40; H.attackT = 0; fx('i_' + ROSTER[wantHero].el, 4, 12, H.x, H.y, 32); }
@@ -183,7 +183,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             const row = Math.floor((H.y + 33) / 32) * MW;
             for (const px of [H.x + 12, H.x + 16, H.x + 20]) { const i = row + Math.floor(px / 32), id = ground[i];
               // bounce mushroom: the tileset says 2x jump velocity, which would fly off the top of the 360px view, so it's ~1.45x (about 6 tiles)
-              if (id >= 63 && id <= 67) { H.vy = -12; H.ground = false; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
+              if (id >= 63 && id <= 67) { H.vy = -12; H.ground = false; H.jumpT = tick; H.jumpV = -12; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
               if (id >= 56 && id <= 58 && crumble[i] == null) crumble[i] = 0; } }
           else { H.y = ny; H.ground = false; }
           if (H.vy < 0 && EH_SOLID.has(tileAt(H.x + 16, H.y + 8))) { H.vy = 0; }
@@ -220,8 +220,8 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           if (PUP.gr) { PUP.y = g0 - 32; PUP.vy = 0;
             const wall = d && (EH_SOLID.has(tileAt(ax + d * 6, PUP.y + 20)) || EH_SOLID.has(tileAt(ax + d * 6, PUP.y + 6)));
             const gap = d && (() => { const fx2 = PUP.x + 16 + d * 36; for (let t = Math.floor((PUP.y + 32) / 32); t < MH; t++) { const id = tileAt(fx2, t * 32); if (id === 31 || id === 32) return true; if (surface(fx2, t) != null) return false; } return true; })();   // a pit or water: hop it; a ledge: just drop down
-            if (wantUp) PUP.vy = -10.5; else if (wall || gap) PUP.vy = -8.5; }
-          else { PUP.vy = Math.min(8, PUP.vy + 0.45); if (PUP.vy < 0 && EH_SOLID.has(tileAt(PUP.x + 16, PUP.y + PUP.vy))) PUP.vy = 0; }
+            if (wantUp) PUP.vy = wantUp; else if (wall || gap) PUP.vy = -8.3; }
+          else { PUP.vy = Math.min(7, PUP.vy + 0.35); if (PUP.vy < 0 && EH_SOLID.has(tileAt(PUP.x + 16, PUP.y + PUP.vy))) PUP.vy = 0; }
           PUP.y += PUP.vy;
         };
         if (PUP) {
@@ -243,7 +243,9 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             if (far || (PUP.stuck = PUP.stuck || 0, PUP.stuck = Math.abs(dx) > 60 || H.y + 16 - PUP.y < -40 ? PUP.stuck + 1 : 0) > 240) { const puff = () => { fx('fx_dust_land', 4, 12, PUP.x - 8, PUP.y + 4, 32); fx('fx_dust_land', 4, 12, PUP.x + 8, PUP.y + 4, 32); }; puff(); PUP.x = tx; PUP.y = H.y + 16; PUP.vy = 0; PUP.stuck = 0; puff(); }   // lost or stuck: catch up
             const sp = Math.abs(dx) > 80 ? 3.6 : 2.4, vx = Math.abs(dx) > 6 ? Math.max(-sp, Math.min(sp, dx * 0.12)) : 0;
             // hop up after the owner when he is higher up and close by; drop through one-way ledges when he is below
-            const hf = H.y + 48 - (PUP.y + 32), up = H.ground && hf < -20 && Math.abs(H.x - PUP.x) < 110, down = H.ground && hf > 40;   // hf: owner's feet vs the puppy's
+            const hf = H.y + 48 - (PUP.y + 32), down = H.ground && hf > 40;   // hf: owner's feet vs the puppy's
+            // jump with Dimitrije: same jump, a moment after him (a mushroom bounce too, if the puppy is on it)
+            const up = H.jumpT != null && tick - H.jumpT >= 4 && tick - H.jumpT <= 10 && PUP.lastJ !== H.jumpT && Math.abs(H.x - PUP.x) < 120 ? (PUP.lastJ = H.jumpT, H.jumpV) : 0;
             pupStep(vx, up, down);
             if (Math.abs(dx) > 2) PUP.face = Math.sign(dx);
             PUP.anim = !PUP.gr ? 'jump' : vx ? 'run' : 'idle';
