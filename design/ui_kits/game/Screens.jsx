@@ -13,22 +13,26 @@ function ParallaxBackdrop({ dim }) {
   );
 }
 
-function TitleScreen({ onStart, onSelect }) {
+function TitleScreen({ onStart, onSelect, lang, onLang }) {
   const { PixelButton, Sprite } = EHK;
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
       <ParallaxBackdrop />
+      {/* language: English / Srpski (latinica), remembered in this browser */}
+      <div style={{ position: 'absolute', top: 24, right: 24, display: 'flex', gap: 12, zIndex: 1 }}>
+        {[['en', 'English'], ['sr', 'Srpski']].map(([id, label]) => <PixelButton key={id} size="sm" variant={lang === id ? 'primary' : 'secondary'} onClick={() => onLang(id)}>{label}</PixelButton>)}
+      </div>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 96, gap: 12 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 128, lineHeight: 1, color: 'var(--eh-gold)', textShadow: '-6px 0 0 var(--eh-ink),6px 0 0 var(--eh-ink),0 -6px 0 var(--eh-ink),0 6px 0 var(--eh-ink),6px 12px 0 var(--eh-ember)' }}>Elemental Heroes</div>
-        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>The Rescue of Baba Vera</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 128, lineHeight: 1, color: 'var(--eh-gold)', textShadow: '-6px 0 0 var(--eh-ink),6px 0 0 var(--eh-ink),0 -6px 0 var(--eh-ink),0 6px 0 var(--eh-ink),6px 12px 0 var(--eh-ember)' }}>{T('Elemental Heroes')}</div>
+        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>{T('The Rescue of Baba Vera')}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 21, alignItems: 'center', marginTop: 48 }}>
-          <PixelButton size="lg" onClick={onStart}>Start</PixelButton>
-          <PixelButton variant="secondary" onClick={onSelect}>Level Select</PixelButton>
+          <PixelButton size="lg" onClick={onStart}>{T('Start')}</PixelButton>
+          <PixelButton variant="secondary" onClick={onSelect}>{T('Level Select')}</PixelButton>
         </div>
       </div>
       <div style={{ position: 'absolute', left: 48, bottom: 72, display: 'flex', gap: 0 }}>{['konstantin', 'katarina', 'vasilije', 'dimitrije'].map(k => <Sprite key={k} src={EHK_A + `sprites/heroes/kids/${k}/hero_${k}_idle.png`} frames={4} frame={0} scale={4} />)}</div>
       <div style={{ position: 'absolute', right: 96, bottom: 72 }}><Sprite src={EHK_A + 'sprites/enemies/forest/enemy_rotroot_idle.png'} frames={4} fps={5} scale={6} flip /></div>
-      <div style={{ position: 'absolute', bottom: 24, width: '100%', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 16, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>← → move · space jump · F fire · 1–4 cousins · Q/E switch hero · esc pause</div>
+      <div style={{ position: 'absolute', bottom: 24, width: '100%', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 16, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>{T('← → move · space jump · F fire · 1–4 cousins · Q/E switch hero · esc pause')}</div>
     </div>
   );
 }
@@ -41,11 +45,11 @@ function PauseMenu({ onResume, onRestart, onQuit }) {
   const { PixelPanel, PixelButton } = EHK;
   return (
     <Overlay>
-      <PixelPanel title="Paused" style={{ width: 360 }}>
+      <PixelPanel title={T('Paused')} style={{ width: 360 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
-          <PixelButton variant="ghost" selected onClick={onResume}>Resume</PixelButton>
-          <PixelButton variant="ghost" onClick={onRestart}>Restart</PixelButton>
-          <PixelButton variant="ghost" onClick={onQuit}>Quit to title</PixelButton>
+          <PixelButton variant="ghost" selected onClick={onResume}>{T('Resume')}</PixelButton>
+          <PixelButton variant="ghost" onClick={onRestart}>{T('Restart')}</PixelButton>
+          <PixelButton variant="ghost" onClick={onQuit}>{T('Quit to title')}</PixelButton>
         </div>
       </PixelPanel>
     </Overlay>
@@ -57,14 +61,14 @@ function ResultPanel({ kind, coins, gems, gemTotal, onRetry, onQuit, onContinue 
   const win = kind === 'complete';
   return (
     <Overlay>
-      <PixelPanel title={win ? 'Level Complete' : 'Game Over'} tone={win ? 'stone' : 'dark'} style={{ width: 560 }}>
+      <PixelPanel title={T(win ? 'Level Complete' : 'Game Over')} tone={win ? 'stone' : 'dark'} style={{ width: 560 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
-          {win ? <CoinCounter count={coins} scale={3} src={EHK_A + 'sprites/items/item_coin_spin.png'} /> : <div style={{ fontSize: 24, textAlign: 'center' }}>The flame goes out. For now.</div>}
-          {win && gemTotal > 0 && <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18 }}>GEMS {gems}/{gemTotal}</div>}
+          {win ? <CoinCounter count={coins} scale={3} src={EHK_A + 'sprites/items/item_coin_spin.png'} /> : <div style={{ fontSize: 24, textAlign: 'center' }}>{T('The flame goes out. For now.')}</div>}
+          {win && gemTotal > 0 && <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18 }}>{T('GEMS')} {gems}/{gemTotal}</div>}
           <div style={{ display: 'flex', gap: 21 }}>
-            {win && onContinue && <PixelButton onClick={onContinue}>Continue ▶</PixelButton>}
-            <PixelButton variant={win ? 'secondary' : 'primary'} onClick={onRetry}>{win ? 'Play again' : 'Retry'}</PixelButton>
-            <PixelButton variant="secondary" onClick={onQuit}>Title</PixelButton>
+            {win && onContinue && <PixelButton onClick={onContinue}>{T('Continue ▶')}</PixelButton>}
+            <PixelButton variant={win ? 'secondary' : 'primary'} onClick={onRetry}>{T(win ? 'Play again' : 'Retry')}</PixelButton>
+            <PixelButton variant="secondary" onClick={onQuit}>{T('Title')}</PixelButton>
           </div>
         </div>
       </PixelPanel>

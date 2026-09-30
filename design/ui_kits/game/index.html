@@ -5,6 +5,7 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="../../_ds_bundle.js"></script>
 <style>html,body{margin:0;height:100%;background:var(--eh-ink);overflow:hidden}#fit{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:0 0}</style></head><body><div id="fit"><div id="root" style="position:relative;width:1280px;height:720px;overflow:hidden"></div></div>
+<script type="text/babel" src="I18n.jsx"></script>
 <script type="text/babel" src="GameView.jsx"></script>
 <script type="text/babel" src="Screens.jsx"></script>
 <script type="text/babel" src="Story.jsx"></script>
@@ -15,6 +16,8 @@ addEventListener('resize',fit);addEventListener('load',fit);new ResizeObserver(f
 function App(){
   const [screen,setScreen]=React.useState(()=>localStorage.getItem('eh_screen')==='play'?'play':'title');
   const [run,setRun]=React.useState(0);
+  const [lang,setLang]=React.useState(window.EH_LANG);
+  const pickLang=l=>{ehSetLang(l);setLang(l);document.documentElement.lang=l;};
   const [level,setLevel]=React.useState(()=>localStorage.getItem('eh_level')||'l1');
   React.useEffect(()=>{localStorage.setItem('eh_level',level);},[level]);
   const [hud,setHud]=React.useState({hp:4,coins:0});
@@ -27,7 +30,7 @@ function App(){
   const levelRef=React.useRef(level);levelRef.current=level;
   const end=React.useCallback((kind,coins,x={})=>{if(kind==='complete')ehSaveLevel(levelRef.current,{coins,...x});setRes({kind,coins,...x});setScreen(s=>s==='play'?(kind==='complete'?'note':'result'):s);},[]);
   const story=React.useCallback(id=>{if(!EH_DIALOGUE[id])return;setDialog(id);setScreen(s=>s==='play'?'dialog':s);},[]);
-  if(screen==='title')return <TitleScreen onStart={()=>{setLevel('l1');setScreen('intro');}} onSelect={()=>setScreen('select')}/>;
+  if(screen==='title')return <TitleScreen onStart={()=>{setLevel('l1');setScreen('intro');}} onSelect={()=>setScreen('select')} lang={lang} onLang={pickLang}/>;
   if(screen==='select'||screen==='travel')return <WorldMap key={screen} mode={screen} onPlay={id=>{setLevel(id);restart();}} onBack={setScreen}/>;
   if(screen==='intro')return <IntroCutscene onDone={restart}/>;
   return(<div style={{position:'absolute',inset:0}}>
