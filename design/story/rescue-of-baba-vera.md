@@ -10,6 +10,13 @@ Every New Year's Eve the four cousins spend the night at Baba Vera's house at th
 
 An hour before midnight a storm blows out every light in the house, and Baba Vera is gone. **Mrak, the Hollow King**, has taken her to his cold, grey kingdom. His wardens drag her across four lands: forest, mountains, caves and finally his keep. The children must follow her red yarn and bring her home before midnight.
 
+### Writing rule: every hero grows
+The players are the real kids, so nobody is ever the butt of the joke. Teasing stays friendly, and every level ends with the cousins recognising what the star did well and learning from it:
+- **Level 1:** Kosta and Vasilije learn from Dimitrije that acting beats arguing.
+- **Level 2:** they learn from Katarina to stop and think.
+- **Level 3:** Vasilije learns he needs the team.
+- **Level 4:** Kosta learns to share the lead.
+
 ### The running jokes
 - **Baba's orders.** Every note Baba leaves ends with one of the things she always tells them:
   - *share the cookies*
@@ -136,7 +143,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Before the Blightwarden**
 - **Vasilije:** "My legs are dead. How are you not tired?"
 - **Dimitrije:** "Football. Every day."
-- **Kosta:** "Fine… you lead. But just this level."
+- **Kosta:** "You were right back there, Dimi. Lead the way."
 - **Dimitrije:** "Okej."
 - **Blightwarden:** "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains."
 - **Katarina:** "Over the mountains… that's where it snows."
@@ -151,8 +158,9 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 
 - **Katarina:** "Ali Vera! The warm ones are so itchy…"
 - **Dimitrije:** "I packed extra. Here."
-- **Vasilije:** "Wait. Why didn't she say well done to ME?"
-- **Kosta:** "Because Dimitrije did the whole level."
+- **Vasilije:** "Dimi, you were right. We were arguing and you just… went."
+- **Kosta:** "Yeah. Less arguing, more going. Good leading, Dimi."
+- **Dimitrije:** "Thanks. Now let's go get Baba."
 
 ### Level 2 · The Frostfang Peaks: Katarina
 **Start**
@@ -196,7 +204,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **The trap.** Vasilije charges ahead alone, a gate slams, and lava starts rising.
 - **Vasilije:** "…Guys? GUYS?"
 - *(The fox runs off and comes back with the others.)*
-- **Kosta:** "Captain in trouble?"
+- **Kosta:** "Need a hand, captain?"
 - **Vasilije:** "…Maybe we need everybody."
 - **Kosta:** "Maybe."
 
@@ -215,7 +223,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 > — Baba
 
 - **Kosta:** "Ali Vera…"
-- **Vasilije:** "HA!"
+- **Vasilije:** "Share it? …Okay. Deal. We lead together."
 
 ### Level 4 · The Hollow Keep: Konstantin
 **Start.** The keep sits on top of a sheer cliff. A golden eagle lands in front of Kosta.
