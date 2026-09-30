@@ -644,7 +644,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           ctx.drawImage(img.bar_frame, fx0, fy0);
           for (let x = 0; x < fw; x += 8) ctx.drawImage(img.bar_fill, 0, 0, Math.min(8, fw - x), 8, fx0 + 20 + x, fy0 + 4, Math.min(8, fw - x), 8);
           if (bb.hurt > 0) { ctx.fillStyle = 'rgba(232,224,208,0.6)'; ctx.fillRect(fx0 + 20, fy0 + 4, fw, 8); }
-          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#0d0b14'; ctx.fillText(T(bb.name), 321, fy0 - 3); ctx.fillStyle = '#e8e0d0'; ctx.fillText(T(bb.name), 320, fy0 - 4);
+          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#0d0b14'; ctx.fillText(window.T(bb.name), 321, fy0 - 3); ctx.fillStyle = '#e8e0d0'; ctx.fillText(window.T(bb.name), 320, fy0 - 4);
         }
       };
       const loop = () => { if (!alive) return; if (!pausedRef.current) step(); draw(); raf = requestAnimationFrame(loop); };
