@@ -40,7 +40,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
-      const map = await (await fetch(EHA + 'maps/forest_mock.tmj')).json();
+      const map = await (await fetch(EHA + 'maps/forest_mock.tmj', { cache: 'no-cache' })).json();
       // tile layers: ids (-1 = empty) plus horizontal-flip flags (Tiled keeps flips in the gid's top bits)
       const L = n => { const l = map.layers.find(l => l.name === n); if (!l) return null; return { id: l.data.map(g => (g % 0x20000000) - 1), flip: l.data.map(g => g >= 0x80000000) }; };
       const GL = L('ground'), DBL = L('decor_back'), DL = L('decor'), FGL = L('foreground'), ground = GL.id;
@@ -240,7 +240,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; for (let t = Math.max(0, Math.floor(H.y / 32)); t < MH; t++) { const g = surface(PUP.x + 16, t); if (g != null) { PUP.y = g - 32; break; } } }   // re-enter standing on the ground   // owner is back: run in from the left
             PUP.st = 'follow'; if (PUP.vy == null) { PUP.vy = 0; PUP.stuck = 0; }
             const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 700 || Math.abs(H.y - PUP.y) > 200;
-            if (far || (PUP.stuck = PUP.stuck || 0, PUP.stuck = Math.abs(dx) > 60 || H.y + 16 - PUP.y < -40 ? PUP.stuck + 1 : 0) > 240) { PUP.x = tx; PUP.y = H.y; PUP.vy = 0; PUP.stuck = 0; }   // lost or stuck: catch up
+            if (far || (PUP.stuck = PUP.stuck || 0, PUP.stuck = Math.abs(dx) > 60 || H.y + 16 - PUP.y < -40 ? PUP.stuck + 1 : 0) > 240) { const puff = () => { fx('fx_dust_land', 4, 12, PUP.x - 8, PUP.y + 4, 32); fx('fx_dust_land', 4, 12, PUP.x + 8, PUP.y + 4, 32); }; puff(); PUP.x = tx; PUP.y = H.y + 16; PUP.vy = 0; PUP.stuck = 0; puff(); }   // lost or stuck: catch up
             const sp = Math.abs(dx) > 80 ? 3.6 : 2.4, vx = Math.abs(dx) > 6 ? Math.max(-sp, Math.min(sp, dx * 0.12)) : 0;
             // hop up after the owner when he is higher up and close by; drop through one-way ledges when he is below
             const hf = H.y + 48 - (PUP.y + 32), up = H.ground && hf < -20 && Math.abs(H.x - PUP.x) < 110, down = H.ground && hf > 40;   // hf: owner's feet vs the puppy's
