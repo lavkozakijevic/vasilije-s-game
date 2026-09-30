@@ -2,7 +2,7 @@
  "id": "companion_puppy",
  "type": "companion",
  "name": "Puppy",
- "companionOf": "hero_konstantin",
+ "companionOf": "hero_dimitrije",
  "frameWidth": 32,
  "frameHeight": 32,
  "facing": "right",

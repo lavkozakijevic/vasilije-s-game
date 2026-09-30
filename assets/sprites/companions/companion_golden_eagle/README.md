@@ -1,4 +1,4 @@
-# Golden eagle (companion_golden_eagle), companion of Dimitrije
+# Golden eagle (companion_golden_eagle), companion of Konstantin
 
 Dark brown with a golden nape, grey hooked beak and gold feet.
 
@@ -17,4 +17,4 @@ Dark brown with a golden nape, grey hooked beak and gold feet.
 ## Notes
 - 32×32 frames except carry (64×32). Faces right; mirror for left.
 - fly: wings up, back, down, back. glide: wings spread in a V. dive: wings tucked, body at 45° with speed lines (frame 0 is the tuck).
-- carry: the eagle grips the child's raised hand; `_carry.png` holds Dimitrije and the `_carry_<name>.png` variants hold the other cousins. Hide the child's own sprite while carried.
+- carry: the eagle grips the child's raised hand; `_carry.png` holds Dimitrije and the `_carry_<name>.png` variants hold the other cousins; use `_carry_konstantin.png` for Konstantin, the eagle's own child. Hide the child's own sprite while carried.

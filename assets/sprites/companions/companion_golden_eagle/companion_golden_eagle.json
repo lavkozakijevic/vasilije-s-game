@@ -2,7 +2,7 @@
  "id": "companion_golden_eagle",
  "type": "companion",
  "name": "Golden eagle",
- "companionOf": "hero_dimitrije",
+ "companionOf": "hero_konstantin",
  "frameWidth": 32,
  "frameHeight": 32,
  "facing": "right",
@@ -93,7 +93,7 @@
    "vasilije": "companion_golden_eagle_carry_vasilije.png",
    "dimitrije": "companion_golden_eagle_carry.png"
   },
-  "note": "child hangs from one raised hand; replace the child sprite with this strip while carried and move the entity upward"
+  "note": "child hangs from one raised hand; the default strip shows Dimitrije, use variants.konstantin for Konstantin (his companion). Hide the child sprite while carried."
  },
  "palette": "elemental16.hex"
 }

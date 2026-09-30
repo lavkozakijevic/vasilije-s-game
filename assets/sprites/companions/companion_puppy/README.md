@@ -1,4 +1,4 @@
-# Puppy (companion_puppy), companion of Konstantin
+# Puppy (companion_puppy), companion of Dimitrije
 
 Small fluffy cream puppy with amber floppy ears and a back patch. About 16px tall.
 
