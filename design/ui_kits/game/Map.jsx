@@ -28,7 +28,8 @@ function WorldMap({ mode, onPlay, onBack }) {
   const [map, setMap] = React.useState(null);
   const [pos, setPos] = React.useState(null);
   const [arrived, setArrived] = React.useState(mode !== 'travel');
-  const prog = React.useMemo(ehProgress, []);
+  const [ver, setVer] = React.useState(0), [sure, setSure] = React.useState(false);
+  const prog = React.useMemo(ehProgress, [ver]);
   const at = ehBabaLevel(prog), cur = EH_LEVELS[Math.max(0, Math.min(EH_LEVELS.length - 1, at < 0 ? EH_LEVELS.length - 1 : at))];
   React.useEffect(() => { fetch(EHM_A + 'ui/ui_world_map.json').then(r => r.json()).then(setMap).catch(() => setMap({ nodes: {}, path: [] })); }, []);
   React.useEffect(() => {
@@ -45,7 +46,7 @@ function WorldMap({ mode, onPlay, onBack }) {
       const a = pts[i], b = pts[i + 1], f = lens[i] ? d / lens[i] : 1; setPos({ x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f });
       if (k < 1) raf = requestAnimationFrame(step); else setArrived(true); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
-  }, [map]);
+  }, [map, ver]);
   const px = { imageRendering: 'pixelated', position: 'absolute', left: 0, top: 0, width: 1280, height: 720 };
   const chip = (lv, i) => {
     const n = map && map.nodes[lv.node]; if (!n) return null;
@@ -77,6 +78,12 @@ function WorldMap({ mode, onPlay, onBack }) {
         {mode === 'travel' && <PixelButton variant="secondary" onClick={() => onBack('select')}>{T('Level select')}</PixelButton>}
         <PixelButton variant="secondary" onClick={() => onBack('title')}>{T('Title')}</PixelButton>
       </div>
+      {mode === 'select' && <div style={{ position: 'absolute', left: 32, bottom: 28, display: 'flex', gap: 12, alignItems: 'center' }}>   {/* start over in this browser (asks first) */}
+        {!sure ? <PixelButton variant="secondary" size="sm" onClick={() => setSure(true)}>{T('Reset progress')}</PixelButton>
+          : <><span style={{ fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', background: 'rgba(20,16,28,.82)', padding: '6px 10px' }}>{T('Erase all progress?')}</span>
+            <PixelButton size="sm" onClick={() => { try { ['eh_progress', 'eh_level', 'eh_screen'].forEach(k => localStorage.removeItem(k)); } catch (e) {} setSure(false); setVer(v => v + 1); }}>{T('Yes, start over')}</PixelButton>
+            <PixelButton variant="secondary" size="sm" onClick={() => setSure(false)}>{T('No')}</PixelButton></>}
+      </div>}
     </div>
   );
 }
