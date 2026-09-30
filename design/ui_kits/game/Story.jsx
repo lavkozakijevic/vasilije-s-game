@@ -277,7 +277,7 @@ function IntroCutscene({ onDone }) {
       R(PAL.slate, x + 100, y - 46, 12, 22); for (let i = 0; i < 5; i++) R(PAL.stone, x + 104 + Math.sin(t * 2 + i) * 4, y - 56 - i * 10 - (t * 8 % 10), 5, 4); };
     const kitchen = (dark = 0) => {
       R(PAL.plum, 0, 0, 640, 360); for (let x = 0; x < 640; x += 32) R(PAL.slate, x, 0, 1, 230);
-      R(PAL.bark, 0, 230, 640, 8); R(PAL.amber, 0, 300, 640, 60); for (let x = 0; x < 640; x += 40) R(PAL.bark, x, 300, 2, 60); R(PAL.bark, 0, 300, 640, 3);
+      R(PAL.bark, 0, 230, 640, 8); R(PAL.amber, 0, 300, 640, 140); for (let x = 0; x < 640; x += 40) R(PAL.bark, x, 300, 2, 140); R(PAL.bark, 0, 300, 640, 3);
       R(PAL.ink, 250, 60, 110, 90); R(PAL.pine, 256, 66, 98, 78); R(PAL.ink, 303, 60, 4, 90); R(PAL.ink, 250, 103, 110, 4); for (let i = 0; i < 6; i++) R(PAL.bone, 262 + i * 15, 76 + (i * 7) % 50, 2, 2);
       R(PAL.slate, 480, 200, 90, 100); R(PAL.stone, 480, 200, 90, 6); R(PAL.ink, 492, 222, 66, 50); R(PAL.ember, 496, 226, 58, 42); R(PAL.flame, 500, 250, 50, 14);
       R(PAL.stone, 40, 230, 70, 70); R(PAL.tide, 48, 238, 54, 16); R(PAL.stone, 70, 214, 6, 18);
@@ -293,7 +293,7 @@ function IntroCutscene({ onDone }) {
         if (t > 5.6) xs[3] = Math.max(60, 300 - (t - 5.6) * 160);
         KIDS.forEach((k, i) => fig(ehKidFigure(k, e < 1 || (i === 3 && t > 5.6 && xs[3] > 60) ? 1 + Math.floor(t * 8) % 2 : 0), xs[i], 300 + hop, 3, i === 3 && t > 5.6));
         fig(ehBabaFigure(t > 1 && t < 3 && Math.floor(t * 4) % 2 ? 1 : 0), 420, 300, 3, true); cookies(404, 236 - (t < 1 ? t * 10 : 10)); },
-      t => { R(PAL.plum, 0, 0, 640, 360); R(PAL.slate, 0, 0, 640, 12); R(PAL.moss, 0, 300, 640, 60); R(PAL.pine, 120, 300, 400, 40);
+      t => { R(PAL.plum, 0, 0, 640, 360); R(PAL.slate, 0, 0, 640, 12); R(PAL.moss, 0, 300, 640, 140); R(PAL.pine, 120, 300, 400, 40);
         R(PAL.ink, 80, 70, 64, 92); R(PAL.ember, 84, 74, 56, 84); g.fillStyle = PAL.gold; g.font = '8px Silkscreen, monospace'; g.textAlign = 'center';
         ['THE RISE', 'OF THE', 'KARATE', 'BADASS'].forEach((w, i) => g.fillText(w, 112, 96 + i * 14)); R(PAL.bone, 100, 144, 24, 2);
         R(PAL.ink, 540, 200, 4, 100); R(PAL.ink, 528, 298, 28, 3); R(PAL.slate, 530, 186, 24, 16); R(PAL.frost, 534, 190, 16, 8);
@@ -332,7 +332,8 @@ function IntroCutscene({ onDone }) {
       if (T >= total) { finish(); return; }
       let n = starts.findIndex((s, i) => T >= s && (i === starts.length - 1 || T < starts[i + 1])); const t = T - starts[n], S = INTRO[n];
       g.globalAlpha = 1; R(PAL.ink, 0, 0, 640, 360);
-      if (real[n]) { for (const l of ['', '_chars', '_fx']) if (img[`s${n}${l}`]) g.drawImage(img[`s${n}${l}`], 0, 0); } else scenes[n](t);
+      if (real[n]) { for (const l of ['', '_chars', '_fx']) if (img[`s${n}${l}`]) g.drawImage(img[`s${n}${l}`], 0, 0); }
+      else { const lift = [1, 2, 4, 5, 7].includes(n) ? 72 : 0; g.save(); g.translate(0, -lift); scenes[n](t); g.restore(); }
       const fade = Math.min(1, t / 0.4, (S.d - t) / 0.3); if (fade < 1 && n !== 4) { g.globalAlpha = 1 - Math.max(0, fade); R(PAL.ink, 0, 0, 640, 360); g.globalAlpha = 1; }
       const ln = S.lines.filter(l => l.at <= t).pop() || null; if (ln !== lastLine) { lastLine = ln; setLine(ln); }
       const nt = S.note != null && t >= S.note; if (nt !== lastNote) { lastNote = nt; setNote(nt); }
