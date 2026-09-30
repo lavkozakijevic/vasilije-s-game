@@ -14,7 +14,7 @@ const EH_SR = {
   'Paused': 'Pauza',
   'Resume': 'Nastavi',
   'Restart': 'Ispočetka',
-  'Quit to title': 'Na početak',
+  'Quit to title': 'Glavni meni',
   'Level Complete': 'Nivo pređen',
   'Game Over': 'Kraj igre',
   'The flame goes out. For now.': 'Plamen se gasi. Zasad.',
@@ -23,7 +23,7 @@ const EH_SR = {
   'Play again': 'Igraj ponovo',
   'Play': 'Igraj',
   'Retry': 'Probaj ponovo',
-  'Title': 'Početak',
+  'Title': 'Glavni meni',
   'Found': 'Pronađeno',
   // ---- world map
   'Baba Vera’s trail': 'Tragom Baba Vere',
