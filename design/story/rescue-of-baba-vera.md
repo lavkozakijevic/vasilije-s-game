@@ -6,7 +6,7 @@ A game made for Konstantin, Katarina, Vasilije and Dimitrije.
 
 ## 1. Premise
 
-Every New Year's Eve the four cousins spend the night at Baba Vera's house at the edge of the old forest. Baba Vera is more than she seems: she is the **Keeper of the Hearth**. Wherever she goes, things get warm and start to grow.
+Every New Year's Eve the four cousins spend the night at Baba Vera's house in **Ivanovo**, at the edge of the old forest. Baba Vera is more than she seems: she is the **Keeper of the Hearth**. Wherever she goes, things get warm and start to grow.
 
 An hour before midnight a storm blows out every light in the house, and Baba Vera is gone. **Mrak, the Hollow King**, has taken her to his cold, grey kingdom. His wardens drag her across four lands: forest, mountains, caves and finally his keep. The children must follow her red yarn and bring her home before midnight.
 
@@ -90,22 +90,22 @@ About 70 seconds. It plays automatically on START. A **SKIP ▶** button appears
 
 | # | Time | Scene | Text |
 |---|---|---|---|
-| 1 | 0–6s | Night. Snowy village, one warm glowing house at the forest's edge. Slow pan. | *New Year's Eve, at Baba Vera's.* |
+| 1 | 0–6s | Night. Snowy village, one warm glowing house at the forest's edge. Slow pan. | *New Year's Eve in Ivanovo.* |
 | 2 | 6–15s | Kitchen. Baba Vera pulls a tray of cookies out of the oven. The four kids pile in. | **Katarina:** "Baba, can I have a cookie? I'm SO hungry." · **Baba:** "Wash your hands before you eat!" · **Kids:** "Ali Veraaa!" · **Dimitrije:** "Already did." *(he's already at the sink)* |
 | 3 | 14–21s | Living room: toys everywhere, a football, a phone on a tripod (they're filming). Poster on the wall: *The Rise of the Karate Badass.* | **Baba:** "And pick up your toys. All of them." · **Vasilije:** "They're Kosta's toys!" · **Kosta:** "Half of them are YOURS." |
 | 4 | 21–28s | Window. Storm clouds roll in and a huge shadow with a crown of thorns rises over the forest. Two cold eyes open. | |
 | 5 | 28–33s | The lights flicker… and go out. Black screen. | **Baba (off-screen):** "Children—!" |
 | 6 | 33–42s | Lights back on. Empty chair, apron, a plate of cookies, the door wide open and snow blowing in. A trail of red yarn leads into the dark forest. | *The chair was empty. Baba Vera was gone.* |
 | 7 | 42–55s | Kitchen table. Baba's wooden box opens by itself. Four stones glow: gold, frost-blue, orange and green. A note. | *(the note, see below)* |
-| 8 | 55–64s | The four kids look at each other. | **Katarina:** "She says follow the red yarn." · **Kosta:** "Okay. I'm the oldest, so I lead." · **Vasilije:** "No way. I'm faster, so I lead." · **Katarina:** "She JUST said no fighting!" · **Dimitrije:** "…I'll go first, then." |
+| 8 | 55–67s | The four kids look at each other, each holding a glowing stone. | **Dimitrije:** "Mine is green. It feels like wind." · **Katarina:** "Each stone is an element. Ice, fire, wind, light. That's our power." · **Kosta:** "Okay. I'm the oldest, so I lead." · **Vasilije:** "No way. I'm faster, so I lead." · **Katarina:** "She JUST said no fighting!" · **Dimitrije:** "…I'll go first, then." |
 | 9 | 64–72s | The kids run out into the snowy forest following the yarn. A puppy barks in the distance. Title card. | ***Elemental Heroes: The Rescue of Baba Vera*** |
 
 **Baba's note:**
 > Mrak has taken me. Don't be scared.
-> Each of you has a stone, and everything you need.
+> Each stone holds an element. It will give you the power to fight the monsters ahead.
 > Follow my red yarn and bring me home before midnight.
 > Share the cookies. Put on your socks.
-> And no fighting over who is captain. Kosta, Vasilije, I mean you.
+> No fighting over who is captain. Kosta, Vasilije, I mean you.
 > — Baba
 
 ---
