@@ -1,0 +1,16 @@
+/* Elemental Heroes: the 16-color master palette. Every pixel in the pack uses one of these. */
+:root{
+--eh-ink:#0d0b14;--eh-plum:#2a2233;--eh-slate:#4a3f55;--eh-stone:#8a7f8e;
+--eh-bone:#e8e0d0;--eh-pine:#1d3b2e;--eh-moss:#2f6b3a;--eh-leaf:#6fae3e;
+--eh-bark:#5a3a24;--eh-amber:#a8703c;--eh-ember:#8e1f1f;--eh-flame:#e0521f;
+--eh-gold:#ffc23d;--eh-tide:#2e5fa8;--eh-frost:#7fd4e8;--eh-void:#6b3fa0;
+/* element signatures */
+--element-fire:var(--eh-flame);--element-fire-dark:var(--eh-ember);
+--element-water:var(--eh-tide);--element-earth:var(--eh-amber);--element-air:var(--eh-leaf);
+--element-ice:var(--eh-frost);--element-lightning:var(--eh-gold);--element-shadow:var(--eh-void);--element-light:var(--eh-bone);
+/* semantic */
+--text-primary:var(--eh-bone);--text-muted:var(--eh-stone);--text-inverse:var(--eh-ink);--text-accent:var(--eh-gold);--text-danger:var(--eh-flame);
+--surface-screen:var(--eh-ink);--surface-panel:var(--eh-slate);--surface-panel-inset:var(--eh-plum);
+--bevel-light:var(--eh-stone);--bevel-dark:var(--eh-plum);--outline:var(--eh-ink);
+--focus:var(--eh-gold);--health:var(--eh-flame);--health-empty:var(--eh-plum);--currency:var(--eh-gold);
+}

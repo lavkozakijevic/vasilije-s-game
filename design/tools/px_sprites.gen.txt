@@ -1,0 +1,89 @@
+// Elemental Heroes pixel generator: characters, FX, items. Requires px_core.js.
+// ---------- FIRE HERO "CINDER" (32x32, faces right, feet on y30) ----------
+const L=(fx,fy=29,b=0)=>({fx,fy,b});
+const CREST=[
+[[-1,0,FLAME],[0,0,FLAME],[1,0,FLAME],[-1,-1,FLAME],[0,-1,GOLD],[-1,-2,GOLD],[0,-2,FLAME],[-2,-3,FLAME]],
+[[-1,0,FLAME],[0,0,FLAME],[1,0,FLAME],[-1,-1,GOLD],[0,-1,FLAME],[-1,-2,FLAME],[-1,-3,GOLD],[-2,-4,FLAME]],
+[[-1,0,FLAME],[0,0,FLAME],[1,0,FLAME],[0,-1,GOLD],[-1,-1,FLAME],[-2,-1,FLAME],[-1,-2,GOLD],[-2,-2,FLAME],[-2,-3,GOLD]]];
+function heroFire(o){
+const g=new G(32,32),bx=o.bx||0,by=o.by||0,t=o.t||0;
+const hx=16+bx,hipY=22+by,shY=16+by;
+const leg=(x0,Lg,c1,c2)=>{const fx=x0+Lg.fx,fy=Lg.fy,kx=Math.round((x0+fx)/2+Lg.b),ky=Math.round((hipY+fy)/2);g.line(x0,hipY,kx,ky,c1,2);g.line(kx,ky,fx,fy,c1,2);g.rect(fx-1,fy,4,2,c2);g.set(fx-1,fy,c2+1);if(c1===SLATE)g.set(kx,ky,STONE);};
+const arm=(sx,sy,H,c,fist)=>{const ex=sx+H[0],ey=sy+H[1];g.line(sx,sy,ex,ey,c,2);g.rect(ex,ey,2,2,fist);g.set(ex,ey,fist===FLAME?GOLD:FLAME);return[ex,ey];};
+const cape=()=>{const blow=o.cape??.15,len=Math.round(10-3*blow);for(let r=0;r<=len;r++){const w=1+Math.floor(r*(.3+.7*blow)+(blow>.3?Math.sin(r*.9+t*1.7)*1.2*blow:0));const y=o.capeUp?shY-1-r:shY-1+r,x1=hx-2,x0=x1-w;for(let x=x0;x<=x1;x++)g.set(x,y,x===x0?FLAME:EMBER);}};
+leg(hx-1,o.legs[0],PLUM,PLUM);
+cape();
+arm(hx-3,shY+1,o.arms[0],PLUM,EMBER);
+for(let y=shY-1;y<=hipY;y++)for(let x=hx-3;x<=hx+3;x++){let c=SLATE;if(x===hx-3||y===shY-1)c=STONE;if(x===hx+3||y===hipY)c=PLUM;g.set(x,y,c);}
+g.set(hx-1,shY+2,FLAME);g.set(hx+1,shY+2,FLAME);g.set(hx,shY+1,FLAME);g.set(hx,shY+3,FLAME);g.set(hx,shY+2,GOLD);
+g.set(hx+1,shY+4,FLAME);g.set(hx+2,shY+5,EMBER);g.set(hx-2,shY+1,EMBER);
+for(let x=hx-3;x<=hx+3;x++)g.set(x,hipY-1,AMBER);g.set(hx+1,hipY-1,GOLD);
+leg(hx+1,o.legs[1],SLATE,SLATE);
+const hX=hx+(o.hdx||0),hY=11+by+(o.hdy||0);
+for(let y=hY-3;y<=hY+3;y++)for(let x=hX-4;x<=hX+3;x++){if((x===hX-4||x===hX+3)&&(y===hY-3||y===hY+3))continue;let c=SLATE;if(x===hX-4||y===hY-3)c=STONE;else if(x===hX+3||y===hY+3)c=PLUM;g.set(x,y,c);}
+g.set(hX-3,hY-2,BONE);g.set(hX-5,hY-2,STONE);g.set(hX-6,hY-3,STONE);g.set(hX-6,hY-4,BONE);
+g.set(hX,hY,INK);g.rect(hX+1,hY,3,1,GOLD);g.rect(hX+1,hY+1,2,2,PLUM);g.set(hX+3,hY+1,FLAME);
+CREST[t%3].forEach(([dx,dy,c])=>g.set(hX+dx,hY-4+dy,c));
+g.ell(hx+3,shY,2,1.5,STONE);g.set(hx+2,shY-1,BONE);g.set(hx+4,shY-2,STONE);
+const hand=arm(hx+3,shY+1,o.arms[1],SLATE,FLAME);
+g.outline(INK);
+if(o.fx!=null)attackFx(g,o.fx,hand[0]+1,hand[1]);
+let out=g;
+if(o.flash)out=flash(out);
+if(o.dissolve)out=dissolve(out,o.dissolve,o.seed||1);
+return out;}
+function attackFx(g,f,x,y){
+if(f===1){g.set(x,y-1,GOLD);g.set(x-1,y,GOLD);}
+if(f===2){g.ell(x+2,y,2,1.5,FLAME);g.ell(x+2,y,1,1,GOLD);g.set(x+2,y,BONE);}
+if(f===3){g.ell(x+2,y,3,2.5,EMBER);g.ell(x+2,y,2.5,2,FLAME);g.ell(x+2,y,1.5,1,GOLD);g.set(x+2,y,BONE);g.set(x+6,y-3,FLAME);g.set(x+5,y+3,GOLD);}
+if(f===4){const r=rng(9);for(let i=0;i<7;i++)g.set(x+1+Math.round(r()*4),y-3+Math.round(r()*6),[EMBER,FLAME,GOLD][i%3]);}}
+const HERO_ANIMS={
+idle:[0,1,2,3].map(f=>{const by=[0,0,1,1][f];return{by,t:f,legs:[L(-1),L(1,29,by)],arms:[[-1,5],[1,5]],cape:.15};}),
+run:[...Array(8)].map((_,f)=>{const ph=f/8*Math.PI*2,s=Math.sin(ph),c=Math.cos(ph);const lg=(s,c)=>L(Math.round(4*s),29-(c>0?Math.round(3*c):0),c>0?2:0);return{bx:1,by:Math.abs(s)<.75?-1:0,t:f,legs:[lg(-s,-c),lg(s,c)],arms:[[Math.round(3*s)-1,4],[Math.round(-3*s)+1,4]],cape:1};}),
+jump:[{by:-1,t:0,legs:[L(-1,26,1),L(3,25,2)],arms:[[-2,-2],[2,-4]],cape:.4},{by:-1,t:1,legs:[L(-1,27,1),L(3,26,2)],arms:[[-2,-3],[2,-5]],cape:.5}],
+fall:[{t:0,legs:[L(-2,29,-1),L(2,28,1)],arms:[[-4,-3],[4,-3]],capeUp:true,cape:.5},{t:2,legs:[L(-2,29,-1),L(3,28,1)],arms:[[-4,-4],[4,-4]],capeUp:true,cape:.6}],
+land:[{by:3,t:0,legs:[L(-3,29,-1),L(3,29,2)],arms:[[-3,3],[3,3]],cape:.1},{by:1,t:1,legs:[L(-2),L(2,29,1)],arms:[[-2,4],[2,4]],cape:.1}],
+attack:[[-2,4,0,0],[-4,2,-1,0],[5,0,1,1],[7,0,1,1],[7,1,1,1],[2,5,0,0]].map(([ax,ay,bx,by],f)=>({bx,by,t:f,legs:[L(-3),L(3,29,1)],arms:[[-2,5],[ax,ay]],cape:.3,fx:f})),
+hurt:[{bx:-2,by:-1,hdx:-1,t:0,legs:[L(-1),L(2,28,-1)],arms:[[-3,2],[3,0]],cape:.6,flash:true},{bx:-2,by:-1,hdx:-1,t:1,legs:[L(-1),L(2,28,-1)],arms:[[-3,2],[3,0]],cape:.6}],
+death:(()=>{const a={bx:-2,by:-1,hdx:-1,t:0,legs:[L(-1),L(2,28,-1)],arms:[[-3,2],[3,0]],cape:.6},b={by:4,hdx:1,hdy:1,t:1,legs:[L(-3,29,-2),L(3,29,2)],arms:[[-1,5],[2,5]],cape:.1},c={by:6,hdx:2,hdy:2,t:2,legs:[L(-4,29,-2),L(4,29,2)],arms:[[0,4],[3,4]],cape:0};return[a,b,c,{...c,dissolve:.35,seed:1},{...c,dissolve:.7,seed:2},{...c,dissolve:.94,seed:3}];})()};
+// ---------- FIRE PROJECTILE ----------
+function fireball(f){const g=new G(16,16),r=rng(100+f);
+for(let i=6;i>=1;i--){const x=8-i,y=8+Math.round(Math.sin(i*1.3+f*1.6)*1.2*(i/6)),rad=Math.max(.6,2.6-i*.35);g.ell(x,y,rad,rad*.8,i<3?FLAME:EMBER);}
+g.ell(10,8,3.5,3,FLAME);g.ell(10,8,2.4,2,GOLD);g.set(11,7,BONE);g.set(11,8,BONE);
+g.outline(INK);
+for(let i=0;i<2;i++)g.set(1+Math.floor(r()*5),3+Math.floor(r()*10),r()<.5?GOLD:FLAME);
+return g;}
+function fireImpact(f){const g=new G(32,32),r=rng(200+f),cx=16,cy=16;
+const ring=(R,c,gap)=>{for(let a=0;a<64;a++){if(r()<gap)continue;const an=a/64*Math.PI*2;g.set(cx+Math.cos(an)*R,cy+Math.sin(an)*R,c);}};
+if(f===0){g.ell(cx,cy,5,5,FLAME);g.ell(cx,cy,3.5,3.5,GOLD);g.ell(cx,cy,1.5,1.5,BONE);g.outline(INK);}
+if(f===1){ring(9,EMBER,.2);ring(8,FLAME,.1);g.ell(cx,cy,4,4,FLAME);g.ell(cx,cy,2.5,2.5,GOLD);g.outline(INK);}
+if(f===2){ring(12,EMBER,.55);ring(11,FLAME,.5);ring(6,SLATE,.6);g.ell(cx,cy,1.5,1.5,FLAME);}
+if(f===3){ring(14,EMBER,.85);ring(8,SLATE,.75);ring(5,PLUM,.8);g.set(cx,cy-4,FLAME);}
+return g;}
+// ---------- FOREST ENEMY "ROTROOT" (32x32, faces right) ----------
+function rotroot(o){const g=new G(32,32),bx=o.bx||0,by=o.by||0,t=o.t||0;
+const x0=10+bx,x1=21+bx,top=14+by,bot=27,cx=x0+6;const R=o.roots||[0,0,0];
+const aB=o.armB||[-4,-3];g.line(x0,top+6,x0+aB[0],top+6+aB[1],BARK,2);g.set(x0+aB[0]-1,top+5+aB[1],MOSS);
+[[x0+1,-2],[x0+5,0],[x1-2,2]].forEach(([rx,dx],i)=>g.line(rx,bot,rx+dx,29-R[i],BARK,2));
+for(let y=top;y<=bot;y++)for(let x=x0;x<=x1;x++){let c=BARK;if(x===x0||(x===x0+1&&y%3!==0))c=AMBER;if((x-x0)%4===3&&y>top+1&&x<x1-1)c=PLUM;if(x===x1)c=PLUM;g.set(x,y,c);}
+g.ell(cx,top,6,1.5,AMBER);g.rect(cx-2,top,5,1,BARK);g.set(cx,top,AMBER);
+for(let x=x0;x<=x0+4;x++)for(let y=top+1;y<=top+1+Math.round(hash(x,t%2,4)*3);y++)g.set(x,y,MOSS);
+g.set(x0,top+1,LEAF);g.set(x0+1,top+1,LEAF);g.rect(x1-2,top+1,3,2,MOSS);g.set(x1-2,top+1,LEAF);
+const ey=top+5;g.rect(cx,ey,2,2,INK);g.rect(cx+3,ey,2,2,INK);g.set(cx-1,ey-1,PLUM);g.set(cx+5,ey-1,PLUM);
+if(!o.dim){g.set(cx+1,ey,GOLD);g.set(cx+4,ey,GOLD);}
+const m=o.mouth?3:2;g.rect(cx-1,ey+4,6,m,INK);g.set(cx,ey+4,BONE);g.set(cx+2,ey+4,BONE);g.set(cx+4,ey+4,BONE);if(o.mouth){g.set(cx+1,ey+6,BONE);g.set(cx+3,ey+6,BONE);g.rect(cx,ey+5,4,1,EMBER);}
+const aF=o.armF||[4,-3],ax=x1+aF[0],ay=top+6+aF[1];g.line(x1,top+6,ax,ay,BARK,2);g.set(ax+1,ay-1,AMBER);g.set(ax+1,ay-2,LEAF);g.set(ax+2,ay-1,MOSS);
+g.outline(INK);let out=g;if(o.flash)out=flash(out);return out;}
+const ROT_ANIMS={
+idle:[0,1,2,3].map(f=>({by:[0,1,1,0][f],t:f,armF:[4,-3+(f%2)],armB:[-4,-3+((f+1)%2)]})),
+move:[0,1,2,3,4,5].map(f=>({t:f,by:f%3===0?-1:0,roots:[f%3===0?2:0,f%3===1?2:0,f%3===2?2:0],armF:[4,-3+(f%2)],armB:[-4,-2-(f%2)]})),
+attack:[{bx:-1,by:-1,armF:[3,-8]},{bx:2,armF:[8,2],mouth:1},{bx:3,armF:[7,6],mouth:1},{bx:1,armF:[5,0]}],
+hurt:[{bx:-2,flash:true},{bx:-2,by:1}],
+death:(()=>{const base=rotroot({by:3,dim:true});return[rotroot({flash:true}),base,scatter(base,.9,.25,5,1),scatter(base,.55,.7,6,5),scatter(base,.2,1.1,7,14)];})()};
+// ---------- ITEMS / HUD ----------
+const HEART_MASK=['.XXX.XXX.','XXXXXXXXX','XXXXXXXXX','XXXXXXXXX','.XXXXXXX.','..XXXXX..','...XXX...','....X....'];
+function heart(state){const g=new G(16,16);HEART_MASK.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch!=='X')return;let c=FLAME;if(state==='empty'||(state==='half'&&x>4))c=PLUM;else if(x+y>9)c=EMBER;g.set(x+3,y+4,c);}));
+if(state!=='empty'){g.set(4,5,BONE);g.set(5,5,GOLD);g.set(4,6,GOLD);}else{g.set(4,5,SLATE);}
+return g.outline(INK);}
+function coin(f){const g=new G(16,16),rx=[4,3,2,.6,2,3][f];g.ell(8,8,rx,5,GOLD);if(rx>1){g.ell(8+Math.min(1,rx/3),9,Math.max(.6,rx-1.5),3.5,AMBER);g.ell(8,8,Math.max(.6,rx-1.8),3,GOLD);g.set(8-Math.floor(rx)+1,5,BONE);}else g.rect(8,3,1,11,AMBER);return g.outline(INK);}
+function iconFire(){const g=new G(16,16);g.ell(8,10,4,4,EMBER);for(let y=2;y<10;y++){const w=Math.round((y-2)*.5);g.rect(8-w,y,w*2+1,1,EMBER);}g.set(5,5,EMBER);g.set(4,6,EMBER);g.ell(8,11,3,3,FLAME);g.rect(8,5,1,4,FLAME);g.rect(7,7,3,2,FLAME);g.ell(8,12,1.5,1.5,GOLD);g.set(8,10,GOLD);g.set(6,9,BONE);return g.outline(INK);}

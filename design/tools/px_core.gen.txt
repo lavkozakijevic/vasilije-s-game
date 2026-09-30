@@ -1,0 +1,31 @@
+// Elemental Heroes pixel generator: core. Palette-locked raster + helpers.
+// Evaluated by run_script (concatenated with px_sprites.js, px_world.js, px_run.js).
+const PAL=['#0d0b14','#2a2233','#4a3f55','#8a7f8e','#e8e0d0','#1d3b2e','#2f6b3a','#6fae3e','#5a3a24','#a8703c','#8e1f1f','#e0521f','#ffc23d','#2e5fa8','#7fd4e8','#6b3fa0'];
+const PAL_NAMES=['ink','plum','slate','stone','bone','pine','moss','leaf','bark','amber','ember','flame','gold','tide','frost','void'];
+const INK=0,PLUM=1,SLATE=2,STONE=3,BONE=4,PINE=5,MOSS=6,LEAF=7,BARK=8,AMBER=9,EMBER=10,FLAME=11,GOLD=12,TIDE=13,FROST=14,VOID=15;
+const RGB=PAL.map(h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)));
+const BAYER=[[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+function rng(seed){let a=seed>>>0;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hash(x,y,s=0){let h=(x*374761393+y*668265263+s*982451653)|0;h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return(h>>>0)/4294967296;}
+class G{
+constructor(w,h,wrap=false){this.w=w;this.h=h;this.wrap=wrap;this.p=new Int8Array(w*h).fill(-1);}
+_x(x){return this.wrap?((x%this.w)+this.w)%this.w:x;}
+set(x,y,c){if(c==null||c<0)return;x=this._x(Math.round(x));y=Math.round(y);if(x<0||y<0||x>=this.w||y>=this.h)return;this.p[y*this.w+x]=c;}
+del(x,y){x=this._x(Math.round(x));y=Math.round(y);if(x<0||y<0||x>=this.w||y>=this.h)return;this.p[y*this.w+x]=-1;}
+get(x,y){x=this._x(Math.round(x));y=Math.round(y);if(x<0||y<0||x>=this.w||y>=this.h)return -1;return this.p[y*this.w+x];}
+rect(x,y,w,h,c){for(let j=0;j<h;j++)for(let i=0;i<w;i++)this.set(x+i,y+j,c);return this;}
+line(x0,y0,x1,y1,c,th=1){x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1);const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;for(let n=0;n<999;n++){this.rect(x0,y0,th,th,c);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx;}if(e2<=dx){e+=dx;y0+=sy;}}return this;}
+ell(cx,cy,rx,ry,c){for(let y=Math.floor(-ry);y<=Math.ceil(ry);y++)for(let x=Math.floor(-rx);x<=Math.ceil(rx);x++)if((x*x)/(rx*rx+.01)+(y*y)/(ry*ry+.01)<=1)this.set(cx+x,cy+y,c);return this;}
+outline(c=INK){const q=Int8Array.from(this.p),w=this.w,h=this.h,wr=this.wrap;const n=(x,y)=>{if(wr)x=(x+w)%w;return x>=0&&y>=0&&x<w&&y<h&&q[y*w+x]>=0;};for(let y=0;y<h;y++)for(let x=0;x<w;x++){if(q[y*w+x]>=0)continue;if(n(x-1,y)||n(x+1,y)||n(x,y-1)||n(x,y+1))this.p[y*w+x]=c;}return this;}
+blit(g,ox,oy,flip=false){for(let y=0;y<g.h;y++)for(let x=0;x<g.w;x++){const v=g.p[y*g.w+x];if(v>=0)this.set(ox+(flip?g.w-1-x:x),oy+y,v);}return this;}
+map(fn){for(let y=0;y<this.h;y++)for(let x=0;x<this.w;x++){const i=y*this.w+x;if(this.p[i]>=0)this.p[i]=fn(this.p[i],x,y);}return this;}
+clone(){const g=new G(this.w,this.h,this.wrap);g.p=Int8Array.from(this.p);return g;}
+flip(){const g=new G(this.w,this.h);g.blit(this,0,0,true);return g;}
+canvas(s=1){const W=this.w*s,H=this.h*s,cv=createCanvas(W,H),ctx=cv.getContext('2d'),id=ctx.createImageData(W,H),d=id.data;for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=this.p[((y/s)|0)*this.w+((x/s)|0)];if(v<0)continue;const o=(y*W+x)*4,c=RGB[v];d[o]=c[0];d[o+1]=c[1];d[o+2]=c[2];d[o+3]=255;}ctx.putImageData(id,0,0);return cv;}
+}
+function strip(frames){const w=frames[0].w,h=frames[0].h,g=new G(w*frames.length,h);frames.forEach((f,k)=>g.blit(f,k*w,0));return g;}
+function flash(g){return g.clone().map(v=>v===INK?INK:BONE);}
+function dissolve(g,amt,seed){const r=rng(seed),o=new G(g.w,g.h);for(let y=0;y<g.h;y++)for(let x=0;x<g.w;x++){const v=g.p[y*g.w+x];if(v<0)continue;const q=r();if(q<amt*0.72){if(r()<0.07)o.set(x+Math.round((r()-.5)*4),y-3-Math.round(r()*8*amt),r()<.5?GOLD:FLAME);continue;}if(q<amt)o.set(x,y-Math.round(amt*2),[EMBER,FLAME,GOLD][(r()*3)|0]);else o.set(x,y,v);}return o;}
+function scatter(g,keep,spread,seed,fall){const r=rng(seed),o=new G(g.w,g.h);for(let y=0;y<g.h;y++)for(let x=0;x<g.w;x++){const v=g.p[y*g.w+x];if(v<0||r()>keep)continue;const dx=(x-16)*spread*r(),dy=(y-20)*spread*.5*r()+fall;o.set(x+dx,Math.min(30,y+dy),v);}return o;}
+const FONT3x5={'0':'111101101101111','1':'010110010010111','2':'111001111100111','3':'111001111001111','4':'101101111001001','5':'111100111001111','6':'111100111101111','7':'111001001001001','8':'111101111101111','9':'111101111001111','x':'000101010101000'};
+function text3x5(g,str,x,y,c,s=1){[...str].forEach((ch,k)=>{const m=FONT3x5[ch];if(!m)return;for(let i=0;i<15;i++)if(m[i]==='1')g.rect(x+k*4*s+(i%3)*s,y+((i/3)|0)*s,s,s,c);});}

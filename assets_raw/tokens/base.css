@@ -1,0 +1,3 @@
+/* Pixel-art rendering defaults */
+img.pixel,.pixel{image-rendering:pixelated;image-rendering:crisp-edges;}
+a{color:var(--eh-gold);text-decoration:none;}a:hover{color:var(--eh-bone);}

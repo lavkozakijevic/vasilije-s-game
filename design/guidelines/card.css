@@ -1,0 +1,7 @@
+body{margin:0;background:var(--eh-plum);color:var(--eh-bone);font-family:var(--font-body);font-size:16px;padding:18px;box-sizing:border-box}
+.row{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end}
+.cell{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.lab{font-family:var(--font-ui);font-size:12px;color:var(--eh-stone);text-transform:lowercase;line-height:1}
+.lab b{color:var(--eh-bone);font-weight:400}
+.well{background:var(--eh-stone);box-shadow:inset 3px 3px 0 var(--eh-slate)}
+.px{image-rendering:pixelated}

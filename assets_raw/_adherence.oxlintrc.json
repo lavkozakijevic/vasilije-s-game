@@ -1,0 +1,280 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/hud/**",
+              "components/menu/**",
+              "guidelines/**",
+              "ui_kits/game/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Jacquard 24|Pixelify Sans|Silkscreen))/i]",
+        "message": "Font not provided by the design system. Available: Jacquard 24, Pixelify Sans, Silkscreen."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='CoinCounter'] > JSXAttribute > JSXIdentifier[name!=/^(?:count|digits|scale|src|spin|key|ref|className|style|children)$/]",
+        "message": "<CoinCounter> doesn't accept that prop. Declared props: count, digits, scale, src, spin."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ElementBadge'] > JSXAttribute > JSXIdentifier[name!=/^(?:element|icon|scale|active|label|key|ref|className|style|children)$/]",
+        "message": "<ElementBadge> doesn't accept that prop. Declared props: element, icon, scale, active, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ElementBadge'] > JSXAttribute[name.name='element'] > Literal[value!=/^(?:fire|water|earth|air|ice|lightning|shadow|light)$/]",
+        "message": "<ElementBadge> element must be one of 'fire' | 'water' | 'earth' | 'air' | 'ice' | 'lightning' | 'shadow' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='HeartMeter'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|max|scale|src|key|ref|className|style|children)$/]",
+        "message": "<HeartMeter> doesn't accept that prop. Declared props: value, max, scale, src."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PixelButton'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|variant|size|disabled|selected|onClick|style|key|ref|className|style|children)$/]",
+        "message": "<PixelButton> doesn't accept that prop. Declared props: children, variant, size, disabled, selected, onClick, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PixelButton'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|ghost)$/]",
+        "message": "<PixelButton> variant must be one of 'primary' | 'secondary' | 'ghost'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PixelButton'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<PixelButton> size must be one of 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PixelPanel'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|title|tone|padding|style|key|ref|className|style|children)$/]",
+        "message": "<PixelPanel> doesn't accept that prop. Declared props: children, title, tone, padding, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PixelPanel'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:stone|dark|parchment)$/]",
+        "message": "<PixelPanel> tone must be one of 'stone' | 'dark' | 'parchment'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Sprite'] > JSXAttribute > JSXIdentifier[name!=/^(?:src|frames|frameWidth|frameHeight|scale|fps|loop|flip|playing|frame|style|key|ref|className|style|children)$/]",
+        "message": "<Sprite> doesn't accept that prop. Declared props: src, frames, frameWidth, frameHeight, scale, fps, loop, flip, playing, frame, style."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "CoinCounter": {
+        "replaces": []
+      },
+      "ElementBadge": {
+        "replaces": []
+      },
+      "HeartMeter": {
+        "replaces": []
+      },
+      "PixelButton": {
+        "replaces": []
+      },
+      "PixelPanel": {
+        "replaces": []
+      },
+      "Sprite": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--bevel-dark",
+      "--bevel-light",
+      "--bevel-pressed",
+      "--bevel-raised",
+      "--currency",
+      "--drop-hard",
+      "--eh-amber",
+      "--eh-bark",
+      "--eh-bone",
+      "--eh-ember",
+      "--eh-flame",
+      "--eh-frost",
+      "--eh-gold",
+      "--eh-ink",
+      "--eh-leaf",
+      "--eh-moss",
+      "--eh-pine",
+      "--eh-plum",
+      "--eh-slate",
+      "--eh-stone",
+      "--eh-tide",
+      "--eh-void",
+      "--element-air",
+      "--element-earth",
+      "--element-fire",
+      "--element-fire-dark",
+      "--element-ice",
+      "--element-light",
+      "--element-lightning",
+      "--element-shadow",
+      "--element-water",
+      "--focus",
+      "--font-body",
+      "--font-display",
+      "--font-ui",
+      "--frame",
+      "--frame-ms",
+      "--health",
+      "--health-empty",
+      "--leading-body",
+      "--leading-tight",
+      "--outline",
+      "--pixel-outline",
+      "--px",
+      "--radius",
+      "--scale",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--step-anim",
+      "--step-fast",
+      "--surface-panel",
+      "--surface-panel-inset",
+      "--surface-screen",
+      "--text-accent",
+      "--text-danger",
+      "--text-inverse",
+      "--text-muted",
+      "--text-outline",
+      "--text-primary",
+      "--tile",
+      "--tracking-ui",
+      "--type-body",
+      "--type-body-sm",
+      "--type-h1",
+      "--type-h2",
+      "--type-title",
+      "--type-ui",
+      "--type-ui-lg",
+      "--type-ui-sm",
+      "--view-h",
+      "--view-w"
+    ],
+    "tokenKinds": {
+      "--eh-ink": "color",
+      "--eh-plum": "color",
+      "--eh-slate": "color",
+      "--eh-stone": "color",
+      "--eh-bone": "color",
+      "--eh-pine": "color",
+      "--eh-moss": "color",
+      "--eh-leaf": "color",
+      "--eh-bark": "color",
+      "--eh-amber": "color",
+      "--eh-ember": "color",
+      "--eh-flame": "color",
+      "--eh-gold": "color",
+      "--eh-tide": "color",
+      "--eh-frost": "color",
+      "--eh-void": "color",
+      "--element-fire": "color",
+      "--element-fire-dark": "color",
+      "--element-water": "color",
+      "--element-earth": "color",
+      "--element-air": "color",
+      "--element-ice": "color",
+      "--element-lightning": "color",
+      "--element-shadow": "shadow",
+      "--element-light": "color",
+      "--text-primary": "font",
+      "--text-muted": "font",
+      "--text-inverse": "font",
+      "--text-accent": "font",
+      "--text-danger": "font",
+      "--surface-screen": "color",
+      "--surface-panel": "color",
+      "--surface-panel-inset": "color",
+      "--bevel-light": "color",
+      "--bevel-dark": "color",
+      "--outline": "color",
+      "--focus": "color",
+      "--health": "color",
+      "--health-empty": "color",
+      "--currency": "color",
+      "--font-display": "font",
+      "--font-ui": "font",
+      "--font-body": "font",
+      "--type-title": "font",
+      "--type-h1": "font",
+      "--type-h2": "font",
+      "--type-ui-lg": "font",
+      "--type-ui": "font",
+      "--type-ui-sm": "font",
+      "--type-body": "font",
+      "--type-body-sm": "font",
+      "--leading-tight": "font",
+      "--leading-body": "font",
+      "--tracking-ui": "font",
+      "--tile": "spacing",
+      "--frame": "spacing",
+      "--view-w": "spacing",
+      "--view-h": "spacing",
+      "--scale": "other",
+      "--px": "spacing",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--radius": "radius",
+      "--pixel-outline": "color",
+      "--bevel-raised": "color",
+      "--bevel-pressed": "color",
+      "--drop-hard": "color",
+      "--text-outline": "font",
+      "--step-fast": "other",
+      "--step-anim": "other",
+      "--frame-ms": "other"
+    },
+    "fontFamilies": [
+      "Jacquard 24",
+      "Pixelify Sans",
+      "Silkscreen"
+    ]
+  }
+}
