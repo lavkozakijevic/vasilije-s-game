@@ -4,7 +4,7 @@
  "name": "Wisp",
  "element": "air",
  "power": "Gale crescent",
- "signatureColor": "#2f6b3a",
+ "signatureColor": "#6fae3e",
  "frameWidth": 32,
  "frameHeight": 32,
  "facing": "right",
@@ -93,6 +93,15 @@
    "fps": 12,
    "loop": false,
    "anchor": "center"
+  },
+  "respawn": {
+   "file": "fx_air_respawn.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "note": "play at checkpoint, then switch to idle"
   }
  },
  "icon": {
@@ -100,5 +109,9 @@
   "frameWidth": 16,
   "frameHeight": 16
  },
- "palette": "elemental16.hex"
+ "palette": "elemental16.hex",
+ "colors": {
+  "armor": "#e8e0d0",
+  "trim": "#6fae3e"
+ }
 }

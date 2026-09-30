@@ -16,8 +16,12 @@ const CAST = {
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
-const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
+const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
 // sprite-based portraits for characters that already have art
+// Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
+const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak',
+  cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
+const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
 const SPRITE_PORTRAIT = {
   elder:        { src: 'sprites/bosses/forest/elder_rotroot/boss_rotroot_idle.png', crop: [6, 2, 52, 52] },
   blightwarden: { src: 'sprites/bosses/forest/blightwarden/boss_blightwarden_idle.png', crop: [18, 4, 64, 64] },
@@ -36,6 +40,21 @@ const EH_DIALOGUE = {
     { who: 'dimitrije', text: 'Baba said find her, not argue. You two are arguing. So I’ll take us through the forest.' },
     { who: 'dimitrije', mood: 'happy', text: 'You can keep arguing behind me.' },
     { who: 'katarina', mood: 'happy', text: "…Honestly? He's got a point." },
+  ],
+  l1_knight_air: [
+    { who: 'wisp', text: 'The wind remembers you, little one. I am Wisp. Your stone woke me.' },
+    { who: 'dimitrije', mood: 'happy', text: 'Cool! Want to help us find Baba?' },
+    { who: 'wisp', text: 'Lead on. I will follow your wind.' },
+  ],
+  l1_knight_earth: [
+    { who: 'basalt', text: "Hmph. Rocks don't hurry." },
+    { who: 'basalt', text: "…But I'll come." },
+    { who: 'katarina', mood: 'happy', text: 'Basalt is volcanic rock. It cools down really fast, you know.' },
+    { who: 'basalt', text: '…She is correct.' },
+  ],
+  l1_finish: [
+    { who: 'katarina', text: "It's almost down! Mita, this one's yours!" },
+    { who: 'kosta', mood: 'happy', text: 'Go on, Mita. Finish it!' },
   ],
   l1_elder: [
     { who: 'elder', text: 'ROOTS CRUSH SMALL FEET!' },
@@ -179,44 +198,45 @@ function ehPortrait(who, mood = 'neutral') {
 function Portrait({ who, mood = 'neutral', size = 128 }) {
   const ref = React.useRef(null);
   const [real, setReal] = React.useState(null);
-  React.useEffect(() => { let on = true; setReal(null); if (!who || !(CAST[who] || who === 'baba' || who === 'mrak')) return;
-    const i = new Image(); i.onload = () => on && setReal(i.src); i.src = EHS_A + `ui/portraits/portrait_${who}_${mood}.png`; return () => { on = false; }; }, [who, mood]);
+  React.useEffect(() => {
+    let on = true; setReal(null); const f = PORTRAIT_FILE[who]; if (!f) return;
+    const tries = [...new Set([PORTRAIT_MOOD[mood] || mood, PORTRAIT_DEFAULT[who] || 'neutral'])].map(m => EHS_A + `ui/portraits/portrait_${f}_${m}.png`);
+    const next = i => { if (i >= tries.length || !on) return; const im = new Image(); im.onload = () => on && setReal(im.src); im.onerror = () => next(i + 1); im.src = tries[i]; };
+    next(0); return () => { on = false; };
+  }, [who, mood]);
   React.useEffect(() => {
     const c = ref.current; if (!c || real) return; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
     const sp = SPRITE_PORTRAIT[who];
     if (sp) { const i = new Image(); i.onload = () => { g.clearRect(0, 0, 64, 64); g.drawImage(i, sp.crop[0], sp.crop[1], sp.crop[2], sp.crop[3], 0, 0, 64, 64); }; i.src = EHS_A + sp.src; }
-    else g.drawImage(ehPortrait(who, mood), 0, 0);
+    else if (CAST[who] || who === 'baba' || who === 'mrak') g.drawImage(ehPortrait(who, mood), 0, 0);
   }, [who, mood, real]);
   const st = { width: size, height: size, imageRendering: 'pixelated', display: 'block' };
   const n = SPRITE_PORTRAIT[who] ? 64 : 34;   // stand-in portraits are 32px + 1px outline border
   return real ? <img src={real} style={st} /> : <canvas key={n} ref={ref} width={n} height={n} style={st} />;
 }
 function PortraitSlot({ who, mood }) {
-  const box = { width: 136, height: 136, background: PAL.plum, boxShadow: `inset 3px 3px 0 ${PAL.ink}`, display: 'grid', placeItems: 'center', flex: 'none' };
-  if (who === 'all') return <div style={box}><div style={{ display: 'grid', gridTemplateColumns: '68px 68px', gap: 0 }}>{KIDS.map(k => <Portrait key={k} who={k} mood={mood || 'ali'} size={68} />)}</div></div>;
-  if (who === 'kosta_vasilije') return <div style={box}><div style={{ display: 'flex', gap: 0 }}>{['kosta', 'vasilije'].map(k => <Portrait key={k} who={k} mood={mood} size={68} />)}</div></div>;
-  return <div style={box}><Portrait who={who} mood={mood} size={136} /></div>;
+  const box = { width: 128, height: 128, display: 'grid', placeItems: 'center', flex: 'none' };
+  if (who === 'all') return <div style={box}><div style={{ display: 'grid', gridTemplateColumns: '64px 64px' }}>{KIDS.map(k => <Portrait key={k} who={k} mood={mood || 'ali'} size={64} />)}</div></div>;
+  if (who === 'kosta_vasilije') return <div style={box}><div style={{ display: 'flex' }}>{['kosta', 'vasilije'].map(k => <Portrait key={k} who={k} mood={mood} size={64} />)}</div></div>;
+  return <div style={box}><Portrait who={who} mood={mood} size={128} /></div>;
 }
-// visual only; DialogueRunner / IntroCutscene drive it
-function DialogueBox({ line, shown, done, interactive }) {
-  const { PixelPanel } = EHK;
+// visual only; DialogueRunner / IntroCutscene drive it. Layout follows Claude Design's mock (640x360 art at 2x):
+// box x 8, y 256, 624x96 · portrait (18, 272) · name tag at (92, 248) · text from (92, 272). pos 'top' mirrors it to the top edge.
+function DialogueBox({ line, shown, done, interactive, pos = 'bottom' }) {
   if (!line) return null;
   const text = shown == null ? line.text : line.text.slice(0, shown);
   if (!line.who) return (
     <div style={{ position: 'absolute', left: 0, right: 0, bottom: 64, textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 40, color: PAL.bone, textShadow: 'var(--text-outline)' }}>{text}</div>
   );
+  const UI = EHS_A + 'ui/', px = { imageRendering: 'pixelated' };
   return (
-    <div style={{ position: 'absolute', left: 32, right: 32, bottom: 28 }}>
-      <PixelPanel tone="stone" padding={16}>
-        <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', minHeight: 136 }}>
-          <PortraitSlot who={line.who} mood={line.mood} />
-          <div style={{ flex: 1, position: 'relative', minHeight: 136 }}>
-            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 22, color: PAL.gold, textTransform: 'uppercase', textShadow: 'var(--text-outline)', marginBottom: 10 }}>{SPEAKER[line.who] || line.who}</div>
-            <div style={{ fontFamily: 'var(--font-body)', fontSize: 32, lineHeight: 1.3, color: PAL.bone, textShadow: 'var(--text-outline)' }}>{text}</div>
-            {interactive && done && <div style={{ position: 'absolute', right: 0, bottom: 0, fontFamily: 'var(--font-ui)', fontSize: 16, color: PAL.gold, animation: 'ehBlink 1s steps(2) infinite' }}>SPACE ▶</div>}
-          </div>
-        </div>
-      </PixelPanel>
+    <div style={{ position: 'absolute', left: 16, right: 16, height: 192, ...(pos === 'top' ? { top: 32 } : { bottom: 16 }) }}>
+      <div style={{ position: 'absolute', inset: 0, boxSizing: 'border-box', borderStyle: 'solid', borderWidth: 16, borderImage: `url(${UI}ui_dialogue_box.png) 8 fill / 16px stretch`, ...px }} />
+      <div style={{ position: 'absolute', left: 20, top: 32 }}><PortraitSlot who={line.who} mood={line.mood} /></div>
+      <div style={{ position: 'absolute', left: 168, top: -16, height: 32, boxSizing: 'border-box', borderStyle: 'solid', borderWidth: '0 12px', borderImage: `url(${UI}ui_name_tag.png) 0 6 fill / 0 12px stretch`, ...px,
+        padding: '8px 4px 0', fontFamily: 'var(--font-ui)', fontSize: 16, lineHeight: '16px', color: PAL.bone, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{SPEAKER[line.who] || line.who}</div>
+      <div style={{ position: 'absolute', left: 168, right: 32, top: 34, fontFamily: 'var(--font-body)', fontSize: 30, lineHeight: 1.35, color: PAL.bone, textShadow: 'var(--text-outline)' }}>{text}</div>
+      {interactive && done && <div style={{ position: 'absolute', right: 28, bottom: 20, fontFamily: 'var(--font-ui)', fontSize: 16, color: PAL.gold, animation: 'ehBlink 1s steps(2) infinite' }}>SPACE ▶</div>}
     </div>
   );
 }
@@ -236,20 +256,16 @@ function DialogueRunner({ lines, onDone }) {
   useStoryKeys(code => (code === 'Escape' ? onDone() : next()));
   return <div style={{ position: 'absolute', inset: 0 }} onClick={next}><DialogueBox line={line} shown={shown} done={done} interactive /></div>;
 }
+// ui_note_paper.png is 320x200 (shown 2x): 36px red margin, ruled lines 16px apart from y 46 (measured; its README says 30)
 function BabaNote({ lines, style }) {
-  const { PixelPanel } = EHK;
   return (
-    <div style={{ width: 760, ...style }}>
-      <PixelPanel tone="parchment" padding={28}>
-        <div style={{ fontFamily: 'var(--font-body)', fontSize: 30, lineHeight: 1.45, color: PAL.ink }}>
-          {lines.map((l, i) => <div key={i}>{l}</div>)}
-          <div style={{ textAlign: 'right', marginTop: 14, color: PAL.ember }}>— Baba</div>
-        </div>
-      </PixelPanel>
+    <div style={{ width: 640, height: 400, boxSizing: 'border-box', padding: '66px 36px 0 80px', background: `url(${EHS_A}ui/ui_note_paper.png) 0 0 / 640px 400px no-repeat`, imageRendering: 'pixelated',
+      fontFamily: 'var(--font-body)', fontSize: 23, lineHeight: '32px', color: PAL.ink, ...style }}>
+      {lines.map((l, i) => <div key={i}>{l}</div>)}
+      <div style={{ textAlign: 'right', color: PAL.ember }}>— Baba</div>
     </div>
   );
 }
-// end-of-level: Baba's note, then the kids' replies
 function NoteScreen({ level, onDone }) {
   const n = EH_NOTES[level]; const [phase, setPhase] = React.useState('note');
   React.useEffect(() => { if (!n) onDone(); }, []);
@@ -273,6 +289,7 @@ function NoteWait({ onNext }) {
 // ---------------------------------------------------------------- intro cutscene (watch-only, skippable)
 function IntroCutscene({ onDone }) {
   const cv = React.useRef(null);
+  const [realTitle, setRealTitle] = React.useState(false), [hover, setHover] = React.useState(false);
   const [line, setLine] = React.useState(null), [note, setNote] = React.useState(false), [title, setTitle] = React.useState(false), [skip, setSkip] = React.useState(false);
   const doneRef = React.useRef(false);
   const finish = () => { if (!doneRef.current) { doneRef.current = true; onDone(); } };
@@ -282,8 +299,11 @@ function IntroCutscene({ onDone }) {
     const ld = (k, p) => new Promise(r => { const i = new Image(); i.onload = () => { img[k] = i; r(true); }; i.onerror = () => r(false); i.src = EHS_A + p; });
     const t0 = performance.now(); let lastLine = null, lastNote = false, lastTitle = false;
     const starts = []; let acc = 0; for (const s of INTRO) { starts.push(acc); acc += s.d; } const total = acc;
-    Promise.all([...['sky', 'far', 'mid', 'near'].map(k => ld(k, `backgrounds/forest/bg_forest_${k}.png`)),
-      ...INTRO.map((_, n) => ld(`s${n}`, `cutscenes/intro/intro_0${n + 1}_bg.png`).then(ok => ok && Promise.all(['chars', 'fx'].map(l => ld(`s${n}_${l}`, `cutscenes/intro/intro_0${n + 1}_${l}.png`))).then(() => { real[n] = true; })))]);
+    ['sky', 'far', 'mid', 'near'].forEach(k => ld(k, `backgrounds/forest/bg_forest_${k}.png`));
+    fetch(EHS_A + 'cutscenes/intro/intro.json').then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
+      if (!j) return; j.scenes.slice(0, INTRO.length).forEach((sc, n) =>
+        Promise.all(sc.layers.map(l => ld(`L${n}_${l.name}`, 'cutscenes/intro/' + l.file))).then(ok => { if (ok[0]) real[n] = true; if (n === INTRO.length - 1 && img[`L${n}_title`]) setRealTitle(true); }));
+    });
     const setT = setTimeout(() => alive && setSkip(true), 1000);
     const g = cv.current.getContext('2d'); g.imageSmoothingEnabled = false;
     const R = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
@@ -347,17 +367,32 @@ function IntroCutscene({ onDone }) {
         kidsAt([140, 190, 235, 275].map((x, i) => x + Math.sin(t * 3 + i) * 6), t, true, 3, 300);
         R(PAL.bone, 600 - (t * 10) % 20, 290, 10, 7); R(PAL.bone, 606 - (t * 10) % 20, 286, 5, 5); },
     ];
+    // Claude Design layers (bg, chars, fg, fx, title; 640x360 each) animated per cutscenes/intro/README.md, moved in whole 2px steps
+    const real2 = (n, t) => {
+      const L = k => img[`L${n}_${k}`], d = (im, x = 0, y = 0) => im && g.drawImage(im, Math.round(x / 2) * 2, Math.round(y / 2) * 2);
+      const slide = (from, dur) => from * Math.max(0, 1 - t / dur);
+      if (n === 0) { d(L('bg')); const y = (t * 24) % 360; d(L('fx'), 0, y); d(L('fx'), 0, y - 360); }
+      else if (n === 1) { d(L('bg')); d(L('chars'), slide(-320, 1.2)); d(L('fx'), 0, -2 * (Math.floor(t * 3) % 3)); }
+      else if (n === 2) { d(L('bg')); if (Math.floor(t * 8) % 11) d(L('fx')); }
+      else if (n === 3) { d(L('bg')); d(L('chars'), 0, 40 - Math.min(40, t * 10)); d(L('fg')); if ((t > 2.2 && t < 2.35) || (t > 4.1 && t < 4.2) || (t > 5.9 && t < 6.0)) d(L('fx')); }
+      else if (n === 4) { d(L('bg')); if ((t > 1.2 && t < 1.24) || t > 1.34) d(L('fx')); }
+      else if (n === 5) { d(L('bg')); const x = (t * 40) % 640; d(L('fx'), x); d(L('fx'), x - 640); }
+      else if (n === 6) { d(L('bg')); d(L('chars')); if (Math.floor(t / 0.4) % 2 === 0) d(L('fx')); }
+      else if (n === 7) { d(L('bg')); const ch = L('chars'); if (ch) { const k = Math.min(1, t / 0.8), xl = Math.round(-320 * (1 - k) / 2) * 2, xr = Math.round(320 * (1 - k) / 2) * 2;
+          g.drawImage(ch, 0, 0, 320, 360, xl, 0, 320, 360); g.drawImage(ch, 320, 0, 320, 360, 320 + xr, 0, 320, 360); } d(L('fx')); }
+      else if (n === 8) { d(L('bg')); d(L('chars'), 0, -Math.min(16, t * 4) - 2 * (Math.floor(t * 8) % 2)); d(L('fx')); if (t > 1.5) d(L('title'), 0, -Math.max(0, 80 - (t - 1.5) * 200)); }
+    };
     const loop = () => {
       if (!alive) return; const T = (performance.now() - t0) / 1000;
       if (T >= total) { finish(); return; }
       let n = starts.findIndex((s, i) => T >= s && (i === starts.length - 1 || T < starts[i + 1])); const t = T - starts[n], S = INTRO[n];
       g.globalAlpha = 1; R(PAL.ink, 0, 0, 640, 360);
-      if (real[n]) { for (const l of ['', '_chars', '_fx']) if (img[`s${n}${l}`]) g.drawImage(img[`s${n}${l}`], 0, 0); }
+      if (real[n]) real2(n, t);
       else { const lift = [1, 2, 4, 5, 7].includes(n) ? 72 : 0; g.save(); g.translate(0, -lift); scenes[n](t); g.restore(); }
       const fade = Math.min(1, t / 0.4, (S.d - t) / 0.3); if (fade < 1 && n !== 4) { g.globalAlpha = 1 - Math.max(0, fade); R(PAL.ink, 0, 0, 640, 360); g.globalAlpha = 1; }
       const ln = S.lines.filter(l => l.at <= t).pop() || null; if (ln !== lastLine) { lastLine = ln; setLine(ln); }
       const nt = S.note != null && t >= S.note; if (nt !== lastNote) { lastNote = nt; setNote(nt); }
-      const tt = S.title != null && t >= S.title; if (tt !== lastTitle) { lastTitle = tt; setTitle(tt); }
+      const tt = S.title != null && t >= S.title && !real[n]; if (tt !== lastTitle) { lastTitle = tt; setTitle(tt); }
       raf = requestAnimationFrame(loop);
     };
     loop();
@@ -372,8 +407,10 @@ function IntroCutscene({ onDone }) {
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 110, lineHeight: 1, color: PAL.gold, textShadow: `-6px 0 0 ${PAL.ink},6px 0 0 ${PAL.ink},0 -6px 0 ${PAL.ink},0 6px 0 ${PAL.ink},6px 12px 0 ${PAL.ember}` }}>Elemental Heroes</div>
           <div style={{ fontFamily: 'var(--font-ui)', fontSize: 30, color: PAL.bone, textShadow: 'var(--text-outline)', textTransform: 'uppercase', marginTop: 18 }}>The Rescue of Baba Vera</div>
         </div></div>}
-      <DialogueBox line={line} />
-      {skip && <button onClick={finish} style={{ position: 'absolute', right: 28, top: 24, fontFamily: 'var(--font-ui)', fontSize: 20, padding: '8px 16px', color: PAL.bone, background: PAL.slate, border: 'none', boxShadow: `inset 3px 3px 0 ${PAL.stone}, inset -3px -3px 0 ${PAL.plum}, 0 0 0 3px ${PAL.ink}`, cursor: 'pointer', animation: 'ehFadeIn .4s' }}>SKIP ▶</button>}
+      <DialogueBox line={line} pos={line && [1, 7].includes(INTRO.findIndex(sc => sc.lines.includes(line))) ? 'top' : 'bottom'} />
+      {skip && <button onClick={finish} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} aria-label="Skip intro"
+        style={{ position: 'absolute', right: 28, top: 24, width: 160, height: 40, padding: 0, border: 'none', cursor: 'pointer', animation: 'ehFadeIn .4s', imageRendering: 'pixelated',
+          background: `url(${EHS_A}ui/ui_skip_button.png) ${hover ? '-160px' : '0'} 0 / 320px 40px no-repeat` }} />}
     </div>
   );
 }

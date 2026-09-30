@@ -1,8 +1,9 @@
 // Forest level runtime: Tiled .tmj map, parallax, 8 switchable heroes, Rotroot / Mothwing / Sporecap enemies,
 // checkpoints, Elder Rotroot mid-boss arena (thorn gates) and Blightwarden final boss. Renders at 640x360, 60 ticks/s.
 const EHA = '../../../assets/';
-const EH_SOLID = new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,24,25,30]);
-const EH_PLAT = new Set([19,20,21,22,23]);
+// tile ids from tileset_forest.tsj: 63-67 bounce mushroom, 68/69/71/73 hollow log shell, 56-58 crumble planks, 60-62 rope bridge (59 = crumbled, gone)
+const EH_SOLID = new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,24,25,30,63,64,65,66,67,68,69,71,73]);
+const EH_PLAT = new Set([19,20,21,22,23,56,57,58,60,61,62]);
 const EH_HAZ = new Set([26,27,28,29,36]);
 const EH_HERO = { idle:4, run:8, jump:2, fall:2, land:2, attack:6, hurt:2, death:6 };
 const EH_ROT = { idle:4, move:6, attack:4, hurt:2, death:5 };
@@ -10,18 +11,21 @@ const EH_MOTH = { fly:4, attack:4, hurt:2, death:5 };
 const EH_SPORE = { idle:4, attack:6, hurt:2, death:5 };
 const EH_ELDER = { idle:4, move:6, tell:3, charge:4, throw:5, hurt:2, death:8 };
 const EH_BOSS = { idle:4, telegraph:4, attack:6, hurt:2, death:8 };
-// Hero order = number keys 1-8. Projectile stats are placeholders for tuning:
-// v = speed (px/tick), dmg = damage, arc = lobbed with gravity, pierce = passes through enemies.
-const EH_HEROES = [
-  { el: 'fire',      name: 'Cinder', v: 4.2, dmg: 1 },
-  { el: 'water',     name: 'Brine',  v: 3.6, dmg: 1 },
-  { el: 'earth',     name: 'Basalt', v: 3.4, dmg: 2, arc: true },
-  { el: 'air',       name: 'Wisp',   v: 5.2, dmg: 1, pierce: true },
-  { el: 'ice',       name: 'Rime',   v: 4.8, dmg: 1 },
-  { el: 'lightning', name: 'Jolt',   v: 6.5, dmg: 1 },
-  { el: 'shadow',    name: 'Umbra',  v: 3.2, dmg: 2 },
-  { el: 'light',     name: 'Aurel',  v: 5.6, dmg: 1, pierce: true },
+// Playable roster: the four cousins (keys 1-4), then each Hearth Knight once its statue is woken (Q/E cycles everyone).
+// Projectile stats per element are placeholders for tuning: v = speed (px/tick), dmg = damage, arc = lobbed, pierce = passes through enemies.
+const EH_POWER = {
+  fire: { v: 4.2, dmg: 1 }, water: { v: 3.6, dmg: 1 }, earth: { v: 3.4, dmg: 2, arc: true }, air: { v: 5.2, dmg: 1, pierce: true },
+  ice: { v: 4.8, dmg: 1 }, lightning: { v: 6.5, dmg: 1 }, shadow: { v: 3.2, dmg: 2 }, light: { v: 5.6, dmg: 1, pierce: true },
+};
+const EH_COUSINS = [
+  { id: 'konstantin', el: 'light', name: 'Kosta', kid: true },
+  { id: 'katarina',   el: 'ice',   name: 'Katarina', kid: true },
+  { id: 'vasilije',   el: 'fire',  name: 'Vasilije', kid: true },
+  { id: 'dimitrije',  el: 'air',   name: 'Dimitrije', kid: true },
 ];
+const EH_KNIGHTS = { fire: 'Cinder', water: 'Brine', earth: 'Basalt', air: 'Wisp', ice: 'Rime', lightning: 'Jolt', shadow: 'Umbra', light: 'Aurel' };
+const EH_ELEMENTS = Object.keys(EH_POWER);
+const EH_STAR = 'dimitrije';   // level 1's star: the level starts with him and only he can land the final blow on its boss
 const GROUND_Y = 288;
 function ehImg(src){ return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; }); }
 
@@ -31,14 +35,16 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
   pausedRef.current = paused;
   React.useEffect(() => {
     let alive = true, raf = 0;
-    const keys = {}; let wantHero = -1;
-    const kd = e => { keys[e.code] = true; const d = /^Digit([1-8])$/.exec(e.code); if (d) wantHero = +d[1] - 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
+    const keys = {}; let wantHero = -1, cycle = 0, jumpBuf = 0;   // jumpBuf remembers a jump press for a few ticks so quick taps aren't lost
+    const kd = e => { keys[e.code] = true; const d = /^Digit([1-4])$/.exec(e.code); if (d) wantHero = +d[1] - 1; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
       const map = await (await fetch(EHA + 'maps/forest_mock.tmj')).json();
-      const L = n => map.layers.find(l => l.name === n).data.map(g => g - 1);
-      const ground = L('ground'), decorB = L('decor_back'), decor = L('decor');
+      // tile layers: ids (-1 = empty) plus horizontal-flip flags (Tiled keeps flips in the gid's top bits)
+      const L = n => { const l = map.layers.find(l => l.name === n); if (!l) return null; return { id: l.data.map(g => (g % 0x20000000) - 1), flip: l.data.map(g => g >= 0x80000000) }; };
+      const GL = L('ground'), DBL = L('decor_back'), DL = L('decor'), FGL = L('foreground'), ground = GL.id;
+      const crumble = {}, bounceT = {}; let fgA = 1;   // per-tile crumble timers, bounce animations, foreground fade
       const S = EHA + 'sprites/', img = {};
       const load = async (k, p) => { img[k] = await ehImg(EHA + p); };
       await Promise.all([
@@ -50,9 +56,11 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         ...['dust_jump','dust_land','splash_water','hit_spark','hero_respawn'].map(k => load('fx_' + k, `sprites/fx/fx_${k}.png`)),
         ...['idle','activate','lit'].map(k => load('cp_' + k, `sprites/props/forest/prop_checkpoint_shrine_${k}.png`)),
         load('arch', 'sprites/props/forest/prop_exit_arch.png'),
-        ...EH_HEROES.flatMap(h => [
-          ...Object.keys(EH_HERO).map(k => load(`h_${h.el}_${k}`, `sprites/heroes/${h.el}/hero_${h.el}_${k}.png`)),
-          load('p_' + h.el, `sprites/heroes/${h.el}/fx_${h.el}_projectile.png`), load('i_' + h.el, `sprites/heroes/${h.el}/fx_${h.el}_impact.png`)]),
+        ...EH_COUSINS.flatMap(c => [...Object.keys(EH_HERO), 'respawn'].map(k => load(`h_${c.id}_${k}`, `sprites/heroes/kids/${c.id}/hero_${c.id}_${k}.png`))),
+        ...EH_ELEMENTS.flatMap(el => [
+          ...Object.keys(EH_HERO).map(k => load(`h_k_${el}_${k}`, `sprites/heroes/${el}/hero_${el}_${k}.png`)),
+          load('p_' + el, `sprites/heroes/${el}/fx_${el}_projectile.png`), load('i_' + el, `sprites/heroes/${el}/fx_${el}_impact.png`),
+          load('rs_' + el, `sprites/heroes/${el}/fx_${el}_respawn.png`)]),
         ...Object.keys(EH_ROT).map(k => load('r_' + k, `sprites/enemies/forest/rotroot/enemy_rotroot_${k}.png`)),
         ...Object.keys(EH_MOTH).map(k => load('m_' + k, `sprites/enemies/forest/mothwing/enemy_mothwing_${k}.png`)),
         ...Object.keys(EH_SPORE).map(k => load('s_' + k, `sprites/enemies/forest/sporecap/enemy_sporecap_${k}.png`)),
@@ -74,7 +82,11 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
       const ents = map.layers.find(l => l.name === 'entities').objects, of = t => ents.filter(o => o.type === t);
       const sp = ents.find(o => o.name === 'player_spawn');
       const spawn = { x: sp ? sp.x : 64, y: sp ? sp.y : 257 }; let safe = { ...spawn };
-      const H = { ...spawn, vx: 0, vy: 0, face: 1, ground: true, attackT: 0, hurtT: 0, inv: 0, landT: 0, dead: 0, hp: 4, coins: 0, fired: false, hero: 0, swapT: 0 };
+      const ROSTER = EH_COUSINS.map(c => ({ ...c }));
+      const H = { ...spawn, vx: 0, vy: 0, face: 1, ground: true, attackT: 0, hurtT: 0, inv: 0, landT: 0, dead: 0, hp: 4, coins: 0, fired: false, hero: ROSTER.findIndex(r => r.id === EH_STAR), swapT: 0 };
+      // Hearth Knight statues: touching one wakes the knight, who joins the roster
+      const ST = ents.filter(o => o.type === 'knight_statue').map(o => ({ el: o.name, x: o.x, y: o.y, woke: false }));
+      let toast = null; const say = text => { toast = { text, t: 0 }; };
       const heroBox = () => ({ x: H.x + 10, y: H.y + 8, w: 12, h: 23 });
       // enemies share one list; kind decides behaviour, hitbox and sprites
       const E = [
@@ -107,9 +119,12 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
       const told = new Set(), story = id => { if (!told.has(id)) { told.add(id); onStory && onStory(id); } };   // each story moment plays once per run
       const hurt = dir => { if (H.inv > 0 || H.dead) return; H.hp -= 0.5; H.hurtT = 16; H.inv = 70; H.vx = -2 * dir; H.vy = -3; H.ground = false; if (H.hp <= 0) { H.dead = 1; H.vx = 0; } };
       const drawStrip = (im, n, f, x, y, w, flip) => { if (!im) return; f = Math.max(0, Math.min(n - 1, Math.floor(f))); ctx.save(); ctx.translate(Math.round(x) + (flip ? w : 0), Math.round(y)); ctx.scale(flip ? -1 : 1, 1); ctx.drawImage(im, f * w, 0, w, im.height, 0, 0, w, im.height); ctx.restore(); };
-      const drawLayer = arr => { const c0 = Math.max(0, Math.floor(cam / 32)), c1 = Math.min(MW, c0 + 22);
-        for (let r = 0; r < MH; r++) for (let c = c0; c < c1; c++) { let id = arr[r * MW + c]; if (id < 0) continue; if (id === 32) id = 32 + (Math.floor(tick / 10) % 4); if (id === 36) id = 36 + (Math.floor(tick / 6) % 4);
-          ctx.drawImage(img.tiles, (id % 8) * 32, Math.floor(id / 8) * 32, 32, 32, c * 32, r * 32, 32, 32); } };
+      const drawLayer = lay => { if (!lay) return; const c0 = Math.max(0, Math.floor(cam / 32)), c1 = Math.min(MW, c0 + 22);
+        for (let r = 0; r < MH; r++) for (let c = c0; c < c1; c++) { const i = r * MW + c; let id = lay.id[i]; if (id < 0) continue;
+          if (id === 32) id = 32 + (Math.floor(tick / 10) % 4); if (id === 36) id = 36 + (Math.floor(tick / 6) % 4); if (id === 63 && bounceT[i] != null) id = 64 + Math.min(3, Math.floor(bounceT[i] / 5));
+          const sx = (id % 8) * 32, sy = Math.floor(id / 8) * 32;
+          if (lay.flip[i]) { ctx.save(); ctx.translate(c * 32 + 32, r * 32); ctx.scale(-1, 1); ctx.drawImage(img.tiles, sx, sy, 32, 32, 0, 0, 32, 32); ctx.restore(); }
+          else ctx.drawImage(img.tiles, sx, sy, 32, 32, c * 32, r * 32, 32, 32); } };
       const resetBosses = () => {
         if (ELD && !ELD.dead) { Object.assign(ELD, { x: ELD.sx, hp: ELD.max, st: 'wait', t: 0, awake: false, hurt: 0 }); gates[0].st = 'open'; SEEDS.length = 0; }
         if (BOSS && !BOSS.dead) Object.assign(BOSS, { hp: BOSS.max, state: 'idle', t: 0, awake: false, spots: [], roots: [] });
@@ -119,25 +134,27 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
       const step = () => {
         tick++;
         if (tick === 1) story('l1_start');
-        const HR = EH_HEROES[H.hero];
+        const HR = ROSTER[H.hero], PW = EH_POWER[HR.el];
         // ---- hero input ----
         if (H.dead) {
           H.dead++;
           if (H.dead === 60) {
             if (activeCP) { Object.assign(H, { x: activeCP.x, y: GROUND_Y - 31, vx: 0, vy: 0, hp: 4, dead: 0, inv: 90, hurtT: 0, attackT: 0 }); safe = { x: H.x, y: H.y };
-              fx('fx_hero_respawn', 6, 10, H.x, H.y, 32); resetBosses(); }
+              const RH = ROSTER[H.hero]; if (RH.kid) fx(`h_${RH.id}_respawn`, 6, 10, H.x, H.y, 32); else fx('rs_' + RH.el, 6, 10, H.x, H.y, 32); resetBosses(); }
             else onEnd('over');
           }
         } else {
           const L1 = keys.ArrowLeft || keys.KeyA, R1 = keys.ArrowRight || keys.KeyD;
           if (H.hurtT <= 0) { H.vx = (R1 ? 1.8 : 0) - (L1 ? 1.8 : 0); if (H.vx) H.face = Math.sign(H.vx); if (H.attackT > 0 && H.ground) H.vx *= 0.3; }
-          if ((keys.Space || keys.ArrowUp || keys.KeyW) && H.ground && H.hurtT <= 0) { H.vy = -8.3; H.ground = false; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
+          if (jumpBuf > 0) jumpBuf--;
+          if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
           if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0) { H.attackT = 24; H.fired = false; }
-          if (wantHero >= 0 && wantHero !== H.hero) { H.hero = wantHero; H.swapT = 40; H.attackT = 0; fx('i_' + EH_HEROES[wantHero].el, 4, 12, H.x, H.y, 32); }
+          if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
+          if (wantHero >= 0 && wantHero < ROSTER.length && wantHero !== H.hero) { H.hero = wantHero; H.swapT = 40; H.attackT = 0; fx('i_' + ROSTER[wantHero].el, 4, 12, H.x, H.y, 32); }
           wantHero = -1;
         }
         if (H.attackT > 0) { H.attackT--; if (!H.fired && H.attackT <= 12) { H.fired = true;
-          B.push({ x: H.x + (H.face > 0 ? 26 : -10), y: H.y + 10, vx: HR.v * H.face, vy: HR.arc ? -3.2 : 0, t: 0, el: HR.el, dmg: HR.dmg, arc: !!HR.arc, pierce: !!HR.pierce, hit: new Set() }); } }
+          B.push({ x: H.x + (H.face > 0 ? 26 : -10), y: H.y + (HR.kid ? 14 : 10), vx: PW.v * H.face, vy: PW.arc ? -3.2 : 0, t: 0, el: HR.el, who: HR.id, dmg: PW.dmg, arc: !!PW.arc, pierce: !!PW.pierce, hit: new Set() }); } }
         if (H.hurtT > 0) H.hurtT--; if (H.inv > 0) H.inv--; if (H.landT > 0) H.landT--; if (H.swapT > 0) H.swapT--;
         // ---- hero physics ----
         if (!H.dead) {
@@ -153,7 +170,12 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             if (okTop && s <= feet + (H.ground ? 6 : 0) && (best == null || s < best)) best = s;
           }
           if (best != null) { if (!H.ground && H.vy > 3) { H.landT = 8; fx('fx_dust_land', 4, 16, H.x, best - 16, 32); } H.y = best - 31; H.vy = 0; H.ground = true;
-            const under = tileAt(H.x + 16, H.y + 33); if (EH_SOLID.has(under) && under !== 30 && !EH_HAZ.has(tileAt(H.x + 16, H.y + 16))) safe = { x: H.x, y: H.y }; }
+            const under = tileAt(H.x + 16, H.y + 33); if (EH_SOLID.has(under) && under !== 30 && under < 63 && !EH_HAZ.has(tileAt(H.x + 16, H.y + 16))) safe = { x: H.x, y: H.y };
+            const row = Math.floor((H.y + 33) / 32) * MW;
+            for (const px of [H.x + 12, H.x + 16, H.x + 20]) { const i = row + Math.floor(px / 32), id = ground[i];
+              // bounce mushroom: the tileset says 2x jump velocity, which would fly off the top of the 360px view, so it's ~1.45x (about 6 tiles)
+              if (id >= 63 && id <= 67) { H.vy = -12; H.ground = false; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
+              if (id >= 56 && id <= 58 && crumble[i] == null) crumble[i] = 0; } }
           else { H.y = ny; H.ground = false; }
           if (H.vy < 0 && EH_SOLID.has(tileAt(H.x + 16, H.y + 8))) { H.vy = 0; }
           // hazards / water / exit
@@ -170,6 +192,9 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           GM.forEach(g => { if (!g.got && near(g)) { g.got = true; H.coins += 5; fx('fx_heart', 5, 14, g.x - 8, g.y - 8, 32); } });
           HP.forEach(h => { if (!h.got && H.hp < 4 && near(h)) { h.got = true; H.hp = 4; fx('fx_heart', 5, 14, h.x - 8, h.y - 8, 32); } });
           CP.forEach(c => { if (c.st === 'idle' && overlap(heroBox(), { x: c.x, y: c.y, w: 32, h: 64 })) { c.st = 'activate'; c.t = 0; activeCP = c; } });
+          ST.forEach(s => { if (!s.woke && overlap(heroBox(), { x: s.x + 6, y: s.y + 4, w: 20, h: 28 })) { s.woke = true;
+            ROSTER.push({ id: 'k_' + s.el, el: s.el, name: EH_KNIGHTS[s.el], kid: false }); fx('rs_' + s.el, 6, 10, s.x, s.y, 32); fx('i_' + s.el, 4, 12, s.x, s.y, 32);
+            say(`${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story('l1_knight_' + s.el); } });
         }
         CP.forEach(c => { c.t++; if (c.st === 'activate' && c.t >= 36) c.st = 'lit'; });
         // ---- enemies ----
@@ -267,11 +292,16 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             if (ELD.hp <= 0) { ELD.dead = 1; SEEDS.length = 0; gates.forEach(g => { if (g.st !== 'open') { g.st = 'opening'; g.t = 0; } }); } }
           if (BOSS && !BOSS.dead && !hit && overlap(pb, bossBody())) {
             BOSS.hp -= b.dmg * (overlap(pb, bossWeak()) ? 2 : 1); BOSS.hurt = 10; BOSS.awake = true; spark();
+            if (BOSS.hp <= 0 && b.who !== EH_STAR) { BOSS.hp = 1; if (!BOSS.callStar) { BOSS.callStar = true; say('PRESS 4 · DIMITRIJE FINISHES IT'); story('l1_finish'); } }
             if (BOSS.hp <= 0) { BOSS.dead = 1; BOSS.spots = []; BOSS.roots = []; }
             hit = true; }
           if (hit) { if (wall) fx('i_' + b.el, 4, 12, b.x - 8, b.y - 8, 32); B.splice(i, 1); } }
         for (let i = X.length - 1; i >= 0; i--) if (++X[i].t >= X[i].n * X[i].d) X.splice(i, 1);
-        const hud = H.hp + ':' + H.coins + ':' + H.hero; if (hud !== lastHud) { lastHud = hud; const CH = EH_HEROES[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); }
+        // crumble planks: 450ms after being stepped on they crack, break and fall away, then grow back after 3s
+        for (const k in crumble) { const t = ++crumble[k]; ground[k] = t < 27 ? 56 : t < 36 ? 57 : t < 45 ? 58 : t < 225 ? 59 : 56; if (t >= 225) delete crumble[k]; }
+        for (const k in bounceT) if (++bounceT[k] >= 20) delete bounceT[k];
+        if (toast && ++toast.t > 240) toast = null;
+        const hud = H.hp + ':' + H.coins + ':' + H.hero; if (hud !== lastHud) { lastHud = hud; const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); }
       };
 
       const draw = () => {
@@ -286,9 +316,10 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         for (const k of ['sky','far','mid','near']) bg(k, par[k]);
         if (arenaW > 0 && img.arena_near) { ctx.globalAlpha = arenaW; bg('arena_near', par.near); ctx.globalAlpha = 1; }
         ctx.save(); ctx.translate(-cam, 0);
-        drawLayer(decorB); drawLayer(ground); drawLayer(decor);
+        drawLayer(DBL); drawLayer(GL); drawLayer(DL);
         CP.forEach(c => { if (c.st === 'idle') drawStrip(img.cp_idle, 1, 0, c.x, c.y, 32); else if (c.st === 'activate') drawStrip(img.cp_activate, 6, c.t / 6, c.x, c.y, 32); else drawStrip(img.cp_lit, 4, (tick / 7.5) % 4, c.x, c.y, 32); });
         if (ex) drawStrip(img.arch, 4, (tick / 7.5) % 4, ex.x, ex.y, 64);
+        ST.forEach(s => { if (s.woke) return; ctx.filter = 'grayscale(1) brightness(0.8)'; drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32); ctx.filter = 'none'; });
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
         GM.forEach((g, i) => { if (!g.got) drawStrip(img.gem, 6, (tick / 7.5 + i) % 6, g.x, g.y, 16); });
         HP.forEach((h, i) => { if (!h.got) drawStrip(img.heart, 6, (tick / 7.5 + i) % 6, h.x, h.y, 16); });
@@ -323,7 +354,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           drawStrip(img['b_' + a], EH_BOSS[a], f, BOSS.x, BOSS.y, 96, true);
           BOSS.roots.forEach(r => drawStrip(img.roots, 6, r.t / 5, r.x - 16, 224, 32));
         }
-        const hel = EH_HEROES[H.hero].el;
+        const CUR = ROSTER[H.hero], hkey = CUR.kid ? CUR.id : 'k_' + CUR.el;
         let a, f;
         if (H.dead) { a = 'death'; f = H.dead / 8; }
         else if (H.hurtT > 0) { a = 'hurt'; f = H.hurtT > 8 ? 0 : 1; }
@@ -332,12 +363,18 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         else if (H.landT > 0) { a = 'land'; f = H.landT > 4 ? 0 : 1; }
         else if (Math.abs(H.vx) > 0.1) { a = 'run'; f = (tick / 5) % 8; }
         else { a = 'idle'; f = (tick / 10) % 4; }
-        if (!(H.inv > 0 && !H.dead && H.hurtT <= 0 && Math.floor(tick / 3) % 2)) drawStrip(img[`h_${hel}_${a}`], EH_HERO[a], f, H.x, H.y, 32, H.face < 0);
+        if (!(H.inv > 0 && !H.dead && H.hurtT <= 0 && Math.floor(tick / 3) % 2)) drawStrip(img[`h_${hkey}_${a}`], EH_HERO[a], f, H.x, H.y, 32, H.face < 0);
         B.forEach(b => drawStrip(img['p_' + b.el], 4, (b.t / 4) % 4, b.x, b.y, 16, b.vx < 0));
         X.forEach(x => drawStrip(img[x.k], x.n, x.t / x.d, x.x, x.y, x.w));
+        if (FGL) { const hb = heroBox(); let over = false;
+          for (let r = Math.floor(hb.y / 32); r <= Math.floor((hb.y + hb.h) / 32) && !over; r++) for (let c = Math.floor(hb.x / 32); c <= Math.floor((hb.x + hb.w) / 32); c++)
+            if (r >= 0 && r < MH && c >= 0 && c < MW && FGL.id[r * MW + c] >= 0) { over = true; break; }
+          fgA += ((over ? 0.35 : 1) - fgA) * 0.15; ctx.globalAlpha = fgA; drawLayer(FGL); ctx.globalAlpha = 1; }
         ctx.restore();
         if (arenaW > 0 && img.fg) { ctx.globalAlpha = arenaW; const o = Math.round(((cam * 1.2) % 640 + 640) % 640); ctx.drawImage(img.fg, -o, 0); ctx.drawImage(img.fg, 640 - o, 0); ctx.globalAlpha = 1; }
-        if (H.swapT > 0) { ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; const nm = EH_HEROES[H.hero].name.toUpperCase(), sx = Math.round(H.x - cam + 16), sy = Math.round(H.y - 6);
+        if (toast) { ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; const w = ctx.measureText(toast.text).width + 16;
+          ctx.fillStyle = '#0d0b14'; ctx.fillRect(320 - w / 2 - 1, 63, w + 2, 16); ctx.fillStyle = '#2a2233'; ctx.fillRect(320 - w / 2, 64, w, 14); ctx.fillStyle = '#ffc23d'; ctx.fillText(toast.text, 320, 74); }
+        if (H.swapT > 0) { ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; const nm = CUR.name.toUpperCase(), sx = Math.round(H.x - cam + 16), sy = Math.round(H.y - 6);
           ctx.fillStyle = '#0d0b14'; ctx.fillText(nm, sx + 1, sy + 1); ctx.fillStyle = '#ffc23d'; ctx.fillText(nm, sx, sy); }
         // boss bar (ui_bossbar_frame: fill area x 20, y 4, w 184, h 8)
         const bb = eldFight || (ELD && ELD.dead && ELD.dead < 40) ? ELD : BOSS && BOSS.awake && BOSS.dead < 40 ? BOSS : null;

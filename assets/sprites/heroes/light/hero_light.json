@@ -93,6 +93,15 @@
    "fps": 12,
    "loop": false,
    "anchor": "center"
+  },
+  "respawn": {
+   "file": "fx_light_respawn.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "note": "play at checkpoint, then switch to idle"
   }
  },
  "icon": {
