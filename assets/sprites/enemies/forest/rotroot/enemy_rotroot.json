@@ -1,0 +1,55 @@
+{
+ "id": "enemy_rotroot",
+ "type": "enemy",
+ "name": "Rotroot",
+ "biome": "forest",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 9,
+  "y": 12,
+  "w": 15,
+  "h": 19
+ },
+ "hp": 2,
+ "speedPxPerSec": 27,
+ "behavior": "patrol; turns at ledges/walls; attack when player within 28px",
+ "animations": {
+  "idle": {
+   "file": "enemy_rotroot_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "move": {
+   "file": "enemy_rotroot_move.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  "attack": {
+   "file": "enemy_rotroot_attack.png",
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  },
+  "hurt": {
+   "file": "enemy_rotroot_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_rotroot_death.png",
+   "frames": 5,
+   "fps": 8,
+   "loop": false
+  }
+ },
+ "palette": "elemental16.hex"
+}
