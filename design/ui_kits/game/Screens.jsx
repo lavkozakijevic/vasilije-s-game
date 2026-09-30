@@ -20,7 +20,7 @@ function TitleScreen({ onStart }) {
       <ParallaxBackdrop />
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 96, gap: 12 }}>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 128, lineHeight: 1, color: 'var(--eh-gold)', textShadow: '-6px 0 0 var(--eh-ink),6px 0 0 var(--eh-ink),0 -6px 0 var(--eh-ink),0 6px 0 var(--eh-ink),6px 12px 0 var(--eh-ember)' }}>Elemental Heroes</div>
-        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>World 1 · The Forest</div>
+        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>The Rescue of Baba Vera · World 1: The Forest</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 21, alignItems: 'center', marginTop: 48 }}>
           <PixelButton size="lg" onClick={onStart}>Start</PixelButton>
           <PixelButton variant="secondary" disabled>Level Select</PixelButton>

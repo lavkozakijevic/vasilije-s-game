@@ -25,7 +25,7 @@ const EH_HEROES = [
 const GROUND_Y = 288;
 function ehImg(src){ return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; }); }
 
-function GameView({ paused, runId, onHud, onEnd }) {
+function GameView({ paused, runId, onHud, onEnd, onStory }) {
   const cv = React.useRef(null);
   const pausedRef = React.useRef(paused);
   pausedRef.current = paused;
@@ -104,6 +104,7 @@ function GameView({ paused, runId, onHud, onEnd }) {
       const bossWeak = () => ({ x: BOSS.x + 36, y: BOSS.y + 34, w: 26, h: 14 });
       const finalL = LW - 640;
       let tick = 0, lastHud = '';
+      const told = new Set(), story = id => { if (!told.has(id)) { told.add(id); onStory && onStory(id); } };   // each story moment plays once per run
       const hurt = dir => { if (H.inv > 0 || H.dead) return; H.hp -= 0.5; H.hurtT = 16; H.inv = 70; H.vx = -2 * dir; H.vy = -3; H.ground = false; if (H.hp <= 0) { H.dead = 1; H.vx = 0; } };
       const drawStrip = (im, n, f, x, y, w, flip) => { if (!im) return; f = Math.max(0, Math.min(n - 1, Math.floor(f))); ctx.save(); ctx.translate(Math.round(x) + (flip ? w : 0), Math.round(y)); ctx.scale(flip ? -1 : 1, 1); ctx.drawImage(im, f * w, 0, w, im.height, 0, 0, w, im.height); ctx.restore(); };
       const drawLayer = arr => { const c0 = Math.max(0, Math.floor(cam / 32)), c1 = Math.min(MW, c0 + 22);
@@ -117,6 +118,7 @@ function GameView({ paused, runId, onHud, onEnd }) {
 
       const step = () => {
         tick++;
+        if (tick === 1) story('l1_start');
         const HR = EH_HEROES[H.hero];
         // ---- hero input ----
         if (H.dead) {
@@ -202,7 +204,7 @@ function GameView({ paused, runId, onHud, onEnd }) {
         if (ELD) {
           if (ELD.dead) ELD.dead++;
           else {
-            if (!ELD.awake && H.x + 10 > arenaL + 8 && H.x < arenaR) { ELD.awake = true; ELD.st = 'wander'; ELD.t = 0; if (gates[0]) { gates[0].st = 'closing'; gates[0].t = 0; } }
+            if (!ELD.awake && H.x + 10 > arenaL + 8 && H.x < arenaR) { story('l1_elder'); ELD.awake = true; ELD.st = 'wander'; ELD.t = 0; if (gates[0]) { gates[0].st = 'closing'; gates[0].t = 0; } }
             if (ELD.hurt > 0) ELD.hurt--;
             if (ELD.awake && !H.dead) {
               ELD.t++;
@@ -229,7 +231,7 @@ function GameView({ paused, runId, onHud, onEnd }) {
         if (BOSS) {
           if (BOSS.dead) BOSS.dead++;
           else {
-            if (!BOSS.awake && H.x > LW - 600) { BOSS.awake = true; BOSS.t = 60; }
+            if (!BOSS.awake && H.x > LW - 600) { story('l1_blight'); BOSS.awake = true; BOSS.t = 60; }
             if (BOSS.hurt > 0) BOSS.hurt--;
             if (BOSS.awake && !H.dead) {
               BOSS.t++;

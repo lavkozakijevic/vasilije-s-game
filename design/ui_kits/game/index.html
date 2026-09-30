@@ -7,6 +7,7 @@
 <style>html,body{margin:0;height:100%;background:var(--eh-ink);overflow:hidden}#fit{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:0 0}</style></head><body><div id="fit"><div id="root" style="position:relative;width:1280px;height:720px;overflow:hidden"></div></div>
 <script type="text/babel" src="GameView.jsx"></script>
 <script type="text/babel" src="Screens.jsx"></script>
+<script type="text/babel" src="Story.jsx"></script>
 <script type="text/babel">
 function fit(){let s=Math.min(innerWidth/1280,innerHeight/720);if(!isFinite(s)||s<=0)s=1;document.getElementById('fit').style.transform=`scale(${s}) translate(-50%,-50%)`;}
 addEventListener('resize',fit);addEventListener('load',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
@@ -17,12 +18,18 @@ function App(){
   const [res,setRes]=React.useState(null);
   React.useEffect(()=>{localStorage.setItem('eh_screen',screen==='title'?'title':'play');},[screen]);
   React.useEffect(()=>{const k=e=>{if((e.code==='Escape'||e.code==='KeyP')&&screen==='play')setScreen('paused');else if((e.code==='Escape'||e.code==='KeyP')&&screen==='paused')setScreen('play');};addEventListener('keydown',k);return()=>removeEventListener('keydown',k);},[screen]);
-  const restart=()=>{setRun(r=>r+1);setHud({hp:4,coins:0});setRes(null);setScreen('play');};
-  const end=React.useCallback((kind,coins)=>{setRes({kind,coins});setScreen(s=>s==='play'?'result':s);},[]);
-  if(screen==='title')return <TitleScreen onStart={restart}/>;
+  const [dialog,setDialog]=React.useState(null);
+  const restart=()=>{setRun(r=>r+1);setHud({hp:4,coins:0});setRes(null);setDialog(null);setScreen('play');};
+  // story: START plays the intro (skippable), level moments open a dialogue, finishing shows Baba's note
+  const end=React.useCallback((kind,coins)=>{setRes({kind,coins});setScreen(s=>s==='play'?(kind==='complete'?'note':'result'):s);},[]);
+  const story=React.useCallback(id=>{if(!EH_DIALOGUE[id])return;setDialog(id);setScreen(s=>s==='play'?'dialog':s);},[]);
+  if(screen==='title')return <TitleScreen onStart={()=>setScreen('intro')}/>;
+  if(screen==='intro')return <IntroCutscene onDone={restart}/>;
   return(<div style={{position:'absolute',inset:0}}>
-    <GameView key={run} runId={run} paused={screen!=='play'} onHud={setHud} onEnd={end}/>
+    <GameView key={run} runId={run} paused={screen!=='play'} onHud={setHud} onEnd={end} onStory={story}/>
     <Hud hp={hud.hp} coins={hud.coins} element={hud.element} name={hud.name}/>
+    {screen==='dialog'&&dialog&&<DialogueRunner key={dialog} lines={EH_DIALOGUE[dialog]} onDone={()=>{setDialog(null);setScreen('play');}}/>}
+    {screen==='note'&&<NoteScreen level="l1" onDone={()=>setScreen('result')}/>}
     {screen==='paused'&&<PauseMenu onResume={()=>setScreen('play')} onRestart={restart} onQuit={()=>setScreen('title')}/>}
     {screen==='result'&&res&&<ResultPanel kind={res.kind} coins={res.coins} onRetry={restart} onQuit={()=>setScreen('title')}/>}
   </div>);
