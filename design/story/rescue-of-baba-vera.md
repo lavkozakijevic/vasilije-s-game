@@ -38,13 +38,13 @@ The players are the real kids, so nobody is ever the butt of the joke. Teasing s
 | | Star of | Age | Element | Companion | Looks | Personality |
 |---|---|---|---|---|---|---|
 | **Konstantin (Kosta)** | Level 4 · The Hollow Keep | 13 | **Light**: Aurel's powers (the halo) | Golden eagle | Brown hair, sweatshirt and sweatpants | The eldest. Thinks the oldest should be captain. Competes with Vasilije. Learns to share the lead. |
-| **Katarina** | Level 2 · The Frostfang Peaks | 11 | **Ice**: Rime's powers | Snow leopard | Golden hair, t-shirt and sweatpants, carries a sketchbook | The smartest. Knows everything about animals, explores, researches, draws everything she sees. |
+| **Katarina** | Level 2 · The Frostfang Peaks | 11 | **Ice**: Rime's powers | Cheetah | Golden hair, t-shirt and sweatpants, carries a sketchbook | The smartest. Knows everything about animals, explores, researches, draws everything she sees. |
 | **Vasilije** | Level 3 · Cinderdeep Caves | 9 | **Fire**: Cinder's powers | Fire fox (orange) | Dark golden hair, **orange** clothes | Bold, fast, always first in. Wants to be captain. Loves orange and foxes. |
 | **Dimitrije** | Level 1 · The Whispering Forest | 7 | **Air**: Wisp's powers | Puppy | Blond hair, t-shirt and shorts | The youngest and most agile. Works hard, never complains: "Okej." |
 
 **Companions** join in their child's level and follow that child from then on. Only their own child can befriend them. When the player switches to a different hero, the pet runs off the left of the screen, and it comes back when its child is picked again:
 - **Puppy:** barks when a gem or secret is nearby.
-- **Snow leopard:** pounces on the nearest enemy.
+- **Cheetah:** pounces on the nearest enemy.
 - **Fire fox:** fetches coins you can't reach.
 - **Golden eagle:** scouts ahead and marks hidden ledges.
 
@@ -171,10 +171,14 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 - **Vasilije:** "It's FREEZING."
 - **Katarina:** "Told you. Socks."
 
-**Companion: the snow leopard**
-- **Katarina:** "A snow leopard! They can't roar, you know. They chuff. …Hello, you." *(chuff)*
+**Companion: the cheetah.** A cheetah, lost in the snow, is shivering behind a rock, a long way from home. Mrak's wardens must have brought it here.
+- **Katarina:** "A cheetah? Up HERE? You must be freezing."
+- **Vasilije:** "Is it going to eat us?"
+- **Katarina:** "Cheetahs almost never attack people. They can't even roar. They chirp, like birds." *(chirp!)*
+- **Katarina:** *(pulls the itchy warm socks out of her bag and puts them on the cheetah's front paws)* "Here. Baba's orders."
+- **Mita:** "Told you I packed extra."
 - **Kosta:** "How do you know everything?"
-- **Katarina:** "I read." *(pause)* "Snow leopards can go a week between meals. I can't even go an hour. I'm hungry."
+- **Katarina:** "I read." *(pause)* "Cheetahs only eat every few days. I can't even go an hour. I'm hungry."
 
 **Knights**
 - **Rime:** "Ice keeps what it loves. I will keep you safe."

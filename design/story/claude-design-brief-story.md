@@ -33,7 +33,7 @@ projectiles are needed.
 Each follows its child around the level. 32x32 frames unless noted: idle 4, run 6, jump 2,
 special 4.
 - companion_puppy: small fluffy puppy. Special = bark/sniff (finds secrets). ~16px tall.
-- companion_snow_leopard: grey-white with dark rosettes, long thick tail. Special = pounce.
+- companion_cheetah (delivered): golden with black spots, frost-blue collar with an ice charm. Special = pounce.
 - companion_fire_fox: an ORANGE fox with an ember-tipped tail. Special = dash and grab.
 - companion_golden_eagle: 32x32, fly 4 instead of run, glide 2, special = dive. Plus a
   64x32 "carry" strip (4 frames) of the eagle lifting the children upward.
