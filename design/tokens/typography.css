@@ -1,7 +1,7 @@
 /* Type: blackletter-pixel display, 8px-grid UI caps, pixel body. Sizes are multiples of each font's pixel grid. */
 :root{
 --font-display:'Jacquard 24',serif;
---font-ui:'Silkscreen',monospace;
+--font-ui:'Silkscreen','Pixelify Sans',monospace;
 --font-body:'Pixelify Sans',monospace;
 --type-title:96px;--type-h1:72px;--type-h2:48px;
 --type-ui-lg:32px;--type-ui:24px;--type-ui-sm:16px;

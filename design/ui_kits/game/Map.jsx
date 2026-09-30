@@ -52,10 +52,10 @@ function WorldMap({ mode, onPlay, onBack }) {
     const r = prog.levels[lv.id] || {}, open = lv.ready && (i === 0 || (prog.levels[EH_LEVELS[i - 1].id] || {}).done);
     return (
       <div key={lv.id} style={{ position: 'absolute', left: n.x * 2, top: n.y * 2 + (lv.node === 'caves' ? -110 : 18), transform: 'translateX(-50%)', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', whiteSpace: 'nowrap', background: 'rgba(20,16,28,.82)', padding: '6px 10px', border: '2px solid var(--eh-ink)' }}>
-        <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>LEVEL {i + 1} · {lv.star.toUpperCase()}</div>
-        {mode === 'select' && open ? <div style={{ marginTop: 6 }}><PixelButton size="sm" onClick={() => onPlay(lv.id)}>{r.done ? 'Play again' : 'Play'}</PixelButton></div>
-          : <div style={{ marginTop: 4, color: 'var(--eh-stone)' }}>{!lv.ready ? 'COMING SOON' : mode === 'select' ? `FINISH LEVEL ${i} FIRST` : ''}</div>}
-        {r.done && <div style={{ marginTop: 6, fontSize: 12 }}>CLEARED · COINS ×{String(r.coins).padStart(3, '0')} · GEMS {r.gems}/{r.gemTotal}</div>}
+        <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1} · {lv.star.toUpperCase()}</div>{window.EH_LANG === 'sr' && <div style={{ fontSize: 14, marginTop: 2 }}>{T(lv.name).toUpperCase()}</div>}
+        {mode === 'select' && open ? <div style={{ marginTop: 6 }}><PixelButton size="sm" onClick={() => onPlay(lv.id)}>{T(r.done ? 'Play again' : 'Play')}</PixelButton></div>
+          : <div style={{ marginTop: 4, color: 'var(--eh-stone)' }}>{!lv.ready ? T('COMING SOON') : mode === 'select' ? (window.EH_LANG === 'sr' ? `PRVO PREĐI NIVO ${i}` : `FINISH LEVEL ${i} FIRST`) : ''}</div>}
+        {r.done && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')} · {T('COINS')} ×{String(r.coins).padStart(3, '0')} · {T('GEMS')} {r.gems}/{r.gemTotal}</div>}
       </div>
     );
   };
@@ -64,18 +64,18 @@ function WorldMap({ mode, onPlay, onBack }) {
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--eh-ink)' }}>
       <img src={EHM_A + 'ui/ui_world_map.png'} style={px} />
-      <img src={EHM_A + 'ui/ui_world_map_labels.png'} style={px} />
+      {window.EH_LANG !== 'sr' && <img src={EHM_A + 'ui/ui_world_map_labels.png'} style={px} />}   {/* the labels art is English; in Serbian the chips carry the names */}
       {pos && <div style={{ position: 'absolute', left: pos.x * 2 - 32, top: pos.y * 2 - 60, width: 64, height: 64, backgroundImage: `url(${EHM_A}ui/ui_map_marker_baba.png)`,
         backgroundSize: '128px 64px', backgroundPosition: `${-fr * 64}px 0`, imageRendering: 'pixelated' }} />}
       {map && EH_LEVELS.map(chip)}
       <div style={{ position: 'absolute', left: 0, right: 0, top: 24, textAlign: 'center', fontFamily: 'var(--font-display)', fontSize: 56, color: 'var(--eh-gold)', textShadow: '-4px 0 0 var(--eh-ink),4px 0 0 var(--eh-ink),0 -4px 0 var(--eh-ink),0 4px 0 var(--eh-ink)' }}>
-        {mode === 'travel' ? (EH_TRAVEL[cur.id] || EH_TRAVEL.l2)[0] : 'Baba Vera’s trail'}</div>
+        {T(mode === 'travel' ? (EH_TRAVEL[cur.id] || EH_TRAVEL.l2)[0] : 'Baba Vera’s trail')}</div>
       {mode === 'travel' && <div style={{ position: 'absolute', left: 0, right: 0, top: 100, textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 26, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>
-        {(EH_TRAVEL[cur.id] || EH_TRAVEL.l2)[1]} {arrived && !cur.ready ? 'That level is coming soon!' : ''}</div>}
+        {T((EH_TRAVEL[cur.id] || EH_TRAVEL.l2)[1])} {arrived && !cur.ready ? T('That level is coming soon!') : ''}</div>}
       <div style={{ position: 'absolute', right: 32, bottom: 28, display: 'flex', gap: 16, opacity: arrived ? 1 : 0, transition: 'opacity .3s' }}>
-        {mode === 'travel' && cur.ready && <PixelButton onClick={() => onPlay(cur.id)}>Continue ▶</PixelButton>}
-        {mode === 'travel' && <PixelButton variant="secondary" onClick={() => onBack('select')}>Level select</PixelButton>}
-        <PixelButton variant="secondary" onClick={() => onBack('title')}>Title</PixelButton>
+        {mode === 'travel' && cur.ready && <PixelButton onClick={() => onPlay(cur.id)}>{T('Continue ▶')}</PixelButton>}
+        {mode === 'travel' && <PixelButton variant="secondary" onClick={() => onBack('select')}>{T('Level select')}</PixelButton>}
+        <PixelButton variant="secondary" onClick={() => onBack('title')}>{T('Title')}</PixelButton>
       </div>
     </div>
   );

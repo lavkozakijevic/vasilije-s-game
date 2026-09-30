@@ -313,7 +313,7 @@ function PortraitSlot({ who, mood }) {
 // box x 8, y 256, 624x96 · portrait (18, 272) · name tag at (92, 248) · text from (92, 272). pos 'top' mirrors it to the top edge.
 function DialogueBox({ line, shown, done, interactive, pos = 'bottom' }) {
   if (!line) return null;
-  const text = shown == null ? line.text : line.text.slice(0, shown);
+  const full = T(line.text), text = shown == null ? full : full.slice(0, shown);
   if (!line.who) return (
     <div style={{ position: 'absolute', left: 0, right: 0, bottom: 64, textAlign: 'center', fontFamily: 'var(--font-body)', fontSize: 40, color: PAL.bone, textShadow: 'var(--text-outline)' }}>{text}</div>
   );
@@ -323,7 +323,7 @@ function DialogueBox({ line, shown, done, interactive, pos = 'bottom' }) {
       <div style={{ position: 'absolute', inset: 0, boxSizing: 'border-box', borderStyle: 'solid', borderWidth: 16, borderImage: `url(${UI}ui_dialogue_box.png) 8 fill / 16px stretch`, ...px }} />
       <div style={{ position: 'absolute', left: 20, top: 32 }}><PortraitSlot who={line.who} mood={line.mood} /></div>
       <div style={{ position: 'absolute', left: 168, top: -16, height: 32, boxSizing: 'border-box', borderStyle: 'solid', borderWidth: '0 12px', borderImage: `url(${UI}ui_name_tag.png) 0 6 fill / 0 12px stretch`, ...px,
-        padding: '8px 4px 0', fontFamily: 'var(--font-ui)', fontSize: 16, lineHeight: '16px', color: PAL.bone, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{SPEAKER[line.who] || line.who}</div>
+        padding: '8px 4px 0', fontFamily: 'var(--font-ui)', fontSize: 16, lineHeight: '16px', color: PAL.bone, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{T(SPEAKER[line.who] || line.who)}</div>
       <div style={{ position: 'absolute', left: 168, right: 32, top: 34, fontFamily: 'var(--font-body)', fontSize: 30, lineHeight: 1.35, color: PAL.bone, textShadow: 'var(--text-outline)' }}>{text}</div>
       {interactive && done && <div style={{ position: 'absolute', right: 28, bottom: 20, fontFamily: 'var(--font-ui)', fontSize: 16, color: PAL.gold, animation: 'ehBlink 1s steps(2) infinite' }}>SPACE ▶</div>}
     </div>
@@ -339,7 +339,7 @@ function useStoryKeys(handler) {
 }
 function DialogueRunner({ lines, onDone }) {
   const [i, setI] = React.useState(0), [shown, setShown] = React.useState(0);
-  const line = lines[i], done = line && shown >= line.text.length;
+  const line = lines[i], done = line && shown >= T(line.text).length;
   React.useEffect(() => { setShown(0); if (!line) return; const t = setInterval(() => setShown(s => Math.min(line.text.length, s + 1)), 28); return () => clearInterval(t); }, [i]);
   const next = () => { if (!line) return; if (!done) setShown(line.text.length); else if (i + 1 < lines.length) setI(i + 1); else onDone(); };
   useStoryKeys(code => (code === 'Escape' ? onDone() : next()));
@@ -350,7 +350,7 @@ function BabaNote({ lines, style }) {
   return (
     <div style={{ width: 640, height: 400, boxSizing: 'border-box', padding: '66px 36px 0 80px', background: `url(${EHS_A}ui/ui_note_paper.png) 0 0 / 640px 400px no-repeat`, imageRendering: 'pixelated',
       fontFamily: 'var(--font-body)', fontSize: 23, lineHeight: '32px', color: PAL.ink, ...style }}>
-      {lines.map((l, i) => <div key={i}>{l}</div>)}
+      {lines.map((l, i) => <div key={i}>{T(l)}</div>)}
       <div style={{ textAlign: 'right', color: PAL.ember }}>— Baba</div>
     </div>
   );
@@ -363,7 +363,7 @@ function NoteScreen({ level, onDone }) {
     <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,11,20,.7)' }}>
       <div style={{ position: 'absolute', top: phase === 'note' ? 90 : 40, left: 0, right: 0, display: 'grid', placeItems: 'center', gap: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>{n.itemImg && <img src={EHS_A + n.itemImg} style={{ width: 96, height: 96, imageRendering: 'pixelated', animation: 'ehBob 1.2s steps(2) infinite' }} />}
-          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18, color: PAL.gold, textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>Found: {n.item}</div></div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18, color: PAL.gold, textShadow: 'var(--text-outline)', textTransform: 'uppercase' }}>{T('Found')}: {T(n.item)}</div></div>
         <BabaNote lines={n.lines} />
       </div>
       {phase === 'note' ? <NoteWait onNext={() => setPhase('reply')} /> : <DialogueRunner lines={n.replies} onDone={onDone} />}
@@ -471,7 +471,7 @@ function IntroCutscene({ onDone }) {
       else if (n === 6) { d(L('bg')); d(L('chars')); if (Math.floor(t / 0.4) % 2 === 0) d(L('fx')); }
       else if (n === 7) { d(L('bg')); const ch = L('chars'); if (ch) { const k = Math.min(1, t / 0.8), xl = Math.round(-320 * (1 - k) / 2) * 2, xr = Math.round(320 * (1 - k) / 2) * 2;
           g.drawImage(ch, 0, 0, 320, 360, xl, 0, 320, 360); g.drawImage(ch, 320, 0, 320, 360, 320 + xr, 0, 320, 360); } d(L('fx')); }
-      else if (n === 8) { d(L('bg')); d(L('chars'), 0, -Math.min(16, t * 4) - 2 * (Math.floor(t * 8) % 2)); d(L('fx')); if (t > 1.5) d(L('title'), 0, -Math.max(0, 80 - (t - 1.5) * 200)); }
+      else if (n === 8) { d(L('bg')); d(L('chars'), 0, -Math.min(16, t * 4) - 2 * (Math.floor(t * 8) % 2)); d(L('fx')); if (t > 1.5 && window.EH_LANG !== 'sr') d(L('title'), 0, -Math.max(0, 80 - (t - 1.5) * 200)); }
     };
     const loop = () => {
       if (!alive) return;
@@ -485,7 +485,7 @@ function IntroCutscene({ onDone }) {
       const fade = Math.min(1, t / 0.4, (S.d - t) / 0.3); if (fade < 1 && n !== 4) { g.globalAlpha = 1 - Math.max(0, fade); R(PAL.ink, 0, 0, 640, 360); g.globalAlpha = 1; }
       const ln = S.lines.filter(l => l.at <= t).pop() || null; if (ln !== lastLine) { lastLine = ln; setLine(ln); }
       const nt = S.note != null && t >= S.note; if (nt !== lastNote) { lastNote = nt; setNote(nt); }
-      const tt = S.title != null && t >= S.title && !real[n]; if (tt !== lastTitle) { lastTitle = tt; setTitle(tt); }
+      const tt = S.title != null && t >= S.title && (!real[n] || window.EH_LANG === 'sr'); if (tt !== lastTitle) { lastTitle = tt; setTitle(tt); }
       raf = requestAnimationFrame(loop);
     };
     loop();
@@ -497,13 +497,14 @@ function IntroCutscene({ onDone }) {
       {note && <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', animation: 'ehFadeIn .6s' }}><BabaNote lines={INTRO_NOTE} /></div>}
       {title && <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', animation: 'ehFadeIn 1s' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 110, lineHeight: 1, color: PAL.gold, textShadow: `-6px 0 0 ${PAL.ink},6px 0 0 ${PAL.ink},0 -6px 0 ${PAL.ink},0 6px 0 ${PAL.ink},6px 12px 0 ${PAL.ember}` }}>Elemental Heroes</div>
-          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 30, color: PAL.bone, textShadow: 'var(--text-outline)', textTransform: 'uppercase', marginTop: 18 }}>The Rescue of Baba Vera</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 110, lineHeight: 1, color: PAL.gold, textShadow: `-6px 0 0 ${PAL.ink},6px 0 0 ${PAL.ink},0 -6px 0 ${PAL.ink},0 6px 0 ${PAL.ink},6px 12px 0 ${PAL.ember}` }}>{T('Elemental Heroes')}</div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 30, color: PAL.bone, textShadow: 'var(--text-outline)', textTransform: 'uppercase', marginTop: 18 }}>{T('The Rescue of Baba Vera')}</div>
         </div></div>}
       <DialogueBox line={line} pos={line && [1, 7].includes(INTRO.findIndex(sc => sc.lines.includes(line))) ? 'top' : 'bottom'} />
       {skip && <button onClick={finish} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} aria-label="Skip intro"
         style={{ position: 'absolute', right: 28, top: 24, width: 160, height: 40, padding: 0, border: 'none', cursor: 'pointer', animation: 'ehFadeIn .4s', imageRendering: 'pixelated',
-          background: `url(${EHS_A}ui/ui_skip_button.png) ${hover ? '-160px' : '0'} 0 / 320px 40px no-repeat` }} />}
+          background: `url(${EHS_A}ui/ui_skip_button.png) ${hover ? '-160px' : '0'} 0 / 320px 40px no-repeat` }}>
+          {window.EH_LANG === 'sr' && <span style={{ position: 'absolute', inset: 2, display: 'grid', placeItems: 'center', background: hover ? PAL.slate : PAL.plum, color: PAL.bone, fontFamily: 'var(--font-ui)', fontSize: 16 }}>PRESKOČI ▶</span>}</button>}
     </div>
   );
 }

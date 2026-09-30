@@ -263,7 +263,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         // fx_statue_awaken: 6 frames at 10fps; the knight replaces the statue on frame 3 and joins when it ends
         ST.forEach(s => { if (s.wakeT < 0 || s.woke) return; if (++s.wakeT >= 36) { s.woke = true;
           ROSTER.push({ id: 'k_' + s.el, el: s.el, name: EH_KNIGHTS[s.el], kid: false }); fx('i_' + s.el, 4, 12, s.x, s.y, 32);
-          say(`${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story(LV.id + '_knight_' + s.el); } });
+          say(window.EH_LANG === 'sr' ? EH_SR_HINT.joined(EH_KNIGHTS[s.el].toUpperCase()) : `${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story(LV.id + '_knight_' + s.el); } });
         for (const PUP of PETS) {
           PUP.t++;
         // the puppy runs on the ground like the heroes: gravity, landing, hops over walls and pits (the eagle will just fly)
@@ -281,7 +281,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         };
           const isOwner = ROSTER[H.hero].id === PUP.owner;
           if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) {
-              if (isOwner) { PUP.st = 'follow'; story(LV.id + '_' + PUP.id); } else if (!PUP.hinted) { PUP.hinted = true; say(`THE ${PUP.id.toUpperCase()} WAITS FOR ${PUP.ownerName} · PRESS ${PUP.key}`); } } }
+              if (isOwner) { PUP.st = 'follow'; story(LV.id + '_' + PUP.id); } else if (!PUP.hinted) { PUP.hinted = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.petWaits[PUP.id] : `THE ${PUP.id.toUpperCase()} WAITS FOR ${PUP.ownerName} · PRESS ${PUP.key}`); } } }
           else if (!isOwner && PUP.st !== 'gone') {   // not the owner: run off the left edge of the screen
             if (PUP.st !== 'away') { PUP.st = 'away'; PUP.vy = 0; }
             PUP.barkT = 0; PUP.spT = 0; PUP.face = -1;
@@ -508,14 +508,14 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
             if (YETI.hp <= 0) { YETI.dead = 1; BIGS.length = 0; SNOW.length = 0; } }
           if (FW && !FW.dead && !hit && overlap(pb, fwBody())) {
             FW.hp -= b.dmg * (fwGlow() && overlap(pb, fwWeak()) ? 2 : 1); FW.hurt = 10; FW.awake = true; spark();
-            if (FW.hp <= 0 && b.who !== EH_STAR) { FW.hp = 1; if (!FW.callStar) { FW.callStar = true; say(`PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
+            if (FW.hp <= 0 && b.who !== EH_STAR) { FW.hp = 1; if (!FW.callStar) { FW.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish[EH_STAR] : `PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
             if (FW.hp <= 0) { FW.dead = 1; FW.spots = []; FW.spikes = []; FW.breath = null; }
             hit = true; }
           if (ELD && ELD.awake && !ELD.dead && !hit && overlap(pb, elderBox())) { ELD.hp -= b.dmg; ELD.hurt = 10; spark(); hit = true;
             if (ELD.hp <= 0) { ELD.dead = 1; SEEDS.length = 0; gates.forEach(g => { if (g.st !== 'open') { g.st = 'opening'; g.t = 0; } }); } }
           if (BOSS && !BOSS.dead && !hit && overlap(pb, bossBody())) {
             BOSS.hp -= b.dmg * (overlap(pb, bossWeak()) ? 2 : 1); BOSS.hurt = 10; BOSS.awake = true; spark();
-            if (BOSS.hp <= 0 && b.who !== EH_STAR) { BOSS.hp = 1; if (!BOSS.callStar) { BOSS.callStar = true; say(`PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
+            if (BOSS.hp <= 0 && b.who !== EH_STAR) { BOSS.hp = 1; if (!BOSS.callStar) { BOSS.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish[EH_STAR] : `PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
             if (BOSS.hp <= 0) { BOSS.dead = 1; BOSS.spots = []; BOSS.roots = []; }
             hit = true; }
           if (hit) { if (wall) fx('i_' + b.el, 4, 12, b.x - 8, b.y - 8, 32); B.splice(i, 1); } }
@@ -633,9 +633,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         if (LV.fgAlways && img.fg) { const o = Math.round(((cam * 1.2) % 640 + 640) % 640), oy = Math.round((tick * 0.5) % 360);   // snowfall drifts down over everything
           for (const yy of [oy - 360, oy]) { ctx.drawImage(img.fg, -o, yy); ctx.drawImage(img.fg, 640 - o, yy); } }
         else if (arenaW > 0 && img.fg) { ctx.globalAlpha = arenaW; const o = Math.round(((cam * 1.2) % 640 + 640) % 640); ctx.drawImage(img.fg, -o, 0); ctx.drawImage(img.fg, 640 - o, 0); ctx.globalAlpha = 1; }
-        if (toast) { ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; const w = ctx.measureText(toast.text).width + 16;
+        if (toast) { ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; const w = ctx.measureText(toast.text).width + 16;
           ctx.fillStyle = '#0d0b14'; ctx.fillRect(320 - w / 2 - 1, 63, w + 2, 16); ctx.fillStyle = '#2a2233'; ctx.fillRect(320 - w / 2, 64, w, 14); ctx.fillStyle = '#ffc23d'; ctx.fillText(toast.text, 320, 74); }
-        if (H.swapT > 0) { ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; const nm = CUR.name.toUpperCase(), sx = Math.round(H.x - cam + 16), sy = Math.round(H.y - 6);
+        if (H.swapT > 0) { ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; const nm = CUR.name.toUpperCase(), sx = Math.round(H.x - cam + 16), sy = Math.round(H.y - 6);
           ctx.fillStyle = '#0d0b14'; ctx.fillText(nm, sx + 1, sy + 1); ctx.fillStyle = '#ffc23d'; ctx.fillText(nm, sx, sy); }
         // boss bar (ui_bossbar_frame: fill area x 20, y 4, w 184, h 8)
         const bb = eldFight || (ELD && ELD.dead && ELD.dead < 40) ? ELD : yetiFight || (YETI && YETI.dead && YETI.dead < 40) ? YETI : BOSS && BOSS.awake && BOSS.dead < 40 ? BOSS : FW && FW.awake && FW.dead < 40 ? FW : null;
@@ -644,7 +644,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           ctx.drawImage(img.bar_frame, fx0, fy0);
           for (let x = 0; x < fw; x += 8) ctx.drawImage(img.bar_fill, 0, 0, Math.min(8, fw - x), 8, fx0 + 20 + x, fy0 + 4, Math.min(8, fw - x), 8);
           if (bb.hurt > 0) { ctx.fillStyle = 'rgba(232,224,208,0.6)'; ctx.fillRect(fx0 + 20, fy0 + 4, fw, 8); }
-          ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#0d0b14'; ctx.fillText(bb.name, 321, fy0 - 3); ctx.fillStyle = '#e8e0d0'; ctx.fillText(bb.name, 320, fy0 - 4);
+          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#0d0b14'; ctx.fillText(T(bb.name), 321, fy0 - 3); ctx.fillStyle = '#e8e0d0'; ctx.fillText(T(bb.name), 320, fy0 - 4);
         }
       };
       const loop = () => { if (!alive) return; if (!pausedRef.current) step(); draw(); raf = requestAnimationFrame(loop); };
