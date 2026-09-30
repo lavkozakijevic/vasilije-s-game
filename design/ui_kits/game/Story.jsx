@@ -200,24 +200,40 @@ function ehPortrait(who, mood = 'neutral') {
 }
 
 // ---------------------------------------------------------------- React pieces
+// Portraits are resolved once and cached (loaded image, or 'missing'), and every portrait the script uses is
+// preloaded at start-up, so switching speakers shows the real art at once instead of flashing the stand-in.
+const ehPortraitCache = {};
+function ehResolvePortrait(who, mood) {
+  const key = who + '|' + mood, f = PORTRAIT_FILE[who];
+  if (!ehPortraitCache[key]) ehPortraitCache[key] = !f ? Promise.resolve('missing') : new Promise(done => {
+    const tries = [...new Set([PORTRAIT_MOOD[mood] || mood, PORTRAIT_DEFAULT[who] || 'neutral'])].map(m => EHS_A + `ui/portraits/portrait_${f}_${m}.png`);
+    const next = i => { if (i >= tries.length) return done('missing'); const im = new Image(); im.onload = () => done(im); im.onerror = () => next(i + 1); im.src = tries[i]; };
+    next(0);
+  }).then(r => (ehPortraitCache[key].result = r));
+  return ehPortraitCache[key];
+}
+function ehPreloadPortraits() {
+  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines)];
+  for (const l of lines) { if (!l.who) continue; const who = l.who === 'all' ? KIDS : l.who === 'kosta_vasilije' ? ['kosta', 'vasilije'] : [l.who];
+    for (const w of who) ehResolvePortrait(w, l.mood || (l.who === 'all' ? 'ali' : 'neutral')); }
+}
 function Portrait({ who, mood = 'neutral', size = 128 }) {
   const ref = React.useRef(null);
-  const [real, setReal] = React.useState(null);
+  const known = () => { const p = ehPortraitCache[who + '|' + mood]; return p && p.result; };
+  const [res, setRes] = React.useState(known);   // undefined = still loading, Image = real art, 'missing' = use the stand-in
+  React.useEffect(() => { let on = true; const k = known(); setRes(k); if (!k) ehResolvePortrait(who, mood).then(r => on && setRes(r)); return () => { on = false; }; }, [who, mood]);
+  const stand = res === 'missing' || (!PORTRAIT_FILE[who] && SPRITE_PORTRAIT[who]);
   React.useEffect(() => {
-    let on = true; setReal(null); const f = PORTRAIT_FILE[who]; if (!f) return;
-    const tries = [...new Set([PORTRAIT_MOOD[mood] || mood, PORTRAIT_DEFAULT[who] || 'neutral'])].map(m => EHS_A + `ui/portraits/portrait_${f}_${m}.png`);
-    const next = i => { if (i >= tries.length || !on) return; const im = new Image(); im.onload = () => on && setReal(im.src); im.onerror = () => next(i + 1); im.src = tries[i]; };
-    next(0); return () => { on = false; };
-  }, [who, mood]);
-  React.useEffect(() => {
-    const c = ref.current; if (!c || real) return; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
+    const c = ref.current; if (!c || !stand) return; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
     const sp = SPRITE_PORTRAIT[who];
     if (sp) { const i = new Image(); i.onload = () => { g.clearRect(0, 0, 64, 64); g.drawImage(i, sp.crop[0], sp.crop[1], sp.crop[2], sp.crop[3], 0, 0, 64, 64); }; i.src = EHS_A + sp.src; }
     else if (CAST[who] || who === 'baba' || who === 'mrak') g.drawImage(ehPortrait(who, mood), 0, 0);
-  }, [who, mood, real]);
+  }, [who, mood, stand]);
   const st = { width: size, height: size, imageRendering: 'pixelated', display: 'block' };
+  if (res && res !== 'missing') return <img src={res.src} style={st} />;
+  if (!stand) return <div style={st} />;   // real art still loading: keep the frame empty rather than flash a stand-in
   const n = SPRITE_PORTRAIT[who] ? 64 : 34;   // stand-in portraits are 32px + 1px outline border
-  return real ? <img src={real} style={st} /> : <canvas key={n} ref={ref} width={n} height={n} style={st} />;
+  return <canvas key={n} ref={ref} width={n} height={n} style={st} />;
 }
 function PortraitSlot({ who, mood }) {
   const box = { width: 128, height: 128, display: 'grid', placeItems: 'center', flex: 'none' };
@@ -426,4 +442,5 @@ function IntroCutscene({ onDone }) {
 
 (function () { if (document.getElementById('eh-story-css')) return; const s = document.createElement('style'); s.id = 'eh-story-css';
   s.textContent = '@keyframes ehBob{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}@keyframes ehBlink{0%{opacity:1}100%{opacity:0}}@keyframes ehFadeIn{from{opacity:0}to{opacity:1}}'; document.head.appendChild(s); })();
+ehPreloadPortraits();
 Object.assign(window, { IntroCutscene, DialogueRunner, NoteScreen, EH_DIALOGUE, EH_NOTES });
