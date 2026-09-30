@@ -340,8 +340,8 @@ function useStoryKeys(handler) {
 function DialogueRunner({ lines, onDone }) {
   const [i, setI] = React.useState(0), [shown, setShown] = React.useState(0);
   const line = lines[i], done = line && shown >= T(line.text).length;
-  React.useEffect(() => { setShown(0); if (!line) return; const t = setInterval(() => setShown(s => Math.min(line.text.length, s + 1)), 28); return () => clearInterval(t); }, [i]);
-  const next = () => { if (!line) return; if (!done) setShown(line.text.length); else if (i + 1 < lines.length) setI(i + 1); else onDone(); };
+  React.useEffect(() => { setShown(0); if (!line) return; const t = setInterval(() => setShown(s => Math.min(T(line.text).length, s + 1)), 28); return () => clearInterval(t); }, [i]);
+  const next = () => { if (!line) return; if (!done) setShown(T(line.text).length); else if (i + 1 < lines.length) setI(i + 1); else onDone(); };
   useStoryKeys(code => (code === 'Escape' ? onDone() : next()));
   return <div style={{ position: 'absolute', inset: 0 }} onClick={next}><DialogueBox line={line} shown={shown} done={done} interactive /></div>;
 }

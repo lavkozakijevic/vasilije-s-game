@@ -6,8 +6,8 @@ function ehSetLang(l) { window.EH_LANG = l; try { localStorage.setItem('eh_lang'
 const EH_SR = {
   // ---- title, menus, results
   'Elemental Heroes': 'Elementalni heroji',
-  'The Rescue of Baba Vera': 'Spasavanje babe Vere',
-  'Start': 'Kreni',
+  'The Rescue of Baba Vera': 'Spasavanje Baba Vere',
+  'Start': 'Počni',
   'Level Select': 'Izbor nivoa',
   'Level select': 'Izbor nivoa',
   '← → move · space jump · F fire · 1–4 cousins · Q/E switch hero · esc pause': '← → hodanje · space skok · F napad · 1–4 rođaci · Q/E promena heroja · esc pauza',
@@ -26,7 +26,7 @@ const EH_SR = {
   'Title': 'Početak',
   'Found': 'Pronađeno',
   // ---- world map
-  'Baba Vera’s trail': 'Tragom babe Vere',
+  'Baba Vera’s trail': 'Tragom Baba Vere',
   'LEVEL': 'NIVO',
   'COMING SOON': 'USKORO',
   'CLEARED': 'PREĐENO',
@@ -55,14 +55,14 @@ const EH_SR = {
   'FROST WARDEN': 'ČUVAR MRAZA',
   // ---- intro
   "New Year's Eve in Ivanovo.": 'Novogodišnje veče u Ivanovu.',
-  "Baba, can I have a cookie? I'm SO hungry.": 'Bako, mogu li kolačić? TAKO sam gladna.',
+  "Baba, can I have a cookie? I'm SO hungry.": 'Baba, mogu li kolačić? TAKO sam gladna.',
   'Wash your hands before you eat!': 'Operi ruke pre jela!',
   'Already did.': 'Već sam oprao.',
   'And pick up your toys. All of them.': 'I pokupite igračke. Sve.',
   "They're Kosta's toys!": 'To su Kostine igračke!',
   'Half of them are YOURS.': 'Pola su TVOJE.',
   'Children—!': 'Deco—!',
-  'The chair was empty. Baba Vera was gone.': 'Stolica je bila prazna. Babe Vere više nije bilo.',
+  'The chair was empty. Baba Vera was gone.': 'Stolica je bila prazna. Baba Vere više nije bilo.',
   'Mine is green. It feels like wind.': 'Moj je zelen. Kao vetar.',
   'Each stone is an element. Ice, fire, wind, light. That’s our power.': 'Svaki kamen je jedan element. Led, vatra, vetar, svetlost. To je naša moć.',
   "Okay. I'm the oldest, so I lead.": 'Dobro. Ja sam najstariji, pa ja vodim.',
@@ -73,7 +73,7 @@ const EH_SR = {
   'Each stone holds an element. It will give you the power to fight the monsters ahead.': 'U svakom kamenu je jedan element. Daće vam snagu da se borite sa čudovištima.',
   'Follow my red yarn and bring me home before midnight.': 'Pratite moje crveno klupko i vratite me kući pre ponoći.',
   'Share the cookies. Put on your socks.': 'Podelite kolačiće. Obujte čarape.',
-  'No fighting over who is captain. Kosta, Vasilije, I mean you.': 'Bez svađe oko toga ko je kapiten. Kosta, Vasilije, na vas mislim.',
+  'No fighting over who is captain. Kosta, Vasilije, I mean you.': 'Bez svađe oko toga ko je kapiten. Kosta, Vasilije, vama govorim.',
   // ---- level 1
   'Right. Everyone stay behind me.': 'Dobro. Svi iza mene.',
   "Why you? I'm way faster.": 'Zašto ti? Ja sam mnogo brži.',
