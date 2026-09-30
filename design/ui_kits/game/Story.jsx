@@ -16,13 +16,13 @@ const CAST = {
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
-const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
+const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', umbra_sb: 'Umbra', boys: 'Kosta, Vasilije & Dimitrije', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
 // sprite-based portraits for characters that already have art
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
-const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus',
+const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus', umbra_sb: 'umbra',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
 // PORTRAIT_SKIP can stand a mood in for one that needs redrawing, e.g. { 'vasilije|ali': 'neutral' }
-const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = {}, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
+const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = {}, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing', umbra_sb: 'spellbound' };
 const SPRITE_PORTRAIT = {
   elder:        { src: 'sprites/bosses/forest/elder_rotroot/boss_rotroot_idle.png', crop: [6, 2, 52, 52] },
   blightwarden: { src: 'sprites/bosses/forest/blightwarden/boss_blightwarden_idle.png', crop: [18, 4, 64, 64] },
@@ -187,6 +187,55 @@ const EH_DIALOGUE = {
     { who: 'kosta', text: "It's cooling down! Vasilije, this one's yours!" },
     { who: 'vasilije', mood: 'happy', text: "That's for Baba!" },
   ],
+  // ---- Level 4 · The Hollow Keep (Kosta)
+  l4_start: [
+    { who: 'katarina', mood: 'happy', text: 'A golden eagle! Their wingspan is over two metres!' },
+    { who: 'kosta', text: 'Hold on, everyone.' },
+    { who: 'katarina', mood: 'happy', text: "When we get Baba back, I'm eating ALL the cookies." },
+    { who: 'boys', mood: 'ali', text: 'Ali Katarina!' },
+  ],
+  l4_bridge: [
+    { who: 'dimitrije', text: 'The bridge is made of shadow. We fall right through it!' },
+    { who: 'katarina', text: 'Shadow runs from light. Kosta, shine on it!' },
+    { who: 'kosta', mood: 'happy', text: 'Stay close. Walk where my light goes.' },
+  ],
+  l4_knight_light: [
+    { who: 'aurel', text: 'Light finds the lost. Lead on, Konstantin.' },
+    { who: 'kosta', mood: 'happy', text: "Thanks. But I'm not leading alone." },
+  ],
+  l4_umbra: [
+    { who: 'umbra_sb', text: 'Turn back. The Hollow King keeps what he takes.' },
+    { who: 'vasilije', mood: 'ali', text: "That's a Hearth Knight! Why is he fighting us?" },
+    { who: 'katarina', text: "Look at his eyes. It's a spell. Kosta, your light can break it!" },
+  ],
+  l4_knight_shadow: [
+    { who: 'umbra', text: "I guarded Mrak's dark too long. Let me help you end it." },
+    { who: 'dimitrije', mood: 'okej', text: 'Okej. Welcome, Umbra.' },
+  ],
+  l4_mrak: [
+    { who: 'mrak', text: 'Welcome to the Hollow Keep. So cold. So quiet. Finally, someone to keep.' },
+    { who: 'kosta', text: "We're here for our Baba." },
+  ],
+  l4_together: [
+    { who: 'mrak', mood: 'laughing', text: 'My wardens fell? Then I wore their power myself! Four little children. What can you do?' },
+    { who: 'vasilije', mood: 'ali', text: 'Kosta, let me lead this bit!' },
+    { who: 'kosta', mood: 'ali', text: 'No, I should, it’s my level!' },
+    { who: 'mrak', mood: 'laughing', text: 'Ha! Ha! Ha!' },
+    { who: 'kosta', text: "Wait. We don't need a captain. We never did." },
+    { who: 'kosta', mood: 'happy', text: 'Lead it with me? All four stones. Everyone hits him once!' },
+    { who: 'vasilije', mood: 'happy', text: '…Together. On three!' },
+    { who: 'katarina', mood: 'happy', text: 'One!' },
+    { who: 'dimitrije', mood: 'happy', text: 'Two!' },
+    { who: 'all', mood: 'happy', text: 'THREE!' },
+  ],
+  l4_finish: [
+    { who: 'vasilije', mood: 'happy', text: 'Kosta, finish it! Together!' },
+  ],
+  l4_free: [
+    { who: 'baba', mood: 'warm', text: 'My brave ones! You came all this way.' },
+    { who: 'kosta', mood: 'happy', text: 'All four of us, Baba. Together.' },
+    { who: 'baba', mood: 'warm', text: 'Of course together. Now, where is that shadow?' },
+  ],
 };
 const EH_NOTES = {
   l1: {
@@ -347,7 +396,7 @@ function ehResolvePortrait(who, mood) {
 }
 function ehPreloadPortraits() {
   const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : [])];
-  for (const l of lines) { if (!l.who) continue; const who = l.who === 'all' ? KIDS : l.who === 'kosta_vasilije' ? ['kosta', 'vasilije'] : [l.who];
+  for (const l of lines) { if (!l.who) continue; const who = l.who === 'all' ? KIDS : l.who === 'kosta_vasilije' ? ['kosta', 'vasilije'] : l.who === 'boys' ? ['kosta', 'vasilije', 'dimitrije'] : [l.who];
     for (const w of who) ehResolvePortrait(w, l.mood || (l.who === 'all' ? 'ali' : 'neutral')); }
 }
 function Portrait({ who, mood = 'neutral', size = 128 }) {
@@ -371,6 +420,7 @@ function Portrait({ who, mood = 'neutral', size = 128 }) {
 function PortraitSlot({ who, mood }) {
   const box = { width: 128, height: 128, display: 'grid', placeItems: 'center', flex: 'none' };
   if (who === 'all') return <div style={box}><div style={{ display: 'grid', gridTemplateColumns: '64px 64px' }}>{KIDS.map(k => <Portrait key={k} who={k} mood={mood || 'ali'} size={64} />)}</div></div>;
+  if (who === 'boys') return <div style={box}><div style={{ display: 'grid', gridTemplateColumns: '64px 64px' }}>{['kosta', 'vasilije', 'dimitrije'].map(k => <Portrait key={k} who={k} mood={mood || 'ali'} size={64} />)}</div></div>;
   if (who === 'kosta_vasilije') return <div style={box}><div style={{ display: 'flex' }}>{['kosta', 'vasilije'].map(k => <Portrait key={k} who={k} mood={mood} size={64} />)}</div></div>;
   return <div style={box}><Portrait who={who} mood={mood} size={128} /></div>;
 }

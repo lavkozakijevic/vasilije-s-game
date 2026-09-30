@@ -22,7 +22,12 @@ const EH_BAT = { hang:2, fly:4, swoop:4, hurt:2, death:5 };
 const EH_GOLEM = { walk:6, shell_up:3, shell_hold:2, shell_crack:4, hurt:2, death:6 };
 const EH_SAL = { idle:4, walk:6, dive:5, surface:5, spit:5, hurt:2, defeat:6 };
 // shielded enemies: a shot at their face is blocked unless it is one of these elements
-const EH_SHIELD = { frost: ['fire', 'light'], golem: ['ice', 'water'] };
+const EH_SHIELD = { frost: ['fire', 'light'], golem: ['ice', 'water'], hknight: ['light'] };
+const EH_SHADE = { fly:4, fade_out:4, fade_in:4, attack:5, hurt:2, death:6 };
+const EH_GARG = { perch:1, wake:4, fly:4, swoop:4, hurt:2, death:6 };
+const EH_HK = { walk:6, shield_up:3, shield_hold:2, attack:5, hurt:2, death:6 };
+const EH_UMBRA = { idle:4, dash:4, attack:5, stunned:4, kneel:4 };
+const EH_MRAK = { idle:4, telegraph:4, shadow_attack:6, summon:6, hurt:2, phase_change:6, defeat:8, warden_roots:6, warden_frost:6, warden_magma:6, laugh:4, stagger:4 };
 // Playable roster: the four cousins (keys 1-4), then each Hearth Knight once its statue is woken (Q/E cycles everyone).
 // Projectile stats per element are placeholders for tuning: v = speed (px/tick), dmg = damage, arc = lobbed, pierce = passes through enemies.
 const EH_POWER = {
@@ -52,11 +57,17 @@ EH_LV.l3 = { id: 'l3', map: 'maps/caves_l3.tmj', tiles: 'tilesets/caves/tileset_
   shrine: 'sprites/props/caves/prop_checkpoint_shrine_cave_', arch: 'sprites/props/caves/prop_exit_arch_obsidian.png', gem: 'sprites/items/item_gem_caves.png', star: 'vasilije', starKey: 3, knights: ['fire', 'lightning'], pet: 'fox',
   T: { solid: new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,35,36,48,49,50,51,52,53,54,56,58]), plat: new Set([19,20,21,22,23,24,25,26,27]),
     feetHaz: [46], bodyHaz: [], water: [29, 30], lava: true, anim: { 30: [30, 4, 10], 38: [38, 4, 8], 42: [42, 4, 8] }, crumble: [25, 26, 27, 28], bounce: [48, 49, 50, 51, 52], ice: new Set(), noSafe: id => id === 35 || id === 36 || (id >= 48 && id <= 52) } };
-const EH_LV_ORDER = ['l1', 'l2', 'l3'];
+EH_LV.l4 = { id: 'l4', map: 'maps/keep_l4.tmj', tiles: 'tilesets/keep/tileset_keep.png', bg: 'backgrounds/keep/bg_keep_', fg: 'backgrounds/keep/fg_keep_dust.png', fgAlways: true,
+  shrine: 'sprites/props/keep/prop_checkpoint_shrine_keep_', arch: null, gem: 'sprites/items/item_gem_keep.png', star: 'konstantin', starKey: 1, knights: ['light', 'shadow'], pet: 'eagle', ride: true,
+  T: { solid: new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,46,47,48,49,50,51,52,54,56]), plat: new Set([19,20,21,22,23,24,25,26,27,31,34]),
+    feetHaz: [40], bodyHaz: [42], water: [35, 36], anim: { 36: [36, 4, 10], 42: [42, 4, 8] }, crumble: [25, 26, 27, 28], bounce: [46, 47, 48, 49, 50], ice: new Set(), noSafe: id => id === 31 || (id >= 46 && id <= 50),
+    bridge: true, hidden: true } };
+const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4'];
 // Companions: each belongs to one cousin, joins in that cousin's level and follows them from then on (bark: finds gems, pounce: jumps on enemies)
 const EH_PETS = {
   puppy:   { id: 'puppy',   owner: 'dimitrije', ownerName: 'DIMITRIJE', key: 4, sprite: 'companion_puppy',   skill: 'bark',   yarn: true },
   cheetah: { id: 'cheetah', owner: 'katarina',  ownerName: 'KATARINA',  key: 2, sprite: 'companion_cheetah', skill: 'pounce', yarn: false },
+  eagle:   { id: 'eagle',   owner: 'konstantin', ownerName: 'KOSTA',   key: 1, sprite: 'companion_golden_eagle', skill: 'scout', yarn: false, fly: true },   // flies; marks hidden ledges
   fox:     { id: 'fox',     owner: 'vasilije',  ownerName: 'VASILIJE',  key: 3, sprite: 'companion_fire_fox', skill: 'fetch',  yarn: false },   // dashes to coins you can't reach
 };
 const GROUND_Y = 288;
@@ -89,9 +100,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         load('fx_coin', 'sprites/items/fx_pickup_coin.png'), load('fx_heart', 'sprites/items/fx_pickup_heart.png'),
         ...['dust_jump','dust_land','splash_water','hit_spark','hero_respawn'].map(k => load('fx_' + k, `sprites/fx/fx_${k}.png`)),
         ...['idle','activate','lit'].map(k => load('cp_' + k, `${LV.shrine}${k}.png`)),
-        load('arch', LV.arch),
+        load('arch', LV.arch || 'sprites/props/forest/prop_exit_arch.png'),
         ...EH_ELEMENTS.map(el => load('st_' + el, `sprites/statues/statue_knight_${el}.png`)), load('st_awaken', 'sprites/statues/fx_statue_awaken.png'),
-        ...Object.values(EH_PETS).flatMap(pt => ['idle', 'run', 'jump', 'special'].map(k => load(`pet_${pt.id}_${k}`, `sprites/companions/${pt.sprite}/${pt.sprite}_${k}.png`))),
+        ...Object.values(EH_PETS).flatMap(pt => (pt.fly ? ['fly', 'glide', 'dive', 'carry_konstantin'] : ['idle', 'run', 'jump', 'special']).map(k => load(`pet_${pt.id}_${k}`, `sprites/companions/${pt.sprite}/${pt.sprite}_${k}.png`))),
         load('yarn', 'sprites/items/item_yarn_ball.png'),
         ...EH_COUSINS.flatMap(c => [...Object.keys(EH_HERO), 'respawn'].map(k => load(`h_${c.id}_${k}`, `sprites/heroes/kids/${c.id}/hero_${c.id}_${k}.png`))),
         ...EH_ELEMENTS.flatMap(el => [
@@ -130,6 +141,17 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           load('scarf', 'sprites/items/item_baba_family_photo.png'),
           ...['open', 'closing', 'closed', 'opening'].map(k => load('cg_' + k, `sprites/props/caves/prop_cave_gate_${k}.png`)),
           load('rlava', 'backgrounds/caves/rising_lava.png'), load('rlava_body', 'backgrounds/caves/rising_lava_body.png')] : []),
+        ...(LV.id === 'l4' ? [
+          ...Object.keys(EH_SHADE).map(k => load('sh_' + k, `sprites/enemies/keep/shadow_shade/enemy_shadow_shade_${k}.png`)),
+          ...Object.keys(EH_GARG).map(k => load('ga_' + k, `sprites/enemies/keep/stone_gargoyle/enemy_stone_gargoyle_${k}.png`)),
+          ...Object.keys(EH_HK).map(k => load('hk_' + k, `sprites/enemies/keep/hollow_knight/enemy_hollow_knight_${k}.png`)),
+          ...Object.keys(EH_UMBRA).map(k => load('um_' + k, `sprites/npc/umbra/npc_umbra_${k}.png`)),
+          load('chand', 'sprites/hazards/hazard_chandelier.png'), load('fx_chand_crash', 'sprites/hazards/hazard_chandelier_crash.png'), load('fx_eagle_mark', 'sprites/fx/fx_eagle_mark.png'),
+          ...Object.keys(EH_MRAK).map(k => load('mk_' + k, `sprites/bosses/keep/mrak/boss_mrak_${k}.png`)),
+          load('mrak_wave', 'sprites/bosses/keep/mrak/fx_mrak_shadow_wave.png'), load('mrak_orb', 'sprites/bosses/keep/mrak/fx_mrak_orb.png'), load('beam', 'sprites/bosses/keep/mrak/fx_four_stones_beam.png'),
+          load('ice_spike', 'sprites/bosses/peaks/frost_warden/fx_ice_spike.png'), load('lava_wave', 'sprites/bosses/caves/magma_colossus/fx_lava_wave.png'),
+          ...['locked', 'opening', 'open'].map(k => load('cage_' + k, `sprites/props/keep/prop_baba_cage_${k}.png`)),
+          load('cliff', 'backgrounds/keep/bg_keep_cliff.png')] : []),
       ]);
       if (!alive) return;
       const ctx = cv.current.getContext('2d'); ctx.imageSmoothingEnabled = false;
@@ -149,6 +171,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
       const PETS = before.map(l => ({ ...EH_PETS[EH_LV[l].pet], x: -99, y: 0, st: 'gone', face: 1, anim: 'idle', t: 0, barkT: 0, spT: 0, cool: 120, vy: 0, stuck: 0 }));
       const po = ents.find(o => (o.type || '').startsWith('companion_'));
       if (po) PETS.push({ ...EH_PETS[LV.pet], x: po.x, y: po.y, st: 'wait', face: -1, anim: 'idle', t: 0, barkT: 0, spT: 0, cool: 120, hinted: false });
+      else if (LV.pet === 'eagle') PETS.push({ ...EH_PETS.eagle, x: spawn.x - 24, y: spawn.y - 40, st: 'follow', face: 1, anim: 'glide', t: 0, barkT: 0, spT: 0, cool: 60, vy: 0 });   // the eagle arrives with the ride
       let toast = null; const say = text => { toast = { text, t: 0 }; };
       const heroBox = () => ({ x: H.x + 10, y: H.y + 8, w: 12, h: 23 });
       // enemies share one list; kind decides behaviour, hitbox and sprites
@@ -164,11 +187,16 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         ...of('enemy_magma_slime').map(o => ({ kind: 'slime', x: o.x, y: o.y, dir: -1, hp: 2, hurt: 0, dead: 0, st: 'idle', t: 0, frz: 0, hy: 0 })),
         ...of('enemy_ember_bat').map(o => ({ kind: 'bat', x: o.x + 16, y: o.y + 16, hx: o.x + 16, hy: o.y + 16, dir: -1, hp: 1, hurt: 0, dead: 0, st: 'hang', t: 0, cd: 0, tx: 0, ty: 0 })),
         ...of('enemy_cinder_golem').map(o => ({ kind: 'golem', x: o.x, y: o.y, x0: o.x - 56, x1: o.x + 56, dir: -1, hp: 3, hurt: 0, dead: 0, sh: 0, crk: 0 })),
+        // keep: shadow shades (only light hurts them; anything else makes them fade away and come back), stone gargoyles, hollow knights (light breaks their shield)
+        ...of('enemy_shadow_shade').map(o => ({ kind: 'shade', x: o.x + 16, y: o.y + 16, dir: -1, hp: 2, hurt: 0, dead: 0, st: 'fly', t: 0 })),
+        ...of('enemy_stone_gargoyle').map(o => ({ kind: 'garg', x: o.x + 16, y: o.y + 16, px: o.x + 16, py: o.y + 16, dir: -1, hp: 3, hurt: 0, dead: 0, st: 'perch', t: 0, tx: 0, ty: 0 })),
+        ...of('enemy_hollow_knight').map(o => ({ kind: 'hknight', x: o.x, y: o.y, x0: o.x - 80, x1: o.x + 80, dir: -1, hp: 4, hurt: 0, dead: 0, sh: 0, atk: 0 })),
       ];
       const EBOX = { rot: e => ({ x: e.x + 9, y: e.y + 12, w: 14, h: 20 }), moth: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 14 }), spore: e => ({ x: e.x + 6, y: e.y + 9, w: 20, h: 22 }),
-        wolf: e => ({ x: e.x + 5, y: e.y + 14, w: 22, h: 17 }), slime: e => ({ x: e.x + 6, y: e.y + 14 + e.hy, w: 20, h: 17 }), bat: e => ({ x: e.x - 8, y: e.y - 8, w: 16, h: 14 }), golem: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }), sprite: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 18 }), frost: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }) };
+        wolf: e => ({ x: e.x + 5, y: e.y + 14, w: 22, h: 17 }), slime: e => ({ x: e.x + 6, y: e.y + 14 + e.hy, w: 20, h: 17 }), bat: e => ({ x: e.x - 8, y: e.y - 8, w: 16, h: 14 }), golem: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }),
+        shade: e => e.st === 'gone' ? { x: -999, y: -999, w: 0, h: 0 } : { x: e.x - 8, y: e.y - 10, w: 16, h: 20 }, garg: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 18 }), hknight: e => ({ x: e.x + 10, y: e.y + 8, w: 12, h: 23 }), sprite: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 18 }), frost: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }) };
       const ebox = e => EBOX[e.kind](e);
-      const ICE = [...of('hazard_icicle').map(o => ({ k: 'icicle', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 })), ...of('hazard_falling_rock').map(o => ({ k: 'rock', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 }))];
+      const ICE = [...of('hazard_icicle').map(o => ({ k: 'icicle', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 })), ...of('hazard_falling_rock').map(o => ({ k: 'rock', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 })), ...of('hazard_chandelier').map(o => ({ k: 'chand', w: 32, x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 }))];
       // lava bubbles leap out of the lava every 2.2s; frozen lava crust (Vasilije's ice) holds ~3s, cracks, melts back
       const BUB = of('hazard_lava_bubble').map((o, i) => ({ x: o.x, y0: o.y, y: o.y, vy: 0, out: false, t: i * 40 })), CRUST = {};
       // the trap: a gate slams behind Vasilije and lava rises; he climbs out alone (no switching) while the fox runs for help
@@ -178,7 +206,20 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
       const so = ents.find(o => o.type === 'boss_lava_salamander'), sa = ents.find(o => o.type === 'sal_arena');
       const SAL = so ? { x: so.x, y: so.y, hp: 12, max: 12, st: 'wait', t: 0, n: 0, dir: -1, hurt: 0, dead: 0, awake: false, name: 'LAVA SALAMANDER', aL: sa ? sa.x : so.x - 320, aR: sa ? sa.x + sa.width : so.x + 320 } : null;
       const salBox = () => ({ x: SAL.x + 6, y: SAL.y + 34, w: 56, h: 29 }), salUp = () => SAL && !SAL.dead && (SAL.st === 'idle' || SAL.st === 'spit' || SAL.st === 'surface' || (SAL.st === 'dive' && SAL.t < 16));
-      const FIREB = [], TRIG = of('story_trigger');   // hang, wobble 0.6s when the hero passes below, fall, shatter, grow back
+      const mrakDown = () => { MRAK.dead = 1; MRAK.st = 'defeat'; MRAK.waves = []; MRAK.orbs = []; MRAK.roots = []; MRAK.spikes = []; MRAK.spots = []; MRAK.beamT = 40; };
+      const FIREB = [], TRIG = of('story_trigger'), SB = {};   // SB: shadow-bridge tiles lit by light shots
+      // the eagle ride up the cliff plays before the keep level starts
+      const RIDE = LV.ride ? { t: 0, on: true } : null;
+      // Umbra, spellbound: a short duel; light stuns him; when beaten the spell breaks, he kneels and joins
+      const uo = ents.find(o => o.type === 'npc_umbra');
+      const UMB = uo ? { x: uo.x, y: uo.y, hp: 6, st: 'wait', t: 0, dir: -1, hurt: 0, stun: 0 } : null;
+      const umbBox = () => ({ x: UMB.x + 10, y: UMB.y + 8, w: 12, h: 23 }), umbFight = () => UMB && ['idle', 'dash', 'attack'].includes(UMB.st);
+      // Mrak, the Hollow King: phase 1 shadow (wave, homing orbs), phase 2 the wardens' powers (roots, ice spikes, lava wave),
+      // phase 3 together: only the four cousins' stones hurt him; when all four have hit him the braided beam staggers him (three times), then Kosta finishes it
+      const mko = ents.find(o => o.type === 'boss_mrak'), cgo2 = ents.find(o => o.type === 'baba_cage');
+      const MRAK = mko ? { x: mko.x, y: mko.y, hp: 30, max: 30, ph: 1, st: 'idle', t: 60, n: 0, hurt: 0, dead: 0, awake: false, name: 'MRAK', waves: [], orbs: [], roots: [], spikes: [], spots: [], lit: new Set(), stag: 0, beamT: 0,
+        cage: cgo2 ? { x: cgo2.x, y: cgo2.y, st: 'locked', t: 0 } : null } : null;
+      const mBody = () => ({ x: MRAK.x + 36, y: MRAK.y + 24, w: 56, h: 103 }), mCore = () => ({ x: MRAK.x + 59, y: MRAK.y + 55, w: 9, h: 9 });   // hang, wobble 0.6s when the hero passes below, fall, shatter, grow back
       const C = of('item_coin').map(o => ({ x: o.x, y: o.y, got: false }));
       const HP = of('item_heart').map(o => ({ x: o.x, y: o.y, got: false }));
       const GM = of('item_gem').map(o => ({ x: o.x, y: o.y, got: false }));
@@ -227,13 +268,16 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         if (FW && !FW.dead) Object.assign(FW, { hp: FW.max, st: 'idle', t: 60, awake: false, spots: [], spikes: [], breath: null, waves: [], rain: [] });
         if (YETI && !YETI.dead) Object.assign(YETI, { x: YETI.sx, hp: YETI.max, st: 'wait', t: 0, awake: false }), BIGS.length = 0;
         if (SAL && !SAL.dead) Object.assign(SAL, { hp: SAL.max, st: 'wait', t: 0, awake: false }), FIREB.length = 0;
+        if (MRAK && !MRAK.dead) Object.assign(MRAK, { hp: Math.max(MRAK.hp, MRAK.ph === 3 ? 10 : MRAK.ph === 2 ? 20 : 30), st: MRAK.ph === 3 ? 'laugh' : 'idle', t: 60, waves: [], orbs: [], roots: [], spikes: [], spots: [], lit: new Set() });
+        if (UMB && umbFight()) Object.assign(UMB, { hp: 6, st: 'wait', t: 0 });
         if (TRAP && TRAP.st !== 'done') { TRAP.st = 'idle'; TRAP.lavaY = 400; if (TRAP.gate) TRAP.gate.st = 'open'; }
       };
       const damage = (e, dmg) => { e.hp -= dmg; e.hurt = 14; if (e.hp <= 0) { e.dead = 1; if (e.kind === 'spore') fx('fx_spore_burst', 4, 12, e.x + 8, e.y + 10, 16); } else if (EH_SHIELD[e.kind]) e.sh = 0; };
 
       const step = () => {
         tick++;
-        if (tick === 1) story(LV.id + '_start');
+        if (RIDE && RIDE.on) { RIDE.t++; if (RIDE.t === 1) { const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); } if (RIDE.t === 50) story(LV.id + '_start'); if (RIDE.t >= 230) RIDE.on = false; return; }   // the eagle carries Kosta up the cliff
+        if (tick === 1 && !RIDE) story(LV.id + '_start');
         const HR = ROSTER[H.hero], PW = EH_POWER[HR.el];
         // ---- hero input ----
         if (H.dead) {
@@ -266,6 +310,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           for (const g of gates) if (g.st !== 'open') { const hb = heroBox(); if (hb.x < g.x + 32 && hb.x + hb.w > g.x) H.x = H.x + 16 < g.x + 16 ? g.x - 22 : g.x + 32 - 10; }
           if (BOSS && !BOSS.dead) { H.x = Math.min(H.x, bossBody().x - 26); if (BOSS.awake) H.x = Math.max(H.x, finalL - 4); }
           if (FW && !FW.dead) { H.x = Math.min(H.x, fwBody().x - 26); if (FW.awake) H.x = Math.max(H.x, finalL - 4); }
+          if (MRAK && !MRAK.dead) { H.x = Math.min(H.x, mBody().x - 26); if (MRAK.awake) H.x = Math.max(H.x, finalL - 4); }
           if (TRAP && TRAP.gate && TRAP.gate.st !== 'open') { const g = TRAP.gate; if (H.x + 10 < g.x + 32 && H.x + 22 > g.x && H.y + 31 > g.y) H.x = g.x + 32 - 10; }
           if (TRAP && TRAP.st === 'rising') H.x = Math.max(TRAP.x0 + 22, H.x);
           if (SAL && SAL.awake && !SAL.dead) H.x = Math.max(SAL.aL - 4, Math.min(SAL.aR - 26, H.x));
@@ -325,6 +370,24 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           else { PUP.vy = Math.min(7, PUP.vy + 0.35); if (PUP.vy < 0 && T.solid.has(tileAt(PUP.x + 16, PUP.y + PUP.vy))) PUP.vy = 0; }
           PUP.y += PUP.vy;
         };
+          if (PUP.fly) {   // the golden eagle: flies, never lands; scouts for hidden ledges and marks them
+            const own = ROSTER[H.hero].id === PUP.owner;
+            if (!own && PUP.st !== 'gone') { PUP.st = 'away'; PUP.mark = null; PUP.x -= 4; PUP.y -= 1.5; PUP.face = -1; PUP.anim = 'fly'; if (PUP.x < cam - 48 || PUP.y < -40) PUP.st = 'gone'; continue; }
+            if (!own) continue;
+            if (PUP.st !== 'follow') { PUP.st = 'follow'; PUP.x = cam - 40; PUP.y = H.y - 60; }
+            let tx, ty;
+            if (PUP.mark != null) { tx = (PUP.mark % MW) * 32; ty = Math.floor(PUP.mark / MW) * 32 - 24;
+              if (Math.hypot(tx - PUP.x, ty - PUP.y) < 8) { const r = Math.floor(PUP.mark / MW); let c = PUP.mark % MW; while (c > 0 && ground[r * MW + c - 1] === 33) c--;
+                for (; c < MW && ground[r * MW + c] === 33; c++) { ground[r * MW + c] = 34; fx('fx_eagle_mark', 6, 10, c * 32 + 8, r * 32 - 12, 16); } PUP.mark = null; PUP.cool = 40; } }
+            else { tx = H.x - 20 * H.face; ty = H.y - 40 + Math.sin(PUP.t / 20) * 4;
+              if (T.hidden && --PUP.cool <= 0) { PUP.cool = 30; let best = null, bd = 1e9;   // any hidden ledge on screen?
+                for (let c = Math.max(0, Math.floor(cam / 32)); c < Math.min(MW, Math.floor(cam / 32) + 21); c++) for (let r = 0; r < MH; r++) if (ground[r * MW + c] === 33) { const d = Math.abs(c * 32 - H.x); if (d < bd) { bd = d; best = r * MW + c; } }
+                if (best != null && bd < 260) PUP.mark = best; } }
+            const ddx = tx - PUP.x, ddy = ty - PUP.y, d = Math.hypot(ddx, ddy), sp = PUP.mark != null ? 4 : Math.min(5, d * 0.1);
+            if (d > 700) { PUP.x = tx; PUP.y = ty; } else if (d > 0.5) { PUP.x += ddx / d * sp; PUP.y += ddy / d * sp; }
+            if (Math.abs(ddx) > 2) PUP.face = Math.sign(ddx); PUP.anim = sp > 1.5 ? 'fly' : 'glide';
+            continue;
+          }
           if (PUP.st === 'follow' && T.solid.has(tileAt(PUP.x + 16, PUP.y + 16)) && !H.dead) { fx('fx_dust_land', 4, 12, H.x - 18 * H.face - 8, H.y + 4, 32); PUP.x = H.x - 18 * H.face; PUP.y = H.y - 1; PUP.vy = 0; }
           const isOwner = ROSTER[H.hero].id === PUP.owner && !(TRAP && TRAP.st === 'rising');   // in the trap the fox runs off to fetch the others
           if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) {
@@ -439,7 +502,28 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
               const stop = nx < e.x0 || nx > e.x1 || !floorAt(nx + 16 + e.dir * 12, e.y) || T.solid.has(tileAt(nx + 16 + e.dir * 14, e.y + 20));
               if (!stop) e.x = nx; else if (!chase) e.dir *= -1; }
           }
-          if (!H.dead && !(e.kind === 'slime' && e.frz > 0) && overlap(heroBox(), ebox(e))) hurt(Math.sign(-dx) || 1);
+          else if (e.kind === 'shade') {
+            e.t++; const ddx = H.x + 16 - e.x, ddy = H.y + 16 - e.y, dd = Math.hypot(ddx, ddy) || 1;
+            if (e.st === 'fly') { if (dd < 300) { e.x += ddx / dd * 0.67; e.y += ddy / dd * 0.67; e.dir = Math.sign(ddx) || e.dir; } if (dd < 28) { e.st = 'attack'; e.t = 0; } }
+            else if (e.st === 'attack') { if (e.t >= 30) { e.st = 'fly'; e.t = 0; } }
+            else if (e.st === 'fadeout') { if (e.t >= 20) { e.st = 'gone'; e.t = 0; } }
+            else if (e.st === 'gone') { if (e.t >= 72) { e.x += (Math.random() < 0.5 ? -48 : 48); e.st = 'fadein'; e.t = 0; } }
+            else if (e.st === 'fadein') { if (e.t >= 20) { e.st = 'fly'; e.t = 0; } }
+          } else if (e.kind === 'garg') {
+            e.t++;
+            if (e.st === 'perch') { if (!H.dead && Math.abs(dx) < 100 && Math.abs(H.y - e.y) < 160) { e.st = 'wake'; e.t = 0; e.dir = Math.sign(dx) || e.dir; } }
+            else if (e.st === 'wake') { if (e.t >= 30) { e.st = 'hover'; e.t = 0; } }
+            else if (e.st === 'hover') { const ty2 = e.py - 32; e.y += (ty2 - e.y) * 0.1; e.x += (e.px - e.x) * 0.05; if (e.t >= 50 && !H.dead) { e.st = 'swoop'; e.t = 0; e.tx = H.x + 16; e.ty = H.y + 16; e.dir = Math.sign(e.tx - e.x) || e.dir; } }
+            else if (e.st === 'swoop') { const ddx = e.tx - e.x, ddy = e.ty - e.y, d = Math.hypot(ddx, ddy); if (d < 4 || e.t > 50) { e.st = 'back'; e.t = 0; } else { e.x += ddx / d * 4; e.y += ddy / d * 4; } }
+            else { const ddx = e.px - e.x, ddy = e.py - 32 - e.y, d = Math.hypot(ddx, ddy); if (d < 3) { e.st = 'hover'; e.t = 0; } else { e.x += ddx / d * 1.8; e.y += ddy / d * 1.8; e.dir = Math.sign(ddx) || e.dir; } }
+          } else if (e.kind === 'hknight') {
+            if (e.sh > 0) e.sh--;
+            if (e.atk > 0) { e.atk++; if (e.atk >= 10 && e.atk <= 20 && !H.dead && overlap(heroBox(), { x: e.x + (e.dir > 0 ? 20 : 0), y: e.y + 10, w: 12, h: 18 })) hurt(e.dir); if (e.atk >= 26) e.atk = 0; }
+            else if (e.sh <= 0) { const chase = Math.abs(dx) < 200; if (chase) e.dir = Math.sign(dx) || e.dir; const nx = e.x + 0.5 * e.dir;
+              const stop = nx < e.x0 || nx > e.x1 || !floorAt(nx + 16 + e.dir * 12, e.y) || T.solid.has(tileAt(nx + 16 + e.dir * 14, e.y + 20));
+              if (!stop) e.x = nx; else if (!chase) e.dir *= -1; if (chase && Math.abs(dx) < 30 && Math.abs(H.y - e.y) < 24) e.atk = 1; }
+          }
+          if (!H.dead && !(e.kind === 'slime' && e.frz > 0) && !(e.kind === 'shade' && e.st !== 'fly' && e.st !== 'attack') && !(e.kind === 'garg' && e.st === 'perch') && overlap(heroBox(), ebox(e))) hurt(Math.sign(-dx) || 1);
         });
         BUB.forEach(u => { u.t++;
           if (!u.out) { if (u.t >= 132) { u.out = true; u.vy = -6.3; u.t = 0; } }
@@ -460,6 +544,62 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
             if (!H.dead && H.y + 31 > TRAP.lavaY + 6) { fx('fx_lava_splash', 4, 14, H.x, TRAP.lavaY - 8, 32); H.inv = 0; hurt(1); if (!H.dead) { Object.assign(H, { x: TRAP.x0 + 64, y: GROUND_Y - 31, vx: 0, vy: 0, inv: 70 }); TRAP.lavaY = 400; } }
             if (H.x > TRAP.x1 + 8) { TRAP.st = 'done'; story('l3_trap_after'); }
           } else if (TRAP.st === 'done' && TRAP.lavaY < 400) TRAP.lavaY += 1;
+        }
+        for (const k in SB) { const t = ++SB[k]; ground[k] = t < 9 ? 30 : t < 249 ? 31 : t < 297 ? 32 : 29; if (t >= 297) delete SB[k]; }
+        // ---- Umbra ----
+        if (UMB && UMB.st !== 'joined') { UMB.t++; if (UMB.hurt > 0) UMB.hurt--; const dxU = H.x - UMB.x;
+          if (UMB.st === 'wait') { if (!H.dead && Math.abs(dxU) < 220) { story('l4_umbra'); UMB.st = 'idle'; UMB.t = 0; } }
+          else if (UMB.stun > 0) UMB.stun--;
+          else if (UMB.st === 'idle') { UMB.dir = Math.sign(dxU) || UMB.dir; if (UMB.t >= 50) { UMB.st = 'dash'; UMB.t = 0; } }
+          else if (UMB.st === 'dash') { const nx = UMB.x + 3 * UMB.dir; if (!T.solid.has(tileAt(nx + 16 + UMB.dir * 12, UMB.y + 20)) && floorAt(nx + 16 + UMB.dir * 10, UMB.y)) UMB.x = nx; if (UMB.t >= 20 || Math.abs(dxU) < 40) { UMB.st = 'attack'; UMB.t = 0; UMB.dir = Math.sign(dxU) || UMB.dir; } }
+          else if (UMB.st === 'attack') { if (UMB.t === 13) FIREB.push({ x: UMB.x + (UMB.dir > 0 ? 24 : -8), y: UMB.y + 12, vx: 3 * UMB.dir, vy: 0, t: 0, img: 'p_shadow', fx: 'i_shadow' }); if (UMB.t >= 30) { UMB.st = 'idle'; UMB.t = 0; } }
+          else if (UMB.st === 'down') { if (UMB.t === 70) { ROSTER.push({ id: 'k_shadow', el: 'shadow', name: EH_KNIGHTS.shadow, kid: false }); fx('i_shadow', 4, 12, UMB.x, UMB.y, 32);
+              say(window.EH_LANG === 'sr' ? EH_SR_HINT.joined('UMBRA') : 'UMBRA JOINED · Q / E TO SWITCH'); story('l4_knight_shadow'); UMB.st = 'joined'; } }
+          if (umbFight() && UMB.stun <= 0 && !H.dead && overlap(heroBox(), umbBox())) hurt(Math.sign(-dxU) || 1); }
+        // ---- Mrak ----
+        if (MRAK) {
+          if (MRAK.hurt > 0) MRAK.hurt--; if (MRAK.beamT > 0) MRAK.beamT--;
+          const cg2 = MRAK.cage; if (cg2) cg2.t++;
+          if (MRAK.dead) { MRAK.dead++; if (cg2 && MRAK.dead === 70) { cg2.st = 'opening'; cg2.t = 0; } if (cg2 && cg2.st === 'opening' && cg2.t >= 45) cg2.st = 'open';
+            if (MRAK.dead === 130) story('l4_free'); if (MRAK.dead === 160) onEnd('complete', H.coins, { gems: GM.filter(g => g.got).length, gemTotal: GM.length }); }
+          else {
+            if (!MRAK.awake && H.x > LW - 600) { story('l4_mrak'); MRAK.awake = true; MRAK.t = 60; }
+            if (MRAK.awake && !H.dead) {
+              MRAK.t++; const aL = LW - 630, aR = mBody().x - 20, front = MRAK.x + 20;
+              if (MRAK.st !== 'phase' && ((MRAK.ph === 1 && MRAK.hp <= 20) || (MRAK.ph === 2 && MRAK.hp <= 10))) { MRAK.ph++; MRAK.st = 'phase'; MRAK.t = 0; MRAK.spots = []; }
+              if (MRAK.st === 'phase') { if (MRAK.t >= 45) { MRAK.st = MRAK.ph === 3 ? 'laugh' : 'idle'; MRAK.t = 0; if (MRAK.ph === 3) story('l4_together'); } }
+              else if (MRAK.ph === 1) {
+                if (MRAK.st === 'idle' && MRAK.t > 100) { MRAK.st = 'telegraph'; MRAK.t = 0; }
+                else if (MRAK.st === 'telegraph' && MRAK.t >= 30) { if (MRAK.n++ % 2) { MRAK.st = 'shadow_attack'; MRAK.t = 0; }
+                  else { for (let i = 0; i < 3; i++) MRAK.orbs.push({ x: front, y: MRAK.y + 50 + i * 16, t: 0 }); MRAK.st = 'idle'; MRAK.t = 0; } }
+                else if (MRAK.st === 'shadow_attack') { if (MRAK.t === 15) MRAK.waves.push({ x: front - 64, img: 'mrak_wave', v: 2.33, t: 0 }); if (MRAK.t >= 30) { MRAK.st = 'idle'; MRAK.t = 0; } }
+              } else if (MRAK.ph === 2) {
+                const move = ['warden_roots', 'warden_frost', 'warden_magma'][MRAK.n % 3];
+                if (MRAK.st === 'idle' && MRAK.t > 80) { MRAK.st = 'telegraph'; MRAK.t = 0; MRAK.next = move; MRAK.spots = [];
+                  if (move === 'warden_roots') for (let i = -1; i <= 1; i++) MRAK.spots.push(Math.max(aL, Math.min(aR, H.x + 16 + i * 48)));
+                  if (move === 'warden_frost') for (let i = 0; i < 4; i++) MRAK.spots.push(Math.max(aL, Math.min(aR, front - 32 - i * 44))); }
+                else if (MRAK.st === 'telegraph' && MRAK.t >= 45) { MRAK.st = MRAK.next; MRAK.t = 0; MRAK.n++; }
+                else if (MRAK.st.startsWith('warden_')) {
+                  if (MRAK.t === 12) { if (MRAK.st === 'warden_roots') MRAK.roots = MRAK.spots.map(x => ({ x, t: 0 }));
+                    else if (MRAK.st === 'warden_frost') MRAK.spikes = MRAK.spots.map((x, i) => ({ x, t: -i * 4 }));
+                    else MRAK.waves.push({ x: front - 64, img: 'lava_wave', v: 2.5, t: 0 }); MRAK.spots = []; shake = 8; }
+                  if (MRAK.t >= 36) { MRAK.st = 'idle'; MRAK.t = 0; } }
+              } else {
+                if (MRAK.st === 'stagger' && MRAK.t >= 40) { MRAK.st = 'laugh'; MRAK.t = 0; }
+                if (MRAK.st === 'laugh' && MRAK.t % 170 === 169) for (let i = 0; i < 2; i++) MRAK.orbs.push({ x: front, y: MRAK.y + 50 + i * 20, t: 0 });
+              }
+              if (overlap(heroBox(), mBody())) hurt(1);
+            }
+          }
+          MRAK.waves.forEach(v => { v.t++; v.x -= v.v; if (!H.dead && overlap(heroBox(), { x: v.x + 4, y: GROUND_Y - 32 + 12, w: 56, h: 20 })) hurt(-1); });
+          MRAK.waves = MRAK.waves.filter(v => v.x > finalL - 70 && !MRAK.dead);
+          MRAK.orbs.forEach(o => { o.t++; const ddx = H.x + 16 - o.x - 8, ddy = H.y + 16 - o.y - 8, d = Math.hypot(ddx, ddy) || 1; o.x += ddx / d * 1.5; o.y += ddy / d * 1.5;
+            if (!H.dead && overlap(heroBox(), { x: o.x + 3, y: o.y + 3, w: 10, h: 10 })) { hurt(Math.sign(ddx) || 1); o.t = 999; } });
+          MRAK.orbs = MRAK.orbs.filter(o => o.t < 240 && !MRAK.dead);
+          MRAK.roots.forEach(r => { r.t++; const f = Math.floor(r.t / 5); if ((f === 2 || f === 3) && !H.dead && overlap(heroBox(), { x: r.x - 16 + 6, y: 224 + 14, w: 20, h: 50 })) hurt(Math.sign(r.x - H.x - 16) || 1); });
+          MRAK.roots = MRAK.roots.filter(r => r.t < 30);
+          MRAK.spikes.forEach(k => { k.t++; const f = Math.floor(k.t / 5); if (k.t >= 0 && (f === 2 || f === 3) && !H.dead && overlap(heroBox(), { x: k.x - 16 + 8, y: GROUND_Y - 64 + 6, w: 16, h: 58 })) hurt(Math.sign(k.x - H.x - 16) || 1); });
+          MRAK.spikes = MRAK.spikes.filter(k => k.t < 30);
         }
         // ---- Lava Salamander ----
         if (SAL) {
@@ -483,19 +623,20 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         for (let i = FIREB.length - 1; i >= 0; i--) { const f = FIREB[i]; f.x += f.vx; f.y += f.vy; f.t++;
           let gone = T.solid.has(tileAt(f.x + 8, f.y + 8)) || f.t > 240 || f.y > 380 || f.y < -20;
           if (!gone && !H.dead && overlap(heroBox(), { x: f.x + 3, y: f.y + 3, w: 10, h: 10 })) { hurt(Math.sign(f.vx) || 1); gone = true; }
-          if (gone) { fx('i_fire', 4, 12, f.x - 8, f.y - 8, 32); FIREB.splice(i, 1); } }
+          if (gone) { fx(f.fx || 'i_fire', 4, 12, f.x - 8, f.y - 8, 32); FIREB.splice(i, 1); } }
         for (let i = SNOW.length - 1; i >= 0; i--) { const s = SNOW[i]; s.vy += 0.15; s.x += s.vx; s.y += s.vy; s.t++;
           const sf = s.vy > 0 ? surface(s.x + 8, Math.floor((s.y + 14) / 32)) : null;
           let gone = T.solid.has(tileAt(s.x + 8, s.y + 12)) || s.y > 380 || (sf != null && s.y + 14 >= sf);
           if (!gone && !H.dead && overlap(heroBox(), { x: s.x + 3, y: s.y + 3, w: 10, h: 10 })) { hurt(Math.sign(s.vx) || 1); gone = true; }
           if (gone) { fx('fx_snowball_burst', 4, 14, s.x, s.y, 16); SNOW.splice(i, 1); } }
         ICE.forEach(ic => { ic.t++;
-          if (ic.st === 'hang') { if (!H.dead && Math.abs(H.x + 16 - (ic.x + 8)) < 24 && H.y > ic.y) { ic.st = 'wobble'; ic.t = 0; } }
+          const iw = ic.w || 16;
+          if (ic.st === 'hang') { if (!H.dead && Math.abs(H.x + 16 - (ic.x + iw / 2)) < (ic.k === 'chand' ? 32 : 24) && H.y > ic.y) { ic.st = 'wobble'; ic.t = 0; } }
           else if (ic.st === 'wobble') { if (ic.t >= (ic.k === 'rock' ? 30 : 36)) { ic.st = 'fall'; ic.vy = 0; } }
           else if (ic.st === 'fall') { ic.vy = Math.min(9, ic.vy + 0.25); ic.y += ic.vy;
-            const ty = Math.floor((ic.y + 28) / 32), sf = surface(ic.x + 8, ty), hitH = !H.dead && overlap(heroBox(), { x: ic.x + 4, y: ic.y + 3, w: 8, h: 24 });
-            if (hitH) hurt(Math.sign(H.x + 16 - ic.x - 8) || 1);
-            if (hitH || (sf != null && ic.y + 28 >= sf) || ic.y > 380) { fx(ic.k === 'rock' ? 'fx_rock_shatter' : 'fx_icicle_shatter', 4, 14, ic.x - 8, (sf != null ? sf : ic.y + 28) - 16, 32); ic.st = 'gone'; ic.t = 0; } }
+            const ty = Math.floor((ic.y + 28) / 32), sf = surface(ic.x + iw / 2, ty), hitH = !H.dead && overlap(heroBox(), ic.k === 'chand' ? { x: ic.x + 4, y: ic.y + 12, w: 24, h: 12 } : { x: ic.x + 4, y: ic.y + 3, w: 8, h: 24 });
+            if (hitH) hurt(Math.sign(H.x + 16 - ic.x - iw / 2) || 1);
+            if (hitH || (sf != null && ic.y + 28 >= sf) || ic.y > 380) { if (ic.k === 'chand') fx('fx_chand_crash', 4, 14, ic.x - 16, (sf != null ? sf : ic.y + 28) - 32, 64); else fx(ic.k === 'rock' ? 'fx_rock_shatter' : 'fx_icicle_shatter', 4, 14, ic.x - 8, (sf != null ? sf : ic.y + 28) - 16, 32); ic.st = 'gone'; ic.t = 0; } }
           else if (ic.st === 'gone' && ic.t > 300) { ic.st = 'hang'; ic.y = ic.y0; ic.t = 0; } });
         for (let i = SPORES.length - 1; i >= 0; i--) { const s = SPORES[i]; s.vy += 0.167; s.x += s.vx; s.y += s.vy; s.t++;
           let gone = T.solid.has(tileAt(s.x + 8, s.y + 12)) || s.y > 380;
@@ -634,6 +775,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           const spark = () => fx('fx_hit_spark', 3, 18, b.x, b.y, 16);
           for (const e of E) { if (hit) break; if (!e.dead && !b.hit.has(e) && overlap(pb, ebox(e))) { b.hit.add(e);
             // frostling: a shot at its face is blocked by its ice shield, unless it is fire or light (they break it)
+            if (e.kind === 'shade' && b.el !== 'light') { if (e.st === 'fly' || e.st === 'attack') { e.st = 'fadeout'; e.t = 0; } hit = wall = true; continue; }
+            if (e.kind === 'garg' && e.st === 'perch') { e.st = 'wake'; e.t = 0; hit = wall = true; continue; }
             const brk = EH_SHIELD[e.kind];
             if (brk && Math.sign(b.vx) === -e.dir && !brk.includes(b.el)) { if (e.sh <= 0) e.sh = 75; else e.sh = Math.max(e.sh, 20); hit = wall = true; continue; }
             if (brk) { if (e.kind === 'golem' && e.sh > 0) e.crk = 24; e.sh = 0; }
@@ -643,6 +786,20 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
             const c = Math.floor((b.x + 8) / 32), r0 = Math.floor((b.y + 8) / 32), inPool = SAL && !SAL.dead && b.x > SAL.aL && b.x < SAL.aR;
             for (let r = r0; r <= r0 + 3 && r < MH && !inPool; r++) { const i = r * MW + c; if (T.solid.has(ground[i]) && ground[i] !== 35 && ground[i] !== 36) break;
               if (ground[i] === 30 || ground[i] === 37) { for (const cc of [c - 1, c, c + 1]) { const j = r * MW + cc; if (cc >= 0 && cc < MW && (ground[j] === 30 || ground[j] === 37)) { CRUST[j] = 0; ground[j] = 34; } } break; } } }
+          if (T.bridge && b.el === 'light') {   // Kosta's (and Aurel's) light makes the shadow bridge solid for a few seconds
+            const c = Math.floor((b.x + 8) / 32), r0 = Math.floor((b.y + 8) / 32);
+            for (let r = r0; r <= r0 + 3 && r < MH; r++) { const i = r * MW + c; if (T.solid.has(ground[i])) break;
+              if ([29, 30, 31, 32].includes(ground[i])) { for (const cc of [c - 1, c, c + 1]) { const j = r * MW + cc; if (cc >= 0 && cc < MW && [29, 30, 31, 32].includes(ground[j])) { if (ground[j] === 31) SB[j] = 9; else { SB[j] = 0; ground[j] = 30; } } } break; } } }
+          if (UMB && umbFight() && !hit && overlap(pb, umbBox())) { UMB.hp -= b.dmg; UMB.hurt = 10; spark(); hit = true; if (b.el === 'light') UMB.stun = 30;
+            if (UMB.hp <= 0) { UMB.st = 'down'; UMB.t = 0; } }
+          if (MRAK && MRAK.awake && !MRAK.dead && !hit && overlap(pb, mBody())) { hit = true; spark();
+            if (MRAK.st === 'phase') {}
+            else if (MRAK.ph < 3) { MRAK.hp -= b.dmg * (MRAK.st === 'telegraph' && overlap(pb, mCore()) ? 2 : 1); MRAK.hurt = 10; }
+            else { const RH = ROSTER.find(r => r.id === b.who); MRAK.hurt = 6;
+              if (MRAK.callStar) { if (b.who === EH_STAR) mrakDown(); }
+              else if (RH && RH.kid) { MRAK.lit.add(b.who); MRAK.last = b.who;
+                if (MRAK.lit.size === 4) { MRAK.lit.clear(); MRAK.beamT = 40; MRAK.st = 'stagger'; MRAK.t = 0; MRAK.stag++; MRAK.hp = Math.max(1, MRAK.hp - 3);
+                  if (MRAK.stag >= 3) { if (b.who === EH_STAR) mrakDown(); else { MRAK.hp = 1; MRAK.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish.konstantin : 'PRESS 1 · KOSTA FINISHES IT'); story('l4_finish'); } } } } } }
           if (SAL && SAL.awake && !SAL.dead && !hit && salUp() && overlap(pb, salBox())) { SAL.hp -= b.dmg * (b.el === 'ice' || b.el === 'water' ? 2 : 1); SAL.hurt = 10; spark(); hit = true;
             if (SAL.hp <= 0) { SAL.dead = 1; FIREB.length = 0; } }
           if (YETI && YETI.awake && !YETI.dead && !hit && overlap(pb, yetiBox())) { YETI.hp -= b.dmg; YETI.hurt = 10; spark(); hit = true;
@@ -668,8 +825,13 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         const hud = H.hp + ':' + H.coins + ':' + H.hero; if (hud !== lastHud) { lastHud = hud; const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); }
       };
 
+      const drawRide = () => {   // the eagle carries Kosta up the cliff face
+        const t = RIDE.t; ctx.fillStyle = '#0d0b14'; ctx.fillRect(0, 0, 640, 360); if (img.cliff) ctx.drawImage(img.cliff, 0, 0);
+        const y = 380 - Math.min(1, t / 200) * 330, x = 260 + Math.sin(t / 30) * 30; drawStrip(img.pet_eagle_carry_konstantin, 4, (t / 6) % 4, x, y, 64);
+        const fade = Math.min(1, t / 20, (230 - t) / 20); if (fade < 1) { ctx.globalAlpha = 1 - Math.max(0, fade); ctx.fillStyle = '#0d0b14'; ctx.fillRect(0, 0, 640, 360); ctx.globalAlpha = 1; } };
       const draw = () => {
-        const eldFight = ELD && ELD.awake && !ELD.dead, bwFight = (BOSS && BOSS.awake && !BOSS.dead) || (FW && FW.awake && !FW.dead), yetiFight = YETI && YETI.awake && !YETI.dead;
+        if (RIDE && RIDE.on) return drawRide();
+        const eldFight = ELD && ELD.awake && !ELD.dead, bwFight = (BOSS && BOSS.awake && !BOSS.dead) || (FW && FW.awake && !FW.dead) || (MRAK && MRAK.awake && (!MRAK.dead || MRAK.dead < 400)), yetiFight = YETI && YETI.awake && !YETI.dead;
         const trapFight = TRAP && TRAP.st === 'rising', salFight = SAL && SAL.awake && !SAL.dead;
         const camT = eldFight ? gates[0].x : yetiFight ? YETI.aL : trapFight ? TRAP.x0 : salFight ? SAL.aL : bwFight ? finalL : Math.max(0, Math.min(LW - 640, H.x + 16 - 280));
         camF = Math.abs(camT - camF) < 0.5 ? camT : camF + (camT - camF) * 0.12; cam = Math.round(camF);
@@ -688,7 +850,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           if (f < 3) drawStrip(img['st_' + s.el], 1, 0, s.x, s.y, 32); else drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32);
           if (f >= 0) drawStrip(img.st_awaken, 6, f, s.x, s.y, 32); });
         for (const PUP of PETS) { if (PUP.st === 'gone') continue; if (PUP.st === 'wait' && PUP.yarn) drawStrip(img.yarn, 6, (tick / 6) % 6, PUP.x + 20, PUP.y + 15, 16);
-          const a = PUP.barkT > 0 || PUP.spT > 0 ? 'special' : PUP.anim, fsp = PUP.skill === 'fetch' && PUP.spT > 0 ? Math.min(3, PUP.spT < 7 ? 0 : PUP.fetch ? 1 + (Math.floor(PUP.spT / 4) % 2) : 3) : null, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = fsp != null ? fsp : a === 'special' ? (PUP.spT || PUP.barkT) / 6 : a === 'jump' ? (PUP.st === 'away' ? (PUP.vy < 0 ? 0 : 1) : PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
+          const a = PUP.barkT > 0 || PUP.spT > 0 ? 'special' : PUP.anim, fsp = PUP.skill === 'fetch' && PUP.spT > 0 ? Math.min(3, PUP.spT < 7 ? 0 : PUP.fetch ? 1 + (Math.floor(PUP.spT / 4) % 2) : 3) : null, n = { idle: 4, run: 6, jump: 2, special: 4, fly: 4, glide: 2, dive: 4 }[a], f = PUP.fly ? (tick / 6) % n : fsp != null ? fsp : a === 'special' ? (PUP.spT || PUP.barkT) / 6 : a === 'jump' ? (PUP.st === 'away' ? (PUP.vy < 0 ? 0 : 1) : PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
           drawStrip(img[`pet_${PUP.id}_${a}`], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
         GM.forEach((g, i) => { if (!g.got) drawStrip(img.gem, 6, (tick / 7.5 + i) % 6, g.x, g.y, 16); });
@@ -707,6 +869,12 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'hang' ? (tick / 20) % 2 : (tick / 5) % 4; drawStrip(img['bt_' + a], EH_BAT[a], f, e.x - 16, e.y - 16, 32, e.dir < 0); }
           else if (e.kind === 'golem') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.crk > 0 ? 'shell_crack' : e.sh > 60 ? 'shell_up' : e.sh > 0 ? 'shell_hold' : 'walk';
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'shell_crack' ? (24 - e.crk) / 6 : a === 'shell_up' ? (75 - e.sh) / 5 : a === 'shell_hold' ? (tick / 10) % 2 : (tick / 7.5) % 6; drawStrip(img['gl_' + a], EH_GOLEM[a], f, e.x, e.y, 32, e.dir < 0); }
+          else if (e.kind === 'shade') { if (e.st === 'gone') return; const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'fadeout' ? 'fade_out' : e.st === 'fadein' ? 'fade_in' : e.st === 'attack' ? 'attack' : 'fly';
+            const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'fade_out' || a === 'fade_in' ? e.t / 5 : a === 'attack' ? e.t / 6 : (tick / 7.5) % 4; drawStrip(img['sh_' + a], EH_SHADE[a], f, e.x - 16, e.y - 16, 32, e.dir < 0); }
+          else if (e.kind === 'garg') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'perch' ? 'perch' : e.st === 'wake' ? 'wake' : e.st === 'swoop' ? 'swoop' : 'fly';
+            const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'wake' ? e.t / 7.5 : a === 'perch' ? 0 : (tick / 6) % 4; drawStrip(img['ga_' + a], EH_GARG[a], f, e.x - 16, e.y - 16, 32, e.dir < 0); }
+          else if (e.kind === 'hknight') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.atk > 0 ? 'attack' : e.sh > 60 ? 'shield_up' : e.sh > 0 ? 'shield_hold' : 'walk';
+            const f = e.dead ? e.dead / 7.5 : e.hurt ? (14 - e.hurt) / 7 : a === 'attack' ? e.atk / 5 : a === 'shield_up' ? (75 - e.sh) / 5 : a === 'shield_hold' ? (tick / 10) % 2 : (tick / 7.5) % 6; drawStrip(img['hk_' + a], EH_HK[a], f, e.x, e.y, 32, e.dir < 0); }
           else if (e.kind === 'frost') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.sh > 60 ? 'shield_up' : e.sh > 0 ? 'shield_hold' : 'walk';
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'shield_up' ? (75 - e.sh) / 5 : a === 'shield_hold' ? (tick / 10) % 2 : (tick / 7.5) % 6; drawStrip(img['fr_' + a], EH_FROST[a], f, e.x, e.y, 32, e.dir < 0); }
           else { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'attack' ? 'attack' : 'idle'; const f = e.dead ? e.dead / 7.5 : e.hurt ? (14 - e.hurt) / 7 : a === 'attack' ? e.t / 6 : (tick / 10) % 4; drawStrip(img['s_' + a], EH_SPORE[a], f, e.x, e.y, 32, e.dir < 0); }
@@ -747,9 +915,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           else if (SAL.hurt > 0) { a = 'hurt'; f = SAL.hurt > 5 ? 0 : 1; }
           else { a = 'idle'; f = (tick / 12) % 4; }
           if (!hide) drawStrip(img['sa_' + a], EH_SAL[a], f, SAL.x, SAL.y, 64, SAL.dir < 0); }
-        FIREB.forEach(fb => drawStrip(img.salball, 4, (fb.t / 5) % 4, fb.x, fb.y, 16, fb.vx < 0));
+        FIREB.forEach(fb => drawStrip(img[fb.img || 'salball'], 4, (fb.t / 5) % 4, fb.x, fb.y, 16, fb.vx < 0));
         if (TRAP && TRAP.gate) { const g = TRAP.gate; if (g.st === 'closing') drawStrip(img.cg_closing, 4, g.t / 4, g.x, g.y, 32); else drawStrip(img['cg_' + (g.st === 'closed' ? 'closed' : 'open')], 1, 0, g.x, g.y, 32); }
-        ICE.forEach(ic => { if (ic.st === 'gone') return; if (ic.k === 'rock') drawStrip(img.rock, 4, ic.st === 'hang' ? 0 : ic.st === 'wobble' ? Math.floor(ic.t / 4) % 3 : 3, ic.x, ic.y, 16);
+        ICE.forEach(ic => { if (ic.st === 'gone') return; if (ic.k === 'chand') drawStrip(img.chand, 5, ic.st === 'hang' ? 0 : ic.st === 'wobble' ? 1 + Math.floor(ic.t / 5) % 3 : 4, ic.x, ic.y, 32);
+          else if (ic.k === 'rock') drawStrip(img.rock, 4, ic.st === 'hang' ? 0 : ic.st === 'wobble' ? Math.floor(ic.t / 4) % 3 : 3, ic.x, ic.y, 16);
           else drawStrip(img.icicle, 5, ic.st === 'hang' ? 0 : ic.st === 'wobble' ? 1 + (Math.floor(ic.t / 6) % 3) : 4, ic.x, ic.y, 16); });
         if (YETI) { let a, f;
           if (YETI.dead) { a = 'defeat'; f = YETI.dead < 40 ? YETI.dead / 10 : 4 + (Math.floor(YETI.dead / 12) % 2); }   // sits, sulks, then waves goodbye
@@ -775,6 +944,30 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           FW.spikes.forEach(k => { if (k.t >= 0) drawStrip(img.ice_spike, 6, k.t / 5, k.x - 16, GROUND_Y - 64, 32); });
           if (FW.breath && img.breath) { const m = fwMouth(); ctx.save(); ctx.translate(m.x, m.y); ctx.rotate(-FW_ANG); ctx.scale(-1, 1);
             const bf = Math.min(5, Math.floor(FW.breath.t / 6)); ctx.drawImage(img.breath, bf * 96, 0, 96, 32, 0, -16, 96, 32); ctx.restore(); }
+        }
+        if (UMB && UMB.st !== 'wait' && UMB.st !== 'joined') { const a = UMB.st === 'down' ? (UMB.t < 24 ? 'stunned' : 'kneel') : UMB.stun > 0 ? 'stunned' : UMB.st === 'dash' ? 'dash' : UMB.st === 'attack' ? 'attack' : 'idle';
+          const f = UMB.st === 'down' ? (UMB.t < 24 ? UMB.t / 6 : Math.min(3, (UMB.t - 24) / 7)) : UMB.stun > 0 ? (tick / 6) % 4 : a === 'attack' ? UMB.t / 6 : (tick / 8) % 4; drawStrip(img['um_' + a], EH_UMBRA[a], f, UMB.x, UMB.y, 32, UMB.dir < 0); }
+        else if (UMB && UMB.st === 'wait') drawStrip(img.um_idle, 4, (tick / 10) % 4, UMB.x, UMB.y, 32, true);
+        if (MRAK) {
+          if (MRAK.cage) { const c = MRAK.cage; if (c.st === 'opening') drawStrip(img.cage_opening, 6, c.t / 7.5, c.x, c.y, 64); else drawStrip(img['cage_' + c.st], 1, 0, c.x, c.y, 64); }
+          MRAK.spots.forEach(x => drawStrip(img.warn, 4, (tick / 7.5) % 4, x - 16, 256, 32));
+          let a, f; const m = MRAK;
+          if (m.dead) { a = 'defeat'; f = Math.min(7, m.dead / 7.5); }
+          else if (m.st === 'phase') { a = 'phase_change'; f = m.t / 7.5; }
+          else if (m.st === 'telegraph') { a = 'telegraph'; f = (m.t / 7.5) % 4; }
+          else if (m.st === 'shadow_attack') { a = 'shadow_attack'; f = m.t / 5; }
+          else if (m.st.startsWith('warden_')) { a = m.st; f = m.t / 6; }
+          else if (m.st === 'stagger') { a = 'stagger'; f = Math.min(3, m.t / 6); }
+          else if (m.st === 'laugh') { a = 'laugh'; f = (tick / 7.5) % 4; }
+          else if (m.hurt > 0) { a = 'hurt'; f = m.hurt > 5 ? 0 : 1; }
+          else { a = m.ph === 2 ? 'summon' : 'idle'; f = (tick / (a === 'summon' ? 7.5 : 12)) % (a === 'summon' ? 6 : 4); }
+          if (!(m.dead && m.dead > 80)) drawStrip(img['mk_' + a], EH_MRAK[a], f, m.x, m.y, 128, true);
+          m.roots.forEach(r => drawStrip(img.roots, 6, r.t / 5, r.x - 16, 224, 32));
+          m.spikes.forEach(k => { if (k.t >= 0) drawStrip(img.ice_spike, 6, k.t / 5, k.x - 16, GROUND_Y - 64, 32); });
+          m.waves.forEach(v => drawStrip(img[v.img], 6, (v.t / 5) % 6, v.x, GROUND_Y - 32, 64, true));
+          m.orbs.forEach(o => drawStrip(img.mrak_orb, 4, (o.t / 6) % 4, o.x, o.y, 16));
+          if (m.beamT > 0 && img.beam) { const bx0 = H.x + 24, bx1 = mBody().x + 20, by = H.y + 6, bf = Math.floor(tick / 5) % 6;   // the four stones' braided beam
+            for (let x = bx0; x < bx1; x += 64) ctx.drawImage(img.beam, bf * 64, 0, Math.min(64, bx1 - x), 32, Math.round(x), by, Math.min(64, bx1 - x), 32); }
         }
         if (TRAP && TRAP.lavaY < 380 && img.rlava) { const ly = Math.round(TRAP.lavaY), lf = Math.floor(tick / 8) % 4;   // the rising lava, over everything in the trap room
           ctx.drawImage(img.rlava, lf * 640, 0, 640, 32, TRAP.x0, ly, 640, 32); for (let y = ly + 32; y < 360; y += 32) ctx.drawImage(img.rlava_body, TRAP.x0, y); }
@@ -803,7 +996,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         if (H.swapT > 0) { ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; const nm = CUR.name.toUpperCase(), sx = Math.round(H.x - cam + 16), sy = Math.round(H.y - 6);
           ctx.fillStyle = '#0d0b14'; ctx.fillText(nm, sx + 1, sy + 1); ctx.fillStyle = '#ffc23d'; ctx.fillText(nm, sx, sy); }
         // boss bar (ui_bossbar_frame: fill area x 20, y 4, w 184, h 8)
-        const bb = eldFight || (ELD && ELD.dead && ELD.dead < 40) ? ELD : salFight || (SAL && SAL.dead && SAL.dead < 40) ? SAL : yetiFight || (YETI && YETI.dead && YETI.dead < 40) ? YETI : BOSS && BOSS.awake && BOSS.dead < 40 ? BOSS : FW && FW.awake && FW.dead < 40 ? FW : null;
+        const bb = eldFight || (ELD && ELD.dead && ELD.dead < 40) ? ELD : salFight || (SAL && SAL.dead && SAL.dead < 40) ? SAL : yetiFight || (YETI && YETI.dead && YETI.dead < 40) ? YETI : BOSS && BOSS.awake && BOSS.dead < 40 ? BOSS : FW && FW.awake && FW.dead < 40 ? FW : MRAK && MRAK.awake && MRAK.dead < 40 ? MRAK : null;
+        if (MRAK && MRAK.awake && !MRAK.dead && MRAK.ph === 3) {   // the four stones: each cousin must hit him (gold Kosta, orange Katarina, frost Vasilije, green Dimitrije)
+          [['konstantin', '#ffc23d'], ['katarina', '#e0521f'], ['vasilije', '#7fd4e8'], ['dimitrije', '#6fae3e']].forEach(([id, c], i) => { const x = 320 - 38 + i * 20, on = MRAK.lit.has(id);
+            ctx.fillStyle = '#0d0b14'; ctx.fillRect(x - 1, 51, 14, 14); ctx.fillStyle = c; ctx.globalAlpha = on ? 1 : 0.3; ctx.fillRect(x, 52, 12, 12); ctx.globalAlpha = 1; if (on) { ctx.fillStyle = '#e8e0d0'; ctx.fillRect(x + 2, 54, 3, 3); } }); }
         if (bb && img.bar_frame) {
           const fx0 = 320 - 104, fy0 = 34, fw = Math.round(184 * Math.max(0, bb.hp) / bb.max);
           ctx.drawImage(img.bar_frame, fx0, fy0);
