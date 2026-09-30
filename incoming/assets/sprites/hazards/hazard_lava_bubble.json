@@ -1,0 +1,42 @@
+{
+ "id": "hazard_lava_bubble",
+ "type": "hazard",
+ "name": "Lava bubble",
+ "biome": "caves",
+ "frameWidth": 16,
+ "frameHeight": 16,
+ "origin": {
+  "x": 8,
+  "y": 15
+ },
+ "hitbox": {
+  "x": 4,
+  "y": 2,
+  "w": 8,
+  "h": 12
+ },
+ "damage": 1,
+ "frames": {
+  "rise": [
+   0,
+   1
+  ],
+  "fall": [
+   2,
+   3
+  ]
+ },
+ "behavior": "every 2.2s leaps from a lava tile (vy -380px/s, gravity 700px/s²); rise frames going up, fall frames coming down; spawn hazard_lava_bubble_splash at the surface",
+ "splash": {
+  "file": "hazard_lava_bubble_splash.png",
+  "frameWidth": 32,
+  "frameHeight": 16,
+  "frames": 4,
+  "fps": 14
+ },
+ "files": [
+  "hazard_lava_bubble.png",
+  "hazard_lava_bubble_splash.png"
+ ],
+ "palette": "../../palette/elemental16.hex"
+}

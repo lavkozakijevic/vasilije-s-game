@@ -1,0 +1,67 @@
+{
+ "id": "enemy_ember_bat",
+ "type": "enemy",
+ "name": "Ember Bat",
+ "biome": "caves",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 0,
+  "note": "hang: top-centre at the ceiling; fly/swoop: treat (16,14) as centre"
+ },
+ "hitbox": {
+  "x": 8,
+  "y": 8,
+  "w": 16,
+  "h": 12
+ },
+ "hp": 1,
+ "behavior": "hangs until the hero is within 120px horizontally, drops into fly for 0.3s, then swoops along a curve toward the hero (220px/s), climbs back and flies in a small loop before swooping again",
+ "animations": {
+  "hang": {
+   "file": "enemy_ember_bat_hang.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 3,
+   "loop": true,
+   "notes": "upside down; the frame top is the ceiling"
+  },
+  "fly": {
+   "file": "enemy_ember_bat_fly.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  },
+  "swoop": {
+   "file": "enemy_ember_bat_swoop.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "notes": "diving attack toward the hero"
+  },
+  "hurt": {
+   "file": "enemy_ember_bat_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_ember_bat_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "palette": "elemental16.hex"
+}

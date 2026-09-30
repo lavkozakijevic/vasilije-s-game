@@ -1,0 +1,118 @@
+{
+ "id": "hero_vasilije",
+ "type": "hero_kid",
+ "name": "Vasilije",
+ "age": 9,
+ "element": "ice",
+ "power": "Ice shard",
+ "sharesPowerWith": "hero_ice",
+ "heightPx": 22,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 11,
+  "y": 10,
+  "w": 10,
+  "h": 21
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_vasilije_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_vasilije_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_vasilije_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_vasilije_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_vasilije_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_vasilije_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_vasilije_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_vasilije_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "respawn": {
+   "file": "hero_vasilije_respawn.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "../../ice/fx_ice_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "speedPxPerSec": 250,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 29,
+    "y": 19,
+    "note": "relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "../../ice/fx_ice_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center"
+  }
+ },
+ "icon": {
+  "file": "../../../../ui/icon_element_ice.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "colors": {
+  "hair": "#ffc23d",
+  "clothes": "#e0521f",
+  "trim": "#ffc23d",
+  "pendant": "#7fd4e8"
+ },
+ "palette": "elemental16.hex"
+}

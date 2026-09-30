@@ -1,0 +1,24 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "note": "additions for level 3; merge into portraits.json",
+ "portraits": [
+  {
+   "file": "portrait_magma_colossus_neutral.png",
+   "speaker": "Magma Colossus",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_salamander_neutral.png",
+   "speaker": "Lava Salamander",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_salamander_sleepy.png",
+   "speaker": "Lava Salamander",
+   "expression": "sleepy"
+  }
+ ]
+}

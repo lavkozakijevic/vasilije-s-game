@@ -1,0 +1,66 @@
+{
+ "id": "enemy_magma_slime",
+ "type": "enemy",
+ "name": "Magma Slime",
+ "biome": "caves",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 8,
+  "y": 18,
+  "w": 17,
+  "h": 13
+ },
+ "hp": 2,
+ "behavior": "hops toward the hero every 1.2s (vx 70px/s, vy -200px/s); contact damage 1. Hit by ice: show frozen for 1.5s (no contact damage, can be stood on), then resume. Fire heals it.",
+ "animations": {
+  "idle": {
+   "file": "enemy_magma_slime_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "hop": {
+   "file": "enemy_magma_slime_hop.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "notes": "move the entity on frames 1-4 (it is airborne)"
+  },
+  "hurt": {
+   "file": "enemy_magma_slime_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_magma_slime_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false
+  },
+  "frozen": {
+   "file": "enemy_magma_slime_frozen.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "shown while frozen by ice"
+  }
+ },
+ "palette": "elemental16.hex"
+}

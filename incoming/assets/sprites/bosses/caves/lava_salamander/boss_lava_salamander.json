@@ -1,0 +1,116 @@
+{
+ "id": "boss_lava_salamander",
+ "type": "miniboss",
+ "name": "Lava Salamander",
+ "biome": "caves",
+ "frameWidth": 64,
+ "frameHeight": 64,
+ "facing": "right",
+ "note": "Big, lazy and grumpy, not evil: it falls asleep instead of dying. Its dive/surface frames include their own lava line at y 58, so stand it in a lava pool whose surface is at frame y 58.",
+ "origin": {
+  "x": 32,
+  "y": 63
+ },
+ "hitbox": {
+  "x": 6,
+  "y": 34,
+  "w": 56,
+  "h": 29
+ },
+ "hp": 8,
+ "animations": {
+  "idle": {
+   "file": "boss_lava_salamander_idle.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "walk": {
+   "file": "boss_lava_salamander_walk.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  "dive": {
+   "file": "boss_lava_salamander_dive.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "fps": 8,
+   "loop": false,
+   "notes": "sinks into the lava line at y 58"
+  },
+  "surface": {
+   "file": "boss_lava_salamander_surface.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "fps": 8,
+   "loop": false,
+   "notes": "rises out, lava dripping"
+  },
+  "spit": {
+   "file": "boss_lava_salamander_spit.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "release fx_salamander_fireball on frame 3"
+  },
+  "hurt": {
+   "file": "boss_lava_salamander_hurt.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "defeat": {
+   "file": "boss_lava_salamander_defeat.png",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "fps": 5,
+   "loop": false,
+   "notes": "cools, yawns, curls up to sleep; hold the last frame"
+  }
+ },
+ "pattern": [
+  {
+   "move": "Spit",
+   "sequence": "spit; spawn fx_salamander_fireball on frame 3 at (63, 38), flying at the hero at 160px/s",
+   "damage": 1
+  },
+  {
+   "move": "Dive",
+   "sequence": "dive, stay hidden 1.2s while bubbles (hazard_lava_bubble) rise near the hero, then surface under/near the hero; contact while surfacing hurts",
+   "damage": 1
+  },
+  {
+   "move": "Walk",
+   "sequence": "plod toward the hero for 1.5s"
+  }
+ ],
+ "onDefeat": "play defeat once and hold the last frame (asleep); the way forward opens",
+ "fx": {
+  "fireball": {
+   "file": "fx_salamander_fireball.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "spawnOnSpitFrame": 3,
+   "spawnOffset": {
+    "x": 63,
+    "y": 38
+   }
+  }
+ },
+ "palette": "elemental16.hex"
+}

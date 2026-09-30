@@ -1,0 +1,1471 @@
+{
+ "type": "tileset",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "name": "caves",
+ "tilewidth": 32,
+ "tileheight": 32,
+ "tilecount": 80,
+ "columns": 8,
+ "margin": 0,
+ "spacing": 0,
+ "image": "tileset_caves.png",
+ "imagewidth": 256,
+ "imageheight": 320,
+ "tiles": [
+  {
+   "id": 0,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_tl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 1,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_t"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_tr"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_nw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_ne"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "slope_up"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope_dir",
+     "type": "string",
+     "value": "up"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "slope_down"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope_dir",
+     "type": "string",
+     "value": "down"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_single"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_l"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_r"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_sw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_se"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c_veins"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c_fossil"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_pillar"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_bl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_b"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_br"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "walkway_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "walkway_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "walkway_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_0"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 0
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_1"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 1
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_2"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 2
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_3"
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 3
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lava_body"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lava",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lava_surface_0"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lava",
+     "type": "bool",
+     "value": true
+    }
+   ],
+   "animation": [
+    {
+     "tileid": 30,
+     "duration": 180
+    },
+    {
+     "tileid": 31,
+     "duration": 180
+    },
+    {
+     "tileid": 32,
+     "duration": 180
+    },
+    {
+     "tileid": 33,
+     "duration": 180
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lava_surface_1"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lava",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lava_surface_2"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lava",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lava_surface_3"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lava",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crust_0_freezing"
+    },
+    {
+     "name": "crust",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crust_frame",
+     "type": "int",
+     "value": 0
+    },
+    {
+     "name": "crust_state",
+     "type": "string",
+     "value": "freezing"
+    },
+    {
+     "name": "crust_note",
+     "type": "string",
+     "value": "swap a lava surface tile for crust_0 when ice hits it; 0 (150ms) -> 1 (hold ~3s) -> 2 (0.8s) -> 3 (150ms) -> back to lava_surface. Solid on frames 1-2."
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crust_1_solid"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crust",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crust_frame",
+     "type": "int",
+     "value": 1
+    },
+    {
+     "name": "crust_state",
+     "type": "string",
+     "value": "solid"
+    },
+    {
+     "name": "crust_note",
+     "type": "string",
+     "value": "swap a lava surface tile for crust_0 when ice hits it; 0 (150ms) -> 1 (hold ~3s) -> 2 (0.8s) -> 3 (150ms) -> back to lava_surface. Solid on frames 1-2."
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crust_2_cracking"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crust",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crust_frame",
+     "type": "int",
+     "value": 2
+    },
+    {
+     "name": "crust_state",
+     "type": "string",
+     "value": "cracking"
+    },
+    {
+     "name": "crust_note",
+     "type": "string",
+     "value": "swap a lava surface tile for crust_0 when ice hits it; 0 (150ms) -> 1 (hold ~3s) -> 2 (0.8s) -> 3 (150ms) -> back to lava_surface. Solid on frames 1-2."
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crust_3_melting"
+    },
+    {
+     "name": "crust",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crust_frame",
+     "type": "int",
+     "value": 3
+    },
+    {
+     "name": "crust_state",
+     "type": "string",
+     "value": "melting"
+    },
+    {
+     "name": "crust_note",
+     "type": "string",
+     "value": "swap a lava surface tile for crust_0 when ice hits it; 0 (150ms) -> 1 (hold ~3s) -> 2 (0.8s) -> 3 (150ms) -> back to lava_surface. Solid on frames 1-2."
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_top_0"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "top"
+    }
+   ],
+   "animation": [
+    {
+     "tileid": 38,
+     "duration": 110
+    },
+    {
+     "tileid": 39,
+     "duration": 110
+    },
+    {
+     "tileid": 40,
+     "duration": 110
+    },
+    {
+     "tileid": 41,
+     "duration": 110
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_top_1"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "top"
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_top_2"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "top"
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_top_3"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "top"
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_bottom_0"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "bottom"
+    }
+   ],
+   "animation": [
+    {
+     "tileid": 42,
+     "duration": 110
+    },
+    {
+     "tileid": 43,
+     "duration": 110
+    },
+    {
+     "tileid": 44,
+     "duration": 110
+    },
+    {
+     "tileid": 45,
+     "duration": 110
+    }
+   ]
+  },
+  {
+   "id": 43,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_bottom_1"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "bottom"
+    }
+   ]
+  },
+  {
+   "id": 44,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_bottom_2"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "bottom"
+    }
+   ]
+  },
+  {
+   "id": 45,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lavafall_bottom_3"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "lavafall_part",
+     "type": "string",
+     "value": "bottom"
+    }
+   ]
+  },
+  {
+   "id": 46,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "obsidian_spikes"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 47,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_stalactites"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 48,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_idle"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 49,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_0"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 50,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_1"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 51,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_2"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 52,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_3"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 53,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_end_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 54,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 55,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_interior"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 56,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 57,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_end_mid"
+    }
+   ]
+  },
+  {
+   "id": 58,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_end_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 59,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_interior_glow"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 60,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "grotto_facade"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    }
+   ]
+  },
+  {
+   "id": 61,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "roots_l"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 62,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "roots_m"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 63,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "roots_r"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 64,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "roots_fringe"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 65,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "roots_fill"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 66,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_glow_mushrooms"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 67,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_crystals"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 68,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_mine_cart"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 69,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_pickaxe"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 70,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_bones"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 71,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_lantern"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 72,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_warning_sign"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 73,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_yarn_rock"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  }
+ ]
+}

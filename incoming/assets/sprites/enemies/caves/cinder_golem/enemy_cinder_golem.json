@@ -1,0 +1,91 @@
+{
+ "id": "enemy_cinder_golem",
+ "type": "enemy",
+ "name": "Cinder Golem",
+ "biome": "caves",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 6,
+  "y": 11,
+  "w": 20,
+  "h": 20
+ },
+ "hp": 3,
+ "speedPxPerSec": 22,
+ "behavior": "walks and turns at ledges/walls. When shot: shell_up, then shell_hold for 1.5s. While curled, fire (and other non-ice attacks) do no damage. Ice and water hits play shell_crack; the shell is broken for 4s and every hit damages (fire included). Mirrors the Frostling in the Peaks.",
+ "shell": {
+  "immuneTo": [
+   "fire",
+   "light",
+   "earth",
+   "air",
+   "lightning",
+   "shadow"
+  ],
+  "brokenBy": [
+   "ice",
+   "water"
+  ],
+  "brokenSec": 4
+ },
+ "animations": {
+  "walk": {
+   "file": "enemy_cinder_golem_walk.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  "shell_up": {
+   "file": "enemy_cinder_golem_shell_up.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 3,
+   "fps": 12,
+   "loop": false,
+   "notes": "curls into a rock ball when shot"
+  },
+  "shell_hold": {
+   "file": "enemy_cinder_golem_shell_hold.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 6,
+   "loop": true
+  },
+  "shell_crack": {
+   "file": "enemy_cinder_golem_shell_crack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false,
+   "notes": "play when ice/water hits the shell; it ends vulnerable"
+  },
+  "hurt": {
+   "file": "enemy_cinder_golem_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_cinder_golem_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "crumbles"
+  }
+ },
+ "palette": "elemental16.hex"
+}

@@ -1,0 +1,41 @@
+{
+ "id": "hazard_falling_rock",
+ "type": "hazard",
+ "name": "Falling rock",
+ "biome": "caves",
+ "frameWidth": 16,
+ "frameHeight": 16,
+ "origin": {
+  "x": 8,
+  "y": 0,
+  "note": "top-centre under a ceiling tile"
+ },
+ "hitbox": {
+  "x": 3,
+  "y": 2,
+  "w": 10,
+  "h": 12
+ },
+ "damage": 1,
+ "frames": {
+  "shake": [
+   0,
+   1,
+   2
+  ],
+  "fall": 3
+ },
+ "behavior": "when the hero passes below (±24px): shake frames for 0.5s, then fall (gravity 900px/s²); on landing spawn hazard_falling_rock_shatter",
+ "shatter": {
+  "file": "hazard_falling_rock_shatter.png",
+  "frameWidth": 32,
+  "frameHeight": 16,
+  "frames": 4,
+  "fps": 14
+ },
+ "files": [
+  "hazard_falling_rock.png",
+  "hazard_falling_rock_shatter.png"
+ ],
+ "palette": "../../palette/elemental16.hex"
+}
