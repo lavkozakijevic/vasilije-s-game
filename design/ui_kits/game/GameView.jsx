@@ -217,12 +217,21 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) {
               if (isOwner) { PUP.st = 'follow'; story('l1_puppy'); } else if (!PUP.hinted) { PUP.hinted = true; say(`THE PUPPY WAITS FOR ${PUP.ownerName} · PRESS ${PUP.ownerKey}`); } } }
           else if (!isOwner && PUP.st !== 'gone') {   // not the owner: run off the left edge of the screen
-            PUP.st = 'away'; PUP.barkT = 0; PUP.face = -1; PUP.anim = 'run'; PUP.x -= 3.2; PUP.y += (H.y - PUP.y) * 0.1;
+            if (PUP.st !== 'away') { PUP.st = 'away'; PUP.vy = 0; }
+            PUP.barkT = 0; PUP.face = -1; PUP.x -= 3.2;
+            // runs along the ground: falls off ledges, hops over walls and gaps (the eagle will just fly)
+            const land = y => { const ty = Math.floor((y + 32) / 32); for (const t of [ty, ty + 1]) { const g = surface(PUP.x + 16, t); if (g != null && y + 32 >= g - 1 && y + 32 <= g + 8) return g; } return null; };
+            const g0 = land(PUP.y); PUP.gr = g0 != null && PUP.vy >= 0;
+            if (PUP.gr) { PUP.y = g0 - 32; PUP.vy = 0;
+              const wall = EH_SOLID.has(tileAt(PUP.x - 4, PUP.y + 16)) || EH_SOLID.has(tileAt(PUP.x - 4, PUP.y + 4)), gap = (() => { for (let t = Math.floor((PUP.y + 32) / 32); t < MH; t++) { const id = tileAt(PUP.x - 20, t * 32); if (id === 31 || id === 32) return true; if (surface(PUP.x - 20, t) != null) return false; } return true; })();   // a pit or water: hop it; a ledge: just drop down
+              if (wall || gap) PUP.vy = -8.5; }
+            if (!PUP.gr) { PUP.vy = Math.min(8, PUP.vy + 0.45); if (EH_SOLID.has(tileAt(PUP.x + 2, PUP.y + 20))) PUP.x += 3.2; }
+            PUP.y += PUP.vy; PUP.anim = PUP.gr ? 'run' : 'jump';
             if (PUP.x < cam - 48) PUP.st = 'gone';
           }
           else if (!isOwner) { /* gone: off screen until the owner is back */ }
           else {
-            if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; }   // owner is back: run in from the left
+            if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; for (let t = Math.max(0, Math.floor(H.y / 32)); t < MH; t++) { const g = surface(PUP.x + 16, t); if (g != null) { PUP.y = g - 32; break; } } }   // re-enter standing on the ground   // owner is back: run in from the left
             PUP.st = 'follow';
             const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 700 || Math.abs(H.y - PUP.y) > 200;
             if (far) { PUP.x = tx; PUP.y = H.y; }
@@ -370,7 +379,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           if (f < 3) drawStrip(img['st_' + s.el], 1, 0, s.x, s.y, 32); else drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32);
           if (f >= 0) drawStrip(img.st_awaken, 6, f, s.x, s.y, 32); });
         if (PUP && PUP.st !== 'gone') { if (PUP.st === 'wait') drawStrip(img.yarn, 6, (tick / 6) % 6, PUP.x + 20, PUP.y + 15, 16);
-          const a = PUP.barkT > 0 ? 'special' : PUP.anim, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = a === 'special' ? PUP.barkT / 6 : a === 'jump' ? (PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
+          const a = PUP.barkT > 0 ? 'special' : PUP.anim, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = a === 'special' ? PUP.barkT / 6 : a === 'jump' ? (PUP.st === 'away' ? (PUP.vy < 0 ? 0 : 1) : PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
           drawStrip(img['pup_' + a], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         if (BALL) drawStrip(img.ball, 4, Math.floor(Math.abs(BALL.roll) / 6) % 4, BALL.x, BALL.y, 16);
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
