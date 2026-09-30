@@ -4,7 +4,7 @@ const EHM_A = '../../../assets/';
 const EH_LEVELS = [
   { id: 'l1', node: 'forest', name: 'The Whispering Forest', star: 'Dimitrije', ready: true },
   { id: 'l2', node: 'peaks',  name: 'The Frostfang Peaks',   star: 'Katarina',  ready: true },
-  { id: 'l3', node: 'caves',  name: 'Cinderdeep Caves',      star: 'Vasilije',  ready: false },
+  { id: 'l3', node: 'caves',  name: 'Cinderdeep Caves',      star: 'Vasilije',  ready: true },
   { id: 'l4', node: 'keep',   name: 'The Hollow Keep',       star: 'Kosta',     ready: false },
 ];
 const EH_TRAVEL = {

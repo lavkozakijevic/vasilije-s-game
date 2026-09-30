@@ -16,6 +16,13 @@ const EH_SSPR = { fly:4, attack:5, hurt:2, death:5 };
 const EH_FROST = { walk:6, shield_up:3, shield_hold:2, hurt:2, death:6 };
 const EH_YETI = { idle:4, walk:6, stomp:5, throw:5, hurt:2, defeat:6 };
 const EH_FW = { idle:4, telegraph:4, attack_spikes:6, attack_breath:6, hurt:2, death:8 };
+const EH_MC = { idle:4, telegraph:4, attack_slam:6, attack_rain:6, hurt:2, death:8 };
+const EH_SLIME = { idle:4, hop:6, hurt:2, death:5, frozen:1 };
+const EH_BAT = { hang:2, fly:4, swoop:4, hurt:2, death:5 };
+const EH_GOLEM = { walk:6, shell_up:3, shell_hold:2, shell_crack:4, hurt:2, death:6 };
+const EH_SAL = { idle:4, walk:6, dive:5, surface:5, spit:5, hurt:2, defeat:6 };
+// shielded enemies: a shot at their face is blocked unless it is one of these elements
+const EH_SHIELD = { frost: ['fire', 'light'], golem: ['ice', 'water'] };
 // Playable roster: the four cousins (keys 1-4), then each Hearth Knight once its statue is woken (Q/E cycles everyone).
 // Projectile stats per element are placeholders for tuning: v = speed (px/tick), dmg = damage, arc = lobbed, pierce = passes through enemies.
 const EH_POWER = {
@@ -41,11 +48,16 @@ const EH_LV = {
     T: { solid: new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,22,23,24,25,26,34,42,43,44,45,46,47,48,50,52]), plat: new Set([19,20,21,27,28,29,30,31,32]),
       feetHaz: [40], bodyHaz: [], water: [35, 36], anim: { 36: [36, 4, 10] }, crumble: [30, 31, 32, 33], bounce: [42, 43, 44, 45, 46], ice: new Set([22, 23, 24, 25, 26, 34]), noSafe: id => id === 34 || (id >= 42 && id <= 46) } },
 };
-const EH_LV_ORDER = ['l1', 'l2'];
+EH_LV.l3 = { id: 'l3', map: 'maps/caves_l3.tmj', tiles: 'tilesets/caves/tileset_caves.png', bg: 'backgrounds/caves/bg_caves_', fg: 'backgrounds/caves/fg_caves_embers.png', fgAlways: true,
+  shrine: 'sprites/props/caves/prop_checkpoint_shrine_cave_', arch: 'sprites/props/caves/prop_exit_arch_obsidian.png', gem: 'sprites/items/item_gem_caves.png', star: 'vasilije', starKey: 3, knights: ['fire', 'lightning'], pet: 'fox',
+  T: { solid: new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,35,36,48,49,50,51,52,53,54,56,58]), plat: new Set([19,20,21,22,23,24,25,26,27]),
+    feetHaz: [46], bodyHaz: [], water: [29, 30], lava: true, anim: { 30: [30, 4, 10], 38: [38, 4, 8], 42: [42, 4, 8] }, crumble: [25, 26, 27, 28], bounce: [48, 49, 50, 51, 52], ice: new Set(), noSafe: id => id === 35 || id === 36 || (id >= 48 && id <= 52) } };
+const EH_LV_ORDER = ['l1', 'l2', 'l3'];
 // Companions: each belongs to one cousin, joins in that cousin's level and follows them from then on (bark: finds gems, pounce: jumps on enemies)
 const EH_PETS = {
   puppy:   { id: 'puppy',   owner: 'dimitrije', ownerName: 'DIMITRIJE', key: 4, sprite: 'companion_puppy',   skill: 'bark',   yarn: true },
   cheetah: { id: 'cheetah', owner: 'katarina',  ownerName: 'KATARINA',  key: 2, sprite: 'companion_cheetah', skill: 'pounce', yarn: false },
+  fox:     { id: 'fox',     owner: 'vasilije',  ownerName: 'VASILIJE',  key: 3, sprite: 'companion_fire_fox', skill: 'fetch',  yarn: false },   // dashes to coins you can't reach
 };
 const GROUND_Y = 288;
 function ehImg(src){ return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; }); }
@@ -73,7 +85,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         load('tiles', LV.tiles),
         ...['sky','far','mid','near','arena_near'].map(k => load(k, `${LV.bg}${k}.png`)),
         load('fg', LV.fg),
-        load('coin', 'sprites/items/item_coin_spin.png'), load('heart', 'sprites/items/item_heart_pickup.png'), load('gem', 'sprites/items/item_gem_forest.png'),
+        load('coin', 'sprites/items/item_coin_spin.png'), load('heart', 'sprites/items/item_heart_pickup.png'), load('gem', LV.gem || 'sprites/items/item_gem_forest.png'),
         load('fx_coin', 'sprites/items/fx_pickup_coin.png'), load('fx_heart', 'sprites/items/fx_pickup_heart.png'),
         ...['dust_jump','dust_land','splash_water','hit_spark','hero_respawn'].map(k => load('fx_' + k, `sprites/fx/fx_${k}.png`)),
         ...['idle','activate','lit'].map(k => load('cp_' + k, `${LV.shrine}${k}.png`)),
@@ -106,6 +118,18 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           ...Object.keys(EH_FW).map(k => load('fw_' + k, `sprites/bosses/peaks/frost_warden/boss_frost_warden_${k}.png`)),
           load('ice_spike', 'sprites/bosses/peaks/frost_warden/fx_ice_spike.png'), load('breath', 'sprites/bosses/peaks/frost_warden/fx_frost_breath.png'), load('warn_frost', 'sprites/bosses/peaks/frost_warden/fx_warning_frost.png'),
           load('scarf', 'sprites/items/item_baba_red_scarf.png')] : []),
+        ...(LV.id === 'l3' ? [
+          ...Object.keys(EH_SLIME).map(k => load('sl_' + k, `sprites/enemies/caves/magma_slime/enemy_magma_slime_${k}.png`)),
+          ...Object.keys(EH_BAT).map(k => load('bt_' + k, `sprites/enemies/caves/ember_bat/enemy_ember_bat_${k}.png`)),
+          ...Object.keys(EH_GOLEM).map(k => load('gl_' + k, `sprites/enemies/caves/cinder_golem/enemy_cinder_golem_${k}.png`)),
+          load('rock', 'sprites/hazards/hazard_falling_rock.png'), load('fx_rock_shatter', 'sprites/hazards/hazard_falling_rock_shatter.png'),
+          load('bubble', 'sprites/hazards/hazard_lava_bubble.png'), load('fx_lava_splash', 'sprites/hazards/hazard_lava_bubble_splash.png'),
+          ...Object.keys(EH_SAL).map(k => load('sa_' + k, `sprites/bosses/caves/lava_salamander/boss_lava_salamander_${k}.png`)), load('salball', 'sprites/bosses/caves/lava_salamander/fx_salamander_fireball.png'),
+          ...Object.keys(EH_MC).map(k => load('fw_' + k, `sprites/bosses/caves/magma_colossus/boss_magma_colossus_${k}.png`)),
+          load('lava_wave', 'sprites/bosses/caves/magma_colossus/fx_lava_wave.png'), load('magma', 'sprites/bosses/caves/magma_colossus/fx_falling_magma.png'), load('warn_frost', 'sprites/bosses/caves/magma_colossus/fx_warning_heat.png'),
+          load('scarf', 'sprites/items/item_baba_family_photo.png'),
+          ...['open', 'closing', 'closed', 'opening'].map(k => load('cg_' + k, `sprites/props/caves/prop_cave_gate_${k}.png`)),
+          load('rlava', 'backgrounds/caves/rising_lava.png'), load('rlava_body', 'backgrounds/caves/rising_lava_body.png')] : []),
       ]);
       if (!alive) return;
       const ctx = cv.current.getContext('2d'); ctx.imageSmoothingEnabled = false;
@@ -136,11 +160,25 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         ...of('enemy_ice_wolf').map(o => ({ kind: 'wolf', x: o.x, y: o.y, x0: o.x - 80, x1: o.x + 80, dir: -1, hp: 2, hurt: 0, dead: 0, st: 'run', t: 0, cd: 60 })),
         ...of('enemy_snow_sprite').map(o => ({ kind: 'sprite', x: o.x + 16, y: o.y + 16, bx: o.x + 16, by: o.y + 16, x0: o.x - 56, x1: o.x + 56, dir: 1, face: 1, hp: 1, hurt: 0, dead: 0, st: 'fly', t: 0, cd: 90 })),
         ...of('enemy_frostling').map(o => ({ kind: 'frost', x: o.x, y: o.y, x0: o.x - 56, x1: o.x + 56, dir: -1, hp: 3, hurt: 0, dead: 0, sh: 0 })),
+        // caves: magma slimes hop at you (ice freezes them), ember bats hang and swoop, cinder golems curl into a shell only ice/water cracks
+        ...of('enemy_magma_slime').map(o => ({ kind: 'slime', x: o.x, y: o.y, dir: -1, hp: 2, hurt: 0, dead: 0, st: 'idle', t: 0, frz: 0, hy: 0 })),
+        ...of('enemy_ember_bat').map(o => ({ kind: 'bat', x: o.x + 16, y: o.y + 16, hx: o.x + 16, hy: o.y + 16, dir: -1, hp: 1, hurt: 0, dead: 0, st: 'hang', t: 0, cd: 0, tx: 0, ty: 0 })),
+        ...of('enemy_cinder_golem').map(o => ({ kind: 'golem', x: o.x, y: o.y, x0: o.x - 56, x1: o.x + 56, dir: -1, hp: 3, hurt: 0, dead: 0, sh: 0, crk: 0 })),
       ];
       const EBOX = { rot: e => ({ x: e.x + 9, y: e.y + 12, w: 14, h: 20 }), moth: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 14 }), spore: e => ({ x: e.x + 6, y: e.y + 9, w: 20, h: 22 }),
-        wolf: e => ({ x: e.x + 5, y: e.y + 14, w: 22, h: 17 }), sprite: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 18 }), frost: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }) };
+        wolf: e => ({ x: e.x + 5, y: e.y + 14, w: 22, h: 17 }), slime: e => ({ x: e.x + 6, y: e.y + 14 + e.hy, w: 20, h: 17 }), bat: e => ({ x: e.x - 8, y: e.y - 8, w: 16, h: 14 }), golem: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }), sprite: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 18 }), frost: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }) };
       const ebox = e => EBOX[e.kind](e);
-      const ICE = of('hazard_icicle').map(o => ({ x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 }));   // hang, wobble 0.6s when the hero passes below, fall, shatter, grow back
+      const ICE = [...of('hazard_icicle').map(o => ({ k: 'icicle', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 })), ...of('hazard_falling_rock').map(o => ({ k: 'rock', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 }))];
+      // lava bubbles leap out of the lava every 2.2s; frozen lava crust (Vasilije's ice) holds ~3s, cracks, melts back
+      const BUB = of('hazard_lava_bubble').map((o, i) => ({ x: o.x, y0: o.y, y: o.y, vy: 0, out: false, t: i * 40 })), CRUST = {};
+      // the trap: a gate slams behind Vasilije and lava rises; he climbs out alone (no switching) while the fox runs for help
+      const tz = ents.find(o => o.type === 'trap_zone'), cg = ents.find(o => o.type === 'cave_gate');
+      const TRAP = tz ? { x0: tz.x, x1: tz.x + tz.width, gate: cg ? { x: cg.x, y: cg.y, st: 'open', t: 0 } : null, st: 'idle', lavaY: 400 } : null;
+      // Lava Salamander (caves mid-boss): lives in a lava pool, spits fireballs, dives and resurfaces; falls asleep when beaten
+      const so = ents.find(o => o.type === 'boss_lava_salamander'), sa = ents.find(o => o.type === 'sal_arena');
+      const SAL = so ? { x: so.x, y: so.y, hp: 12, max: 12, st: 'wait', t: 0, n: 0, dir: -1, hurt: 0, dead: 0, awake: false, name: 'LAVA SALAMANDER', aL: sa ? sa.x : so.x - 320, aR: sa ? sa.x + sa.width : so.x + 320 } : null;
+      const salBox = () => ({ x: SAL.x + 6, y: SAL.y + 34, w: 56, h: 29 }), salUp = () => SAL && !SAL.dead && (SAL.st === 'idle' || SAL.st === 'spit' || SAL.st === 'surface' || (SAL.st === 'dive' && SAL.t < 16));
+      const FIREB = [], TRIG = of('story_trigger');   // hang, wobble 0.6s when the hero passes below, fall, shatter, grow back
       const C = of('item_coin').map(o => ({ x: o.x, y: o.y, got: false }));
       const HP = of('item_heart').map(o => ({ x: o.x, y: o.y, got: false }));
       const GM = of('item_gem').map(o => ({ x: o.x, y: o.y, got: false }));
@@ -166,9 +204,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
       const YETI = yo ? { x: yo.x, y: yo.y, sx: yo.x, hp: 8, max: 8, st: 'wait', t: 0, n: 0, dir: -1, hurt: 0, dead: 0, awake: false, name: 'YETI CUB', aL: ya ? ya.x : yo.x - 320, aR: ya ? ya.x + ya.width : yo.x + 320 } : null;
       const yetiBox = () => ({ x: YETI.x + 14, y: YETI.y + 18, w: 36, h: 46 });
       // Frost Warden (peaks boss): ice spike line / freezing breath; the chest crack is the weak point and takes double damage while it glows
-      const fo = ents.find(o => o.type === 'boss_frost_warden');
-      const FW = fo ? { x: fo.x, y: fo.y, hp: 24, max: 24, st: 'idle', t: 60, n: 0, hurt: 0, dead: 0, awake: false, spots: [], spikes: [], breath: null, name: 'FROST WARDEN' } : null;
-      const fwBody = () => ({ x: FW.x + 20, y: FW.y + 12, w: 58, h: 83 }), fwWeak = () => ({ x: FW.x + 43, y: FW.y + 38, w: 12, h: 28 });   // flipped: it faces left
+      const fo = ents.find(o => o.type === 'boss_frost_warden' || o.type === 'boss_magma_colossus'), MC = fo && fo.type === 'boss_magma_colossus';   // Magma Colossus: same rig, lava wave + molten rain
+      const FW = fo ? { x: fo.x, y: fo.y, hp: 24, max: 24, st: 'idle', t: 60, n: 0, hurt: 0, dead: 0, awake: false, spots: [], spikes: [], breath: null, waves: [], rain: [], name: MC ? 'MAGMA COLOSSUS' : 'FROST WARDEN' } : null;
+      const fwBody = () => ({ x: FW.x + 20, y: FW.y + 12, w: 58, h: 83 }), fwWeak = () => MC ? { x: FW.x + 42, y: FW.y + 45, w: 13, h: 15 } : { x: FW.x + 43, y: FW.y + 38, w: 12, h: 28 };   // flipped: it faces left
       const fwGlow = () => FW.st !== 'idle' || FW.hurt > 0;
       const FW_ANG = 0.5, fwMouth = () => ({ x: FW.x + 27, y: FW.y + 29 });   // the breath cone angles down to reach the ground
       const SNOW = [], BIGS = []; let shake = 0;
@@ -186,8 +224,12 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
       const resetBosses = () => {
         if (ELD && !ELD.dead) { Object.assign(ELD, { x: ELD.sx, hp: ELD.max, st: 'wait', t: 0, awake: false, hurt: 0 }); gates[0].st = 'open'; SEEDS.length = 0; }
         if (BOSS && !BOSS.dead) Object.assign(BOSS, { hp: BOSS.max, state: 'idle', t: 0, awake: false, spots: [], roots: [] });
+        if (FW && !FW.dead) Object.assign(FW, { hp: FW.max, st: 'idle', t: 60, awake: false, spots: [], spikes: [], breath: null, waves: [], rain: [] });
+        if (YETI && !YETI.dead) Object.assign(YETI, { x: YETI.sx, hp: YETI.max, st: 'wait', t: 0, awake: false }), BIGS.length = 0;
+        if (SAL && !SAL.dead) Object.assign(SAL, { hp: SAL.max, st: 'wait', t: 0, awake: false }), FIREB.length = 0;
+        if (TRAP && TRAP.st !== 'done') { TRAP.st = 'idle'; TRAP.lavaY = 400; if (TRAP.gate) TRAP.gate.st = 'open'; }
       };
-      const damage = (e, dmg) => { e.hp -= dmg; e.hurt = 14; if (e.hp <= 0) { e.dead = 1; if (e.kind === 'spore') fx('fx_spore_burst', 4, 12, e.x + 8, e.y + 10, 16); } else if (e.kind === 'frost') e.sh = 0; };
+      const damage = (e, dmg) => { e.hp -= dmg; e.hurt = 14; if (e.hp <= 0) { e.dead = 1; if (e.kind === 'spore') fx('fx_spore_burst', 4, 12, e.x + 8, e.y + 10, 16); } else if (EH_SHIELD[e.kind]) e.sh = 0; };
 
       const step = () => {
         tick++;
@@ -209,6 +251,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; H.jumpT = tick; H.jumpV = -8.3; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
           if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0) { H.attackT = 24; H.fired = false; }
           if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
+          if (TRAP && TRAP.st === 'rising' && wantHero >= 0 && wantHero !== H.hero) { wantHero = -1; say(window.EH_LANG === 'sr' ? 'VASILIJE JE SAM! PENJI SE!' : 'VASILIJE IS ON HIS OWN! CLIMB!'); }
           if (wantHero >= 0 && wantHero < ROSTER.length && wantHero !== H.hero) { H.hero = wantHero; H.swapT = 40; H.attackT = 0; fx('i_' + ROSTER[wantHero].el, 4, 12, H.x, H.y, 32); }
           wantHero = -1;
         }
@@ -223,6 +266,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           for (const g of gates) if (g.st !== 'open') { const hb = heroBox(); if (hb.x < g.x + 32 && hb.x + hb.w > g.x) H.x = H.x + 16 < g.x + 16 ? g.x - 22 : g.x + 32 - 10; }
           if (BOSS && !BOSS.dead) { H.x = Math.min(H.x, bossBody().x - 26); if (BOSS.awake) H.x = Math.max(H.x, finalL - 4); }
           if (FW && !FW.dead) { H.x = Math.min(H.x, fwBody().x - 26); if (FW.awake) H.x = Math.max(H.x, finalL - 4); }
+          if (TRAP && TRAP.gate && TRAP.gate.st !== 'open') { const g = TRAP.gate; if (H.x + 10 < g.x + 32 && H.x + 22 > g.x && H.y + 31 > g.y) H.x = g.x + 32 - 10; }
+          if (TRAP && TRAP.st === 'rising') H.x = Math.max(TRAP.x0 + 22, H.x);
+          if (SAL && SAL.awake && !SAL.dead) H.x = Math.max(SAL.aL - 4, Math.min(SAL.aR - 26, H.x));
           if (YETI && YETI.awake && !YETI.dead) H.x = Math.max(YETI.aL - 4, Math.min(YETI.aR - 26, H.x));   // the bridge fight holds you on screen
           const prevFeet = H.y + 31; let ny = H.y + H.vy; let feet = ny + 31; let best = null;
           if (H.vy >= 0) for (const px of [H.x + 12, H.x + 16, H.x + 20]) for (let ty = Math.floor((prevFeet - 8) / 32); ty <= Math.floor((feet + (H.ground ? 6 : 0)) / 32); ty++) {
@@ -246,7 +292,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           const feetHaz = tileAt(H.x + 16, H.y + 30), bodyHaz = [tileAt(H.x + 16, H.y + 16), tileAt(H.x + 16, H.y + 26)];
           if ((H.vy >= 0 && T.feetHaz.includes(feetHaz)) || bodyHaz.some(t => T.bodyHaz.includes(t))) hurt(H.face);
           const tw = tileAt(H.x + 16, H.y + 28);
-          if (T.water.includes(tw)) { fx('fx_splash_water', 5, 14, H.x, GROUND_Y - 32, 32); H.inv = 0; hurt(1); if (!H.dead) Object.assign(H, safe, { vx: 0, vy: 0, inv: 70 }); }
+          if (T.water.includes(tw)) { if (T.lava) fx('fx_lava_splash', 4, 14, H.x, GROUND_Y - 16, 32); else fx('fx_splash_water', 5, 14, H.x, GROUND_Y - 32, 32); H.inv = 0; hurt(1); if (!H.dead) Object.assign(H, safe, { vx: 0, vy: 0, inv: 70 }); }
           if (H.y > 380) { H.hp = 0; H.dead = 1; }
           if (ex && (!BOSS || BOSS.dead > 70) && (!FW || FW.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins, { gems: GM.filter(g => g.got).length, gemTotal: GM.length });
         }
@@ -279,7 +325,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           else { PUP.vy = Math.min(7, PUP.vy + 0.35); if (PUP.vy < 0 && T.solid.has(tileAt(PUP.x + 16, PUP.y + PUP.vy))) PUP.vy = 0; }
           PUP.y += PUP.vy;
         };
-          const isOwner = ROSTER[H.hero].id === PUP.owner;
+          const isOwner = ROSTER[H.hero].id === PUP.owner && !(TRAP && TRAP.st === 'rising');   // in the trap the fox runs off to fetch the others
           if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) {
               if (isOwner) { PUP.st = 'follow'; story(LV.id + '_' + PUP.id); } else if (!PUP.hinted) { PUP.hinted = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.petWaits[PUP.id] : `THE ${PUP.id.toUpperCase()} WAITS FOR ${PUP.ownerName} · PRESS ${PUP.key}`); } } }
           else if (!isOwner && PUP.st !== 'gone') {   // not the owner: run off the left edge of the screen
@@ -294,7 +340,14 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
             PUP.st = 'follow'; if (PUP.vy == null) { PUP.vy = 0; PUP.stuck = 0; }
             const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 700 || Math.abs(H.y - PUP.y) > 200;
             if (far || (PUP.stuck = PUP.stuck || 0, PUP.stuck = Math.abs(dx) > 60 || H.y - 1 - PUP.y < -40 ? PUP.stuck + 1 : 0) > 240) { const puff = () => { fx('fx_dust_land', 4, 12, PUP.x - 8, PUP.y + 4, 32); fx('fx_dust_land', 4, 12, PUP.x + 8, PUP.y + 4, 32); }; puff(); PUP.x = tx; PUP.y = H.y - 1; PUP.vy = 0; PUP.stuck = 0; puff(); }   // lost or stuck: catch up
-            if (PUP.spT > 0) {   // cheetah pounce: crouch, leap at the enemy (frames 1-2), bite, settle
+            if (PUP.spT > 0 && PUP.skill === 'fetch') {   // fox: lean, dash through the air to a coin, snap it up, drop back down
+              PUP.spT++; const c = PUP.fetch;
+              if (c && !c.got && PUP.spT > 6) { const ddx = c.x - 8 - PUP.x, ddy = c.y - 16 - PUP.y, d = Math.hypot(ddx, ddy); PUP.face = Math.sign(ddx) || PUP.face;
+                if (d < 10) { c.got = true; H.coins++; fx('fx_coin', 4, 14, c.x, c.y, 16); PUP.fetch = null; PUP.spT = 18; PUP.vy = 0; } else { PUP.x += ddx / d * 5; PUP.y += ddy / d * 5; } }
+              else if (!c || c.got) { PUP.fetch = null; if (PUP.spT >= 30) PUP.spT = 0; pupStep(0, 0, false); }
+              if (PUP.spT > 120) { PUP.spT = 0; PUP.fetch = null; }
+              PUP.anim = 'special';
+            } else if (PUP.spT > 0) {   // cheetah pounce: crouch, leap at the enemy (frames 1-2), bite, settle
               PUP.spT++; const fr = Math.floor(PUP.spT / 6);
               if (PUP.spT === 6 && PUP.target) { const tb = ebox(PUP.target); PUP.leap = Math.max(-7, Math.min(7, (tb.x + tb.w / 2 - 16 * PUP.face - PUP.x - 16 + 16 * PUP.face) / 12)); }
               if ((fr === 1 || fr === 2) && PUP.leap && !T.solid.has(tileAt(PUP.x + 16 + PUP.leap + 12 * PUP.face, PUP.y + 20))) PUP.x += PUP.leap;
@@ -309,6 +362,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
               pupStep(vx, up, down);
               if (Math.abs(dx) > 2) PUP.face = Math.sign(dx);
               PUP.anim = !PUP.gr ? 'jump' : vx ? 'run' : 'idle';
+              if (PUP.skill === 'fetch' && PUP.gr && --PUP.cool <= 0) {   // a coin that is up high and close by
+                const c = C.filter(c => !c.got && Math.abs(c.x - PUP.x - 16) < 170 && c.y < PUP.y - 30 && PUP.y - c.y < 200).sort((a, b) => Math.abs(a.x - PUP.x) - Math.abs(b.x - PUP.x))[0];
+                if (c) { PUP.fetch = c; PUP.spT = 1; PUP.cool = 150; } else PUP.cool = 20; }
               if (PUP.skill === 'pounce' && PUP.gr && --PUP.cool <= 0) {
                 const tgt = E.filter(e => !e.dead && Math.abs(ebox(e).x + ebox(e).w / 2 - PUP.x - 16) < 110 && Math.abs(ebox(e).y + ebox(e).h - PUP.y - 32) < 40).sort((a, b) => Math.abs(a.x - PUP.x) - Math.abs(b.x - PUP.x))[0];
                 if (tgt) { PUP.target = tgt; PUP.leap = 0; PUP.face = Math.sign(ebox(tgt).x + ebox(tgt).w / 2 - PUP.x - 16) || PUP.face; PUP.spT = 1; PUP.cool = 150; } else PUP.cool = 10; }
@@ -359,8 +415,69 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
               const stop = nx < e.x0 || nx > e.x1 || !floorAt(nx + 16 + e.dir * 12, e.y) || T.solid.has(tileAt(nx + 16 + e.dir * 14, e.y + 20));
               if (!stop) e.x = nx; else if (!chase) e.dir *= -1; }
           }
-          if (!H.dead && overlap(heroBox(), ebox(e))) hurt(Math.sign(-dx) || 1);
+          else if (e.kind === 'slime') {
+            if (e.frz > 0) { e.frz--; return; }   // frozen solid: harmless for a moment
+            e.t++;
+            if (e.st === 'idle') { if (e.t >= 50) { e.st = 'hop'; e.t = 0; if (Math.abs(dx) < 260) e.dir = Math.sign(dx) || e.dir; } }
+            else { if (e.t >= 6 && e.t < 30) { const nx = e.x + 1.3 * e.dir; if (floorAt(nx + 16 + e.dir * 10, e.y) && !T.solid.has(tileAt(nx + 16 + e.dir * 14, e.y + 20))) e.x = nx; else e.dir *= -1; }
+              e.hy = e.t >= 6 && e.t < 30 ? -Math.round(Math.sin((e.t - 6) / 24 * Math.PI) * 16) : 0; if (e.t >= 36) { e.st = 'idle'; e.t = 0; e.hy = 0; } }
+          } else if (e.kind === 'bat') {
+            e.t++; if (e.cd > 0) e.cd--;
+            if (e.st === 'hang') { if (!H.dead && e.cd <= 0 && Math.abs(dx) < 90 && H.y > e.y) { e.st = 'swoop'; e.t = 0; e.tx = H.x + 16; e.ty = H.y + 16; e.dir = Math.sign(dx) || e.dir; } }
+            else if (e.st === 'swoop') { const ddx = e.tx - e.x, ddy = e.ty - e.y, d = Math.hypot(ddx, ddy); if (d < 3 || e.t > 70) { e.st = 'climb'; e.t = 0; } else { e.x += ddx / d * 2.6; e.y += ddy / d * 2.6; } }
+            else { const ddx = e.hx - e.x, ddy = e.hy - e.y, d = Math.hypot(ddx, ddy); if (d < 2) { e.x = e.hx; e.y = e.hy; e.st = 'hang'; e.cd = 100; } else { e.x += ddx / d * 1.4; e.y += ddy / d * 1.4; e.dir = Math.sign(ddx) || e.dir; } }
+          } else if (e.kind === 'golem') {
+            if (e.crk > 0) e.crk--;
+            if (e.sh > 0) e.sh--;
+            else { const chase = Math.abs(dx) < 140; if (chase) e.dir = Math.sign(dx) || e.dir; const nx = e.x + 0.35 * e.dir;
+              const stop = nx < e.x0 || nx > e.x1 || !floorAt(nx + 16 + e.dir * 12, e.y) || T.solid.has(tileAt(nx + 16 + e.dir * 14, e.y + 20));
+              if (!stop) e.x = nx; else if (!chase) e.dir *= -1; }
+          }
+          if (!H.dead && !(e.kind === 'slime' && e.frz > 0) && overlap(heroBox(), ebox(e))) hurt(Math.sign(-dx) || 1);
         });
+        BUB.forEach(u => { u.t++;
+          if (!u.out) { if (u.t >= 132) { u.out = true; u.vy = -6.3; u.t = 0; } }
+          else { u.vy += 0.194; u.y += u.vy; if (u.vy > 0 && u.y >= u.y0) { u.y = u.y0; u.out = false; u.t = 0; fx('fx_lava_splash', 4, 14, u.x - 8, u.y0 - 8, 32); }
+            if (!H.dead && overlap(heroBox(), { x: u.x + 4, y: u.y + 2, w: 8, h: 12 })) hurt(Math.sign(H.x + 16 - u.x - 8) || 1); } });
+        TRIG.forEach(o => { if (!H.dead && H.x > o.x) story(o.name); });
+        // frozen lava crust: 34 freezing (150ms) -> 35 solid (3s) -> 36 cracking (0.8s) -> 37 melting -> lava again
+        for (const k in CRUST) { const t = ++CRUST[k]; ground[k] = t < 9 ? 34 : t < 189 ? 35 : t < 237 ? 36 : t < 246 ? 37 : 30; if (t >= 246) delete CRUST[k]; }
+        // ---- the trap: gate slams, lava rises, Vasilije climbs out alone ----
+        if (TRAP) {
+          const g = TRAP.gate; if (g) { g.t++; if (g.st === 'closing' && g.t >= 16) { g.st = 'closed'; shake = 10; } }
+          if (TRAP.st === 'idle' && !H.dead && H.x > TRAP.x0 + 96 && H.x < TRAP.x1 - 64) {
+            TRAP.st = 'rising'; TRAP.lavaY = 400; if (g) { g.st = 'closing'; g.t = 0; }
+            const vi = ROSTER.findIndex(r => r.id === EH_STAR); if (H.hero !== vi) { H.hero = vi; H.swapT = 40; fx('i_' + ROSTER[vi].el, 4, 12, H.x, H.y, 32); }
+            story('l3_trap');
+          } else if (TRAP.st === 'rising') {
+            TRAP.lavaY -= 0.32;
+            if (!H.dead && H.y + 31 > TRAP.lavaY + 6) { fx('fx_lava_splash', 4, 14, H.x, TRAP.lavaY - 8, 32); H.inv = 0; hurt(1); if (!H.dead) { Object.assign(H, { x: TRAP.x0 + 64, y: GROUND_Y - 31, vx: 0, vy: 0, inv: 70 }); TRAP.lavaY = 400; } }
+            if (H.x > TRAP.x1 + 8) { TRAP.st = 'done'; story('l3_trap_after'); }
+          } else if (TRAP.st === 'done' && TRAP.lavaY < 400) TRAP.lavaY += 1;
+        }
+        // ---- Lava Salamander ----
+        if (SAL) {
+          if (SAL.hurt > 0) SAL.hurt--;
+          if (SAL.dead) { SAL.dead++; if (SAL.dead === 80) story('l3_salamander_bye'); }
+          else {
+            if (!SAL.awake && H.x + 10 > SAL.aL + 40 && H.x < SAL.aR) { story('l3_salamander'); SAL.awake = true; SAL.st = 'idle'; SAL.t = 0; }
+            if (SAL.awake && !H.dead) {
+              SAL.t++; const enr = SAL.hp <= SAL.max / 2; SAL.dir = Math.sign(H.x + 16 - SAL.x - 32) || SAL.dir;
+              if (SAL.st === 'idle' && SAL.t >= (enr ? 50 : 80)) { SAL.st = SAL.n++ % 3 === 2 ? 'dive' : 'spit'; SAL.t = 0; }
+              else if (SAL.st === 'spit') { if (SAL.t === 18) { const x0 = SAL.x + (SAL.dir > 0 ? 55 : 1), y0 = SAL.y + 30, ddx = H.x + 16 - x0 - 8, ddy = H.y + 16 - y0 - 8, d = Math.hypot(ddx, ddy) || 1;
+                  FIREB.push({ x: x0, y: y0, vx: ddx / d * 2.7, vy: ddy / d * 2.7, t: 0 }); if (enr) FIREB.push({ x: x0, y: y0, vx: ddx / d * 2.7, vy: ddy / d * 2.7 - 1.2, t: 0 }); }
+                if (SAL.t >= 30) { SAL.st = 'idle'; SAL.t = 0; } }
+              else if (SAL.st === 'dive') { if (SAL.t >= 38) { SAL.st = 'hidden'; SAL.t = 0; } }
+              else if (SAL.st === 'hidden') { if (SAL.t >= 72) { SAL.st = 'surface'; SAL.t = 0; } }
+              else if (SAL.st === 'surface') { if (SAL.t >= 38) { SAL.st = 'idle'; SAL.t = 0; } }
+              if (salUp() && overlap(heroBox(), salBox())) hurt(Math.sign(SAL.x + 32 - H.x - 16) || 1);
+            }
+          }
+        }
+        for (let i = FIREB.length - 1; i >= 0; i--) { const f = FIREB[i]; f.x += f.vx; f.y += f.vy; f.t++;
+          let gone = T.solid.has(tileAt(f.x + 8, f.y + 8)) || f.t > 240 || f.y > 380 || f.y < -20;
+          if (!gone && !H.dead && overlap(heroBox(), { x: f.x + 3, y: f.y + 3, w: 10, h: 10 })) { hurt(Math.sign(f.vx) || 1); gone = true; }
+          if (gone) { fx('i_fire', 4, 12, f.x - 8, f.y - 8, 32); FIREB.splice(i, 1); } }
         for (let i = SNOW.length - 1; i >= 0; i--) { const s = SNOW[i]; s.vy += 0.15; s.x += s.vx; s.y += s.vy; s.t++;
           const sf = s.vy > 0 ? surface(s.x + 8, Math.floor((s.y + 14) / 32)) : null;
           let gone = T.solid.has(tileAt(s.x + 8, s.y + 12)) || s.y > 380 || (sf != null && s.y + 14 >= sf);
@@ -368,11 +485,11 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           if (gone) { fx('fx_snowball_burst', 4, 14, s.x, s.y, 16); SNOW.splice(i, 1); } }
         ICE.forEach(ic => { ic.t++;
           if (ic.st === 'hang') { if (!H.dead && Math.abs(H.x + 16 - (ic.x + 8)) < 24 && H.y > ic.y) { ic.st = 'wobble'; ic.t = 0; } }
-          else if (ic.st === 'wobble') { if (ic.t >= 36) { ic.st = 'fall'; ic.vy = 0; } }
+          else if (ic.st === 'wobble') { if (ic.t >= (ic.k === 'rock' ? 30 : 36)) { ic.st = 'fall'; ic.vy = 0; } }
           else if (ic.st === 'fall') { ic.vy = Math.min(9, ic.vy + 0.25); ic.y += ic.vy;
             const ty = Math.floor((ic.y + 28) / 32), sf = surface(ic.x + 8, ty), hitH = !H.dead && overlap(heroBox(), { x: ic.x + 4, y: ic.y + 3, w: 8, h: 24 });
             if (hitH) hurt(Math.sign(H.x + 16 - ic.x - 8) || 1);
-            if (hitH || (sf != null && ic.y + 28 >= sf) || ic.y > 380) { fx('fx_icicle_shatter', 4, 14, ic.x - 8, (sf != null ? sf : ic.y + 28) - 16, 32); ic.st = 'gone'; ic.t = 0; } }
+            if (hitH || (sf != null && ic.y + 28 >= sf) || ic.y > 380) { fx(ic.k === 'rock' ? 'fx_rock_shatter' : 'fx_icicle_shatter', 4, 14, ic.x - 8, (sf != null ? sf : ic.y + 28) - 16, 32); ic.st = 'gone'; ic.t = 0; } }
           else if (ic.st === 'gone' && ic.t > 300) { ic.st = 'hang'; ic.y = ic.y0; ic.t = 0; } });
         for (let i = SPORES.length - 1; i >= 0; i--) { const s = SPORES[i]; s.vy += 0.167; s.x += s.vx; s.y += s.vy; s.t++;
           let gone = T.solid.has(tileAt(s.x + 8, s.y + 12)) || s.y > 380;
@@ -465,18 +582,23 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         if (FW) {
           if (FW.dead) FW.dead++;
           else {
-            if (!FW.awake && H.x > LW - 600) { story('l2_warden'); FW.awake = true; FW.t = 60; }
+            if (!FW.awake && H.x > LW - 600) { story(MC ? 'l3_colossus' : 'l2_warden'); FW.awake = true; FW.t = 60; }
             if (FW.hurt > 0) FW.hurt--;
             if (FW.awake && !H.dead) {
               FW.t++;
               const enr = FW.hp <= FW.max / 2, aL = LW - 630, aR = fwBody().x - 20;
               if (FW.st === 'idle' && FW.t > (enr ? 90 : 140)) {
                 FW.next = FW.n % 2 ? 'breath' : 'spikes'; FW.spots = [];
-                if (FW.next === 'spikes') { const cnt = enr ? 6 : 4, aimed = FW.n % 4 === 2;   // README pattern (4 spots 40px apart, 32px in front) or aimed at the hero
+                if (MC && FW.next === 'breath') { const cnt = enr ? 7 : 5; FW.spots.push(H.x + 16); for (let i = 1; i < cnt; i++) FW.spots.push(aL + 24 + Math.random() * (aR - aL - 48)); }   // molten rain: one spot under the hero
+                else if (MC) {}
+                else if (FW.next === 'spikes') { const cnt = enr ? 6 : 4, aimed = FW.n % 4 === 2;   // README pattern (4 spots 40px apart, 32px in front) or aimed at the hero
                   for (let i = 0; i < cnt; i++) FW.spots.push(aimed ? H.x + 16 + (i - (cnt - 1) / 2) * 40 : fwBody().x - 32 - 16 - i * 40);
                   FW.spots = FW.spots.map(x => Math.max(aL, Math.min(aR, x))); }
                 FW.n++; FW.st = 'telegraph'; FW.t = 0;
               } else if (FW.st === 'telegraph' && FW.t >= (enr ? 36 : 60)) { FW.st = FW.next; FW.t = 0; }
+              else if (MC && FW.st === 'spikes') {   // magma slam: a lava wave runs along the floor toward the hero (two when enraged)
+                if (FW.t === 12 || (enr && FW.t === 40)) FW.waves.push({ x: FW.x + 14 - 64, t: 0 }); if (FW.t >= (enr ? 60 : 36)) { FW.st = 'idle'; FW.t = 0; } }
+              else if (MC && FW.st === 'breath') { if (FW.t === 42) { FW.rain = FW.spots.map((x, i) => ({ x, y: -40 - i * 6, vy: 0 })); FW.spots = []; } if (FW.t >= 48) { FW.st = 'idle'; FW.t = 0; } }
               else if (FW.st === 'spikes') { if (FW.t === 12) { FW.spikes = FW.spots.map((x, i) => ({ x, t: -i * 4 })); FW.spots = []; shake = 8; } if (FW.t >= 36) { FW.st = 'idle'; FW.t = 0; } }
               else if (FW.st === 'breath') { if (FW.t === 15) FW.breath = { t: 0 }; if (FW.t >= 45) { FW.st = 'idle'; FW.t = 0; } }
               if (overlap(heroBox(), fwBody())) hurt(1);
@@ -485,6 +607,11 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           FW.spikes.forEach(k => { k.t++; const f = Math.floor(k.t / 5);
             if (k.t >= 0 && (f === 2 || f === 3) && !H.dead && overlap(heroBox(), { x: k.x - 16 + 8, y: GROUND_Y - 64 + 6, w: 16, h: 58 })) hurt(Math.sign(k.x - H.x - 16) || 1); });
           FW.spikes = FW.spikes.filter(k => k.t < 30);
+          FW.waves.forEach(v => { v.t++; v.x -= 2.5; if (!H.dead && overlap(heroBox(), { x: v.x + 4, y: GROUND_Y - 32 + 12, w: 56, h: 20 })) hurt(-1); });
+          FW.waves = FW.waves.filter(v => v.x > finalL - 70 && !FW.dead);
+          FW.rain.forEach(r => { r.vy = Math.min(8, r.vy + 0.25); r.y += r.vy; if (!H.dead && overlap(heroBox(), { x: r.x - 8 + 3, y: r.y + 17, w: 10, h: 13 })) { hurt(1); r.y = 999; }
+            if (r.y + 30 >= GROUND_Y && r.y < 999) { fx('fx_rock_shatter', 4, 14, r.x - 16, GROUND_Y - 16, 32); r.y = 999; } });
+          FW.rain = FW.rain.filter(r => r.y < 999 && !FW.dead);
           if (FW.breath) { const b = FW.breath; b.t++; const f = Math.floor(b.t / 6), m = fwMouth();
             if (f >= 2 && f <= 4 && !H.dead) {   // distance from the hero's middle to the breath cone's centre line
               const ex2 = m.x - Math.cos(FW_ANG) * 90, ey2 = m.y + Math.sin(FW_ANG) * 90, px = H.x + 16, py = H.y + 20, vx = ex2 - m.x, vy = ey2 - m.y;
@@ -501,15 +628,23 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           const spark = () => fx('fx_hit_spark', 3, 18, b.x, b.y, 16);
           for (const e of E) { if (hit) break; if (!e.dead && !b.hit.has(e) && overlap(pb, ebox(e))) { b.hit.add(e);
             // frostling: a shot at its face is blocked by its ice shield, unless it is fire or light (they break it)
-            if (e.kind === 'frost' && Math.sign(b.vx) === -e.dir && b.el !== 'fire' && b.el !== 'light') { if (e.sh <= 0) e.sh = 75; else e.sh = Math.max(e.sh, 20); hit = wall = true; continue; }
-            if (e.kind === 'frost') e.sh = 0;
+            const brk = EH_SHIELD[e.kind];
+            if (brk && Math.sign(b.vx) === -e.dir && !brk.includes(b.el)) { if (e.sh <= 0) e.sh = 75; else e.sh = Math.max(e.sh, 20); hit = wall = true; continue; }
+            if (brk) { if (e.kind === 'golem' && e.sh > 0) e.crk = 24; e.sh = 0; }
+            if (e.kind === 'slime' && (b.el === 'ice' || b.el === 'water')) e.frz = 150;
             damage(e, b.dmg); spark(); if (!b.pierce) hit = true; } }
+          if (T.lava && (b.el === 'ice' || b.el === 'water')) {   // ice (and water) shots freeze the lava under them into a crust you can stand on
+            const c = Math.floor((b.x + 8) / 32), r0 = Math.floor((b.y + 8) / 32), inPool = SAL && !SAL.dead && b.x > SAL.aL && b.x < SAL.aR;
+            for (let r = r0; r <= r0 + 3 && r < MH && !inPool; r++) { const i = r * MW + c; if (T.solid.has(ground[i]) && ground[i] !== 35 && ground[i] !== 36) break;
+              if (ground[i] === 30 || ground[i] === 37) { for (const cc of [c - 1, c, c + 1]) { const j = r * MW + cc; if (cc >= 0 && cc < MW && (ground[j] === 30 || ground[j] === 37)) { CRUST[j] = 0; ground[j] = 34; } } break; } } }
+          if (SAL && SAL.awake && !SAL.dead && !hit && salUp() && overlap(pb, salBox())) { SAL.hp -= b.dmg * (b.el === 'ice' || b.el === 'water' ? 2 : 1); SAL.hurt = 10; spark(); hit = true;
+            if (SAL.hp <= 0) { SAL.dead = 1; FIREB.length = 0; } }
           if (YETI && YETI.awake && !YETI.dead && !hit && overlap(pb, yetiBox())) { YETI.hp -= b.dmg; YETI.hurt = 10; spark(); hit = true;
             if (YETI.hp <= 0) { YETI.dead = 1; BIGS.length = 0; SNOW.length = 0; } }
           if (FW && !FW.dead && !hit && overlap(pb, fwBody())) {
             FW.hp -= b.dmg * (fwGlow() && overlap(pb, fwWeak()) ? 2 : 1); FW.hurt = 10; FW.awake = true; spark();
             if (FW.hp <= 0 && b.who !== EH_STAR) { FW.hp = 1; if (!FW.callStar) { FW.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish[EH_STAR] : `PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
-            if (FW.hp <= 0) { FW.dead = 1; FW.spots = []; FW.spikes = []; FW.breath = null; }
+            if (FW.hp <= 0) { FW.dead = 1; FW.spots = []; FW.spikes = []; FW.breath = null; FW.waves = []; FW.rain = []; }
             hit = true; }
           if (ELD && ELD.awake && !ELD.dead && !hit && overlap(pb, elderBox())) { ELD.hp -= b.dmg; ELD.hurt = 10; spark(); hit = true;
             if (ELD.hp <= 0) { ELD.dead = 1; SEEDS.length = 0; gates.forEach(g => { if (g.st !== 'open') { g.st = 'opening'; g.t = 0; } }); } }
@@ -529,7 +664,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
 
       const draw = () => {
         const eldFight = ELD && ELD.awake && !ELD.dead, bwFight = (BOSS && BOSS.awake && !BOSS.dead) || (FW && FW.awake && !FW.dead), yetiFight = YETI && YETI.awake && !YETI.dead;
-        const camT = eldFight ? gates[0].x : yetiFight ? YETI.aL : bwFight ? finalL : Math.max(0, Math.min(LW - 640, H.x + 16 - 280));
+        const trapFight = TRAP && TRAP.st === 'rising', salFight = SAL && SAL.awake && !SAL.dead;
+        const camT = eldFight ? gates[0].x : yetiFight ? YETI.aL : trapFight ? TRAP.x0 : salFight ? SAL.aL : bwFight ? finalL : Math.max(0, Math.min(LW - 640, H.x + 16 - 280));
         camF = Math.abs(camT - camF) < 0.5 ? camT : camF + (camT - camF) * 0.12; cam = Math.round(camF);
         // how much of the view is inside a boss arena -> blend in the arena backdrop + foreground branches
         const ov = (a, b) => Math.max(0, Math.min(cam + 640, b) - Math.max(cam, a)) / 640;
@@ -546,7 +682,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           if (f < 3) drawStrip(img['st_' + s.el], 1, 0, s.x, s.y, 32); else drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32);
           if (f >= 0) drawStrip(img.st_awaken, 6, f, s.x, s.y, 32); });
         for (const PUP of PETS) { if (PUP.st === 'gone') continue; if (PUP.st === 'wait' && PUP.yarn) drawStrip(img.yarn, 6, (tick / 6) % 6, PUP.x + 20, PUP.y + 15, 16);
-          const a = PUP.barkT > 0 || PUP.spT > 0 ? 'special' : PUP.anim, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = a === 'special' ? (PUP.spT || PUP.barkT) / 6 : a === 'jump' ? (PUP.st === 'away' ? (PUP.vy < 0 ? 0 : 1) : PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
+          const a = PUP.barkT > 0 || PUP.spT > 0 ? 'special' : PUP.anim, fsp = PUP.skill === 'fetch' && PUP.spT > 0 ? Math.min(3, PUP.spT < 7 ? 0 : PUP.fetch ? 1 + (Math.floor(PUP.spT / 4) % 2) : 3) : null, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = fsp != null ? fsp : a === 'special' ? (PUP.spT || PUP.barkT) / 6 : a === 'jump' ? (PUP.st === 'away' ? (PUP.vy < 0 ? 0 : 1) : PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
           drawStrip(img[`pet_${PUP.id}_${a}`], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
         GM.forEach((g, i) => { if (!g.got) drawStrip(img.gem, 6, (tick / 7.5 + i) % 6, g.x, g.y, 16); });
@@ -559,6 +695,12 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
             const f = e.dead ? e.dead / 7.5 : e.hurt ? (14 - e.hurt) / 7 : e.st === 'tell' ? 0 : e.st === 'lunge' ? (e.t < 16 ? 1 + e.t / 8 : 3) : (tick / 5) % 6; drawStrip(img['w_' + a], EH_WOLF[a], f, e.x, e.y, 32, e.dir < 0); }
           else if (e.kind === 'sprite') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'attack' ? 'attack' : 'fly';
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'attack' ? e.t / 6 : (tick / 7.5) % 4; drawStrip(img['ss_' + a], EH_SSPR[a], f, e.x - 16, e.y - 16, 32, e.face < 0); }
+          else if (e.kind === 'slime') { const a = e.dead ? 'death' : e.frz > 0 ? 'frozen' : e.hurt ? 'hurt' : e.st === 'hop' ? 'hop' : 'idle';
+            const f = e.dead ? e.dead / 6 : a === 'frozen' ? 0 : e.hurt ? (14 - e.hurt) / 7 : a === 'hop' ? e.t / 6 : (tick / 10) % 4; drawStrip(img['sl_' + a], EH_SLIME[a], f, e.x, e.y + (e.hy || 0), 32, e.dir < 0); }
+          else if (e.kind === 'bat') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'hang' ? 'hang' : e.st === 'swoop' ? 'swoop' : 'fly';
+            const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'hang' ? (tick / 20) % 2 : (tick / 5) % 4; drawStrip(img['bt_' + a], EH_BAT[a], f, e.x - 16, e.y - 16, 32, e.dir < 0); }
+          else if (e.kind === 'golem') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.crk > 0 ? 'shell_crack' : e.sh > 60 ? 'shell_up' : e.sh > 0 ? 'shell_hold' : 'walk';
+            const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'shell_crack' ? (24 - e.crk) / 6 : a === 'shell_up' ? (75 - e.sh) / 5 : a === 'shell_hold' ? (tick / 10) % 2 : (tick / 7.5) % 6; drawStrip(img['gl_' + a], EH_GOLEM[a], f, e.x, e.y, 32, e.dir < 0); }
           else if (e.kind === 'frost') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.sh > 60 ? 'shield_up' : e.sh > 0 ? 'shield_hold' : 'walk';
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'shield_up' ? (75 - e.sh) / 5 : a === 'shield_hold' ? (tick / 10) % 2 : (tick / 7.5) % 6; drawStrip(img['fr_' + a], EH_FROST[a], f, e.x, e.y, 32, e.dir < 0); }
           else { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'attack' ? 'attack' : 'idle'; const f = e.dead ? e.dead / 7.5 : e.hurt ? (14 - e.hurt) / 7 : a === 'attack' ? e.t / 6 : (tick / 10) % 4; drawStrip(img['s_' + a], EH_SPORE[a], f, e.x, e.y, 32, e.dir < 0); }
@@ -589,7 +731,20 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           drawStrip(img['b_' + a], EH_BOSS[a], f, BOSS.x, BOSS.y, 96, true);
           BOSS.roots.forEach(r => drawStrip(img.roots, 6, r.t / 5, r.x - 16, 224, 32));
         }
-        ICE.forEach(ic => { if (ic.st === 'gone') return; drawStrip(img.icicle, 5, ic.st === 'hang' ? 0 : ic.st === 'wobble' ? 1 + (Math.floor(ic.t / 6) % 3) : 4, ic.x, ic.y, 16); });
+        BUB.forEach(u => { if (u.out) drawStrip(img.bubble, 4, (u.vy < 0 ? 0 : 2) + (Math.floor(tick / 6) % 2), u.x, u.y, 16); });
+        if (SAL) { let a, f, hide = false;
+          if (SAL.dead) { a = 'defeat'; f = Math.min(5, SAL.dead / 12); }
+          else if (SAL.st === 'hidden') hide = true;
+          else if (SAL.st === 'dive') { a = 'dive'; f = SAL.t / 7.5; }
+          else if (SAL.st === 'surface') { a = 'surface'; f = SAL.t / 7.5; }
+          else if (SAL.st === 'spit') { a = 'spit'; f = SAL.t / 6; }
+          else if (SAL.hurt > 0) { a = 'hurt'; f = SAL.hurt > 5 ? 0 : 1; }
+          else { a = 'idle'; f = (tick / 12) % 4; }
+          if (!hide) drawStrip(img['sa_' + a], EH_SAL[a], f, SAL.x, SAL.y, 64, SAL.dir < 0); }
+        FIREB.forEach(fb => drawStrip(img.salball, 4, (fb.t / 5) % 4, fb.x, fb.y, 16, fb.vx < 0));
+        if (TRAP && TRAP.gate) { const g = TRAP.gate; if (g.st === 'closing') drawStrip(img.cg_closing, 4, g.t / 4, g.x, g.y, 32); else drawStrip(img['cg_' + (g.st === 'closed' ? 'closed' : 'open')], 1, 0, g.x, g.y, 32); }
+        ICE.forEach(ic => { if (ic.st === 'gone') return; if (ic.k === 'rock') drawStrip(img.rock, 4, ic.st === 'hang' ? 0 : ic.st === 'wobble' ? Math.floor(ic.t / 4) % 3 : 3, ic.x, ic.y, 16);
+          else drawStrip(img.icicle, 5, ic.st === 'hang' ? 0 : ic.st === 'wobble' ? 1 + (Math.floor(ic.t / 6) % 3) : 4, ic.x, ic.y, 16); });
         if (YETI) { let a, f;
           if (YETI.dead) { a = 'defeat'; f = YETI.dead < 40 ? YETI.dead / 10 : 4 + (Math.floor(YETI.dead / 12) % 2); }   // sits, sulks, then waves goodbye
           else if (YETI.hurt > 0) { a = 'hurt'; f = YETI.hurt > 5 ? 0 : 1; }
@@ -600,19 +755,23 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         BIGS.forEach(s => drawStrip(img.bigball, 4, (s.t / 6) % 4, s.x, s.y, 32, s.vx < 0));
         if (FW) {
           FW.spots.forEach(x => drawStrip(img.warn_frost, 4, (tick / 7.5) % 4, x - 16, GROUND_Y - 32, 32));
+          FW.waves.forEach(v => drawStrip(img.lava_wave, 6, (v.t / 5) % 6, v.x, GROUND_Y - 32, 64, true));
+          FW.rain.forEach(r => drawStrip(img.magma, 4, (tick / 6) % 4, r.x - 8, r.y, 16));
           let a, f;
           if (FW.dead) { a = 'death'; f = FW.dead / 7.5; }
           else if (FW.st === 'telegraph') { a = 'telegraph'; f = (FW.t / 15) % 4; }
-          else if (FW.st === 'spikes') { a = 'attack_spikes'; f = FW.t / 6; }
-          else if (FW.st === 'breath') { a = 'attack_breath'; f = FW.t / 7.5; }
+          else if (FW.st === 'spikes') { a = MC ? 'attack_slam' : 'attack_spikes'; f = FW.t / 6; }
+          else if (FW.st === 'breath') { a = MC ? 'attack_rain' : 'attack_breath'; f = FW.t / 7.5; }
           else if (FW.hurt > 0) { a = 'hurt'; f = FW.hurt > 5 ? 0 : 1; }
           else { a = 'idle'; f = (tick / 12) % 4; }
-          drawStrip(img['fw_' + a], EH_FW[a], f, FW.x, FW.y, 96, true);
-          if (FW.dead > 60 && img.scarf) drawStrip(img.scarf, 1, 0, FW.x + 32, FW.y + 60 + Math.round(Math.sin(tick / 15) * 2), img.scarf.width);   // Baba's red scarf on the ice pile
+          drawStrip(img['fw_' + a], (MC ? EH_MC : EH_FW)[a], f, FW.x, FW.y, 96, true);
+          if (FW.dead > 60 && img.scarf) drawStrip(img.scarf, 1, 0, FW.x + (MC ? 40 : 32), FW.y + 60 + Math.round(Math.sin(tick / 15) * 2), img.scarf.width);   // Baba's red scarf on the ice pile
           FW.spikes.forEach(k => { if (k.t >= 0) drawStrip(img.ice_spike, 6, k.t / 5, k.x - 16, GROUND_Y - 64, 32); });
           if (FW.breath && img.breath) { const m = fwMouth(); ctx.save(); ctx.translate(m.x, m.y); ctx.rotate(-FW_ANG); ctx.scale(-1, 1);
             const bf = Math.min(5, Math.floor(FW.breath.t / 6)); ctx.drawImage(img.breath, bf * 96, 0, 96, 32, 0, -16, 96, 32); ctx.restore(); }
         }
+        if (TRAP && TRAP.lavaY < 380 && img.rlava) { const ly = Math.round(TRAP.lavaY), lf = Math.floor(tick / 8) % 4;   // the rising lava, over everything in the trap room
+          ctx.drawImage(img.rlava, lf * 640, 0, 640, 32, TRAP.x0, ly, 640, 32); for (let y = ly + 32; y < 360; y += 32) ctx.drawImage(img.rlava_body, TRAP.x0, y); }
         const CUR = ROSTER[H.hero], hkey = CUR.kid ? CUR.id : 'k_' + CUR.el;
         let a, f;
         if (H.dead) { a = 'death'; f = H.dead / 8; }
@@ -638,7 +797,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         if (H.swapT > 0) { ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; const nm = CUR.name.toUpperCase(), sx = Math.round(H.x - cam + 16), sy = Math.round(H.y - 6);
           ctx.fillStyle = '#0d0b14'; ctx.fillText(nm, sx + 1, sy + 1); ctx.fillStyle = '#ffc23d'; ctx.fillText(nm, sx, sy); }
         // boss bar (ui_bossbar_frame: fill area x 20, y 4, w 184, h 8)
-        const bb = eldFight || (ELD && ELD.dead && ELD.dead < 40) ? ELD : yetiFight || (YETI && YETI.dead && YETI.dead < 40) ? YETI : BOSS && BOSS.awake && BOSS.dead < 40 ? BOSS : FW && FW.awake && FW.dead < 40 ? FW : null;
+        const bb = eldFight || (ELD && ELD.dead && ELD.dead < 40) ? ELD : salFight || (SAL && SAL.dead && SAL.dead < 40) ? SAL : yetiFight || (YETI && YETI.dead && YETI.dead < 40) ? YETI : BOSS && BOSS.awake && BOSS.dead < 40 ? BOSS : FW && FW.awake && FW.dead < 40 ? FW : null;
         if (bb && img.bar_frame) {
           const fx0 = 320 - 104, fy0 = 34, fw = Math.round(184 * Math.max(0, bb.hp) / bb.max);
           ctx.drawImage(img.bar_frame, fx0, fy0);

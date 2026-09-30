@@ -16,10 +16,10 @@ const CAST = {
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
-const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
+const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
 // sprite-based portraits for characters that already have art
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
-const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden',
+const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
 // PORTRAIT_SKIP can stand a mood in for one that needs redrawing, e.g. { 'vasilije|ali': 'neutral' }
 const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = {}, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
@@ -132,6 +132,61 @@ const EH_DIALOGUE = {
     { who: 'kosta', text: "It's cracking! Katarina, this one's yours!" },
     { who: 'vasilije', mood: 'happy', text: 'Go on, Katarina!' },
   ],
+  // ---- Level 3 · Cinderdeep Caves (Vasilije)
+  l3_start: [
+    { who: 'vasilije', mood: 'happy', text: 'Captain Vasilije, going in!' },
+    { who: 'kosta', mood: 'ali', text: 'Nobody voted for you!' },
+    { who: 'vasilije', mood: 'happy', text: "And now I've got ICE. In a lava cave. Perfect." },
+    { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
+  ],
+  l3_fox: [
+    { who: 'vasilije', mood: 'happy', text: "An ORANGE fox. That's MY fox." },
+    { who: 'katarina', text: 'Red foxes are actually orange, you know.' },
+    { who: 'vasilije', mood: 'happy', text: 'Best colour.' },
+    { who: 'katarina', mood: 'ali', text: "It's so hot down here. Like an oven. …Now I'm thinking about cookies. I'm hungry." },
+  ],
+  l3_lava: [
+    { who: 'katarina', mood: 'ali', text: 'Lava! Nobody can cross that.' },
+    { who: 'vasilije', mood: 'happy', text: 'Nobody? Watch this. Ice freezes lava!' },
+    { who: 'kosta', text: 'Shoot across the lava, Vasilije. Then run over it before it melts!' },
+  ],
+  l3_knight_fire: [
+    { who: 'cinder', text: 'Your fire is young, but it burns true.' },
+    { who: 'katarina', mood: 'happy', text: 'Thanks! Can you teach me to make it bigger?' },
+    { who: 'cinder', text: 'Patience, little flame.' },
+  ],
+  l3_knight_lightning: [
+    { who: 'jolt', text: 'Finally, some SPEED around here!' },
+    { who: 'vasilije', mood: 'happy', text: 'Finally, someone gets it!' },
+  ],
+  l3_trap: [
+    { who: 'vasilije', mood: 'ali', text: '…Guys? GUYS?' },
+    { who: 'vasilije', mood: 'ali', text: "The lava's rising! I have to climb. Alone." },
+  ],
+  l3_trap_after: [
+    { who: 'kosta', mood: 'happy', text: 'Need a hand?' },
+    { who: 'vasilije', text: '…Maybe we need everybody.' },
+    { who: 'kosta', text: 'Maybe.' },
+    { who: 'katarina', mood: 'happy', text: 'Your fox ran all the way back to get us. Smart fox.' },
+  ],
+  l3_salamander: [
+    { who: 'salamander', text: 'Hsss… who is splashing in MY lava?' },
+    { who: 'vasilije', text: "Sorry! We're just passing through!" },
+    { who: 'katarina', text: "It's not mean, it's sleepy. Hit it when it comes up, and dodge the fireballs!" },
+  ],
+  l3_salamander_bye: [
+    { who: 'salamander', mood: 'sleepy', text: 'Yaaawn… fine… go… I need a nap…' },
+    { who: 'dimitrije', mood: 'happy', text: 'Sweet dreams!' },
+  ],
+  l3_colossus: [
+    { who: 'colossus', text: "The Keeper warms Mrak's halls now. You're too late." },
+    { who: 'vasilije', text: "Not while I've got ice. Everyone, together!" },
+    { who: 'kosta', mood: 'happy', text: 'Hit the glowing core, Vasilije!' },
+  ],
+  l3_finish: [
+    { who: 'kosta', text: "It's cooling down! Vasilije, this one's yours!" },
+    { who: 'vasilije', mood: 'happy', text: "That's for Baba!" },
+  ],
 };
 const EH_NOTES = {
   l1: {
@@ -156,6 +211,16 @@ EH_NOTES.l2 = {
     { who: 'dimitrije', mood: 'happy', text: 'I saved one cookie. We can share it.' },
     { who: 'vasilije', mood: 'ali', text: 'Ali Vera! A hot place? I’m going first!' },
     { who: 'kosta', mood: 'ali', text: 'Vasilije! She said do NOT run in first!' },
+  ],
+};
+EH_NOTES.l3 = {
+  item: 'the family photo, all four of you in it', itemImg: 'sprites/items/item_baba_family_photo.png',
+  lines: ['Vasilije, I am proud of you.', 'Kosta, it is dark where I am now. You will know what to do.', 'Make your bed before you come.', 'And you two, stop fighting over who is captain.'],
+  replies: [
+    { who: 'kosta', mood: 'ali', text: 'Ali Vera…' },
+    { who: 'vasilije', text: "…Maybe we don't need a captain. Whoever's level it is, leads." },
+    { who: 'kosta', mood: 'happy', text: "Deal. And the next one's mine." },
+    { who: 'vasilije', mood: 'happy', text: "I know. I've got your back." },
   ],
 };
 const INTRO_NOTE = ['Mrak has taken me. Don’t be scared.', 'Each stone holds an element. It will give you the power to fight the monsters ahead.', 'Follow my red yarn and bring me home before midnight.',
