@@ -210,6 +210,20 @@ const EH_SR = {
   "…Maybe we don't need a captain. Whoever's level it is, leads.": '…Možda nam ne treba kapiten. Čiji je nivo, taj vodi.',
   "Deal. And the next one's mine.": 'Važi. A sledeći je moj.',
   "I know. I've got your back.": 'Znam. Ja ću ti čuvati leđa.',
+  // ---- ending
+  'I only wanted… somewhere warm.': 'Samo sam hteo… neko toplo mesto.',
+  "Then come home with us. It's New Year's Eve. Nobody should be alone tonight.": 'Onda pođi kući sa nama. Novogodišnje je veče. Niko ne treba da bude sam večeras.',
+  "No 'ali'. Wash your hands. There are cookies.": 'Nema „ali“. Operi ruke. Ima kolačića.',
+  'HE SAID IT!': 'REKAO JE!',
+  '(mouth full) Finally. I was SO hungry.': '(punih usta) Konačno. Bila sam TAKO gladna.',
+  'Did you wash your hands?': 'Jesi li oprala ruke?',
+  '…Ali Vera.': '…Ali Vera.',
+  'Make your beds before you sleep!': 'Namestite krevete pre spavanja!',
+  '(already in bed) Night, Baba.': '(već u krevetu) Laku noć, baba.',
+  'FROM THE MAKERS OF': 'OD AUTORA FILMA',
+  'DIRECTED BY': 'REŽIJA',
+  'KONSTANTIN, KATARINA,': 'KONSTANTIN, KATARINA,',
+  'VASILIJE AND DIMITRIJE': 'VASILIJE I DIMITRIJE',
 };
 function T(s) { return window.EH_LANG === 'sr' && s != null && EH_SR[s] != null ? EH_SR[s] : s; }
 // in-game hints drawn on the canvas (they need the right grammatical case in Serbian)
