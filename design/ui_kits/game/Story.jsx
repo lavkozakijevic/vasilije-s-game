@@ -256,10 +256,10 @@ function DialogueRunner({ lines, onDone }) {
   useStoryKeys(code => (code === 'Escape' ? onDone() : next()));
   return <div style={{ position: 'absolute', inset: 0 }} onClick={next}><DialogueBox line={line} shown={shown} done={done} interactive /></div>;
 }
-// ui_note_paper.png is 320x200 (shown 2x): 36px red margin, ruled lines 16px apart from y 30
+// ui_note_paper.png is 320x200 (shown 2x): 36px red margin, ruled lines 16px apart from y 46 (measured; its README says 30)
 function BabaNote({ lines, style }) {
   return (
-    <div style={{ width: 640, height: 400, boxSizing: 'border-box', padding: '34px 36px 0 80px', background: `url(${EHS_A}ui/ui_note_paper.png) 0 0 / 640px 400px no-repeat`, imageRendering: 'pixelated',
+    <div style={{ width: 640, height: 400, boxSizing: 'border-box', padding: '66px 36px 0 80px', background: `url(${EHS_A}ui/ui_note_paper.png) 0 0 / 640px 400px no-repeat`, imageRendering: 'pixelated',
       fontFamily: 'var(--font-body)', fontSize: 23, lineHeight: '32px', color: PAL.ink, ...style }}>
       {lines.map((l, i) => <div key={i}>{l}</div>)}
       <div style={{ textAlign: 'right', color: PAL.ember }}>— Baba</div>
