@@ -1,0 +1,7 @@
+/* Grid: 32px tiles, 32x32 characters, 640x360 game view scaled by integer --scale. --px is one art pixel on screen. */
+:root{
+--tile:32px;--frame:32px;--view-w:640px;--view-h:360px;
+--scale:3; /* @kind other */--px:3px;
+--space-1:3px;--space-2:6px;--space-3:12px;--space-4:18px;--space-5:24px;--space-6:36px;--space-7:48px;--space-8:72px;
+--radius:0;
+}
