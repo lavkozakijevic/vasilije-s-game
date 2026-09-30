@@ -24,8 +24,8 @@ const EH_POWER = {
 };
 const EH_COUSINS = [
   { id: 'konstantin', el: 'light', name: 'Kosta', kid: true },
-  { id: 'katarina',   el: 'ice',   name: 'Katarina', kid: true },
-  { id: 'vasilije',   el: 'fire',  name: 'Vasilije', kid: true },
+  { id: 'katarina',   el: 'fire',  name: 'Katarina', kid: true },
+  { id: 'vasilije',   el: 'ice',   name: 'Vasilije', kid: true },
   { id: 'dimitrije',  el: 'air',   name: 'Dimitrije', kid: true },
 ];
 const EH_KNIGHTS = { fire: 'Cinder', water: 'Brine', earth: 'Basalt', air: 'Wisp', ice: 'Rime', lightning: 'Jolt', shadow: 'Umbra', light: 'Aurel' };

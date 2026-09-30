@@ -11,8 +11,8 @@ const PAL = { ink: '#0d0b14', plum: '#2a2233', slate: '#4a3f55', stone: '#8a7f8e
 // ---------------------------------------------------------------- cast
 const CAST = {
   kosta:     { name: 'Kosta',     hair: PAL.bark,  hairLo: PAL.plum,  shirt: PAL.stone, shirtLo: PAL.slate, legs: PAL.slate, gem: PAL.gold,  h: 22, style: 'short', sleeves: 'long',  pants: 'long' },
-  katarina:  { name: 'Katarina',  hair: PAL.gold,  hairLo: PAL.amber, shirt: PAL.frost, shirtLo: PAL.tide,  legs: PAL.slate, gem: PAL.frost, h: 20, style: 'long',  sleeves: 'short', pants: 'long' },
-  vasilije:  { name: 'Vasilije',  hair: PAL.amber, hairLo: PAL.bark,  shirt: PAL.flame, shirtLo: PAL.ember, legs: PAL.plum,  gem: PAL.flame, h: 18, style: 'messy', sleeves: 'short', pants: 'long' },
+  katarina:  { name: 'Katarina',  hair: PAL.gold,  hairLo: PAL.amber, shirt: PAL.frost, shirtLo: PAL.tide,  legs: PAL.slate, gem: PAL.flame, h: 20, style: 'long',  sleeves: 'short', pants: 'long' },
+  vasilije:  { name: 'Vasilije',  hair: PAL.amber, hairLo: PAL.bark,  shirt: PAL.flame, shirtLo: PAL.ember, legs: PAL.plum,  gem: PAL.frost, h: 18, style: 'messy', sleeves: 'short', pants: 'long' },
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
@@ -21,7 +21,8 @@ const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba:
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
 const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
-const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
+// vasilije's 'ali vera' portrait has both fists up; until Claude Design redraws it he uses his neutral face
+const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = { 'vasilije|ali': 'neutral' }, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing' };
 const SPRITE_PORTRAIT = {
   elder:        { src: 'sprites/bosses/forest/elder_rotroot/boss_rotroot_idle.png', crop: [6, 2, 52, 52] },
   blightwarden: { src: 'sprites/bosses/forest/blightwarden/boss_blightwarden_idle.png', crop: [18, 4, 64, 64] },
@@ -81,6 +82,8 @@ const EH_DIALOGUE = {
   l2_start: [
     { who: 'vasilije', mood: 'ali', text: "It's FREEZING." },
     { who: 'katarina', text: 'Told you. Socks.' },
+    { who: 'vasilije', mood: 'ali', text: 'Easy for you. Your stone is fire. Mine is ICE. Up here!' },
+    { who: 'katarina', mood: 'happy', text: "Wait till the caves. You'll love yours down there." },
     { who: 'kosta', mood: 'happy', text: 'Katarina, you know the most about mountains. You lead this one.' },
     { who: 'vasilije', text: "Fine. But I'm second." },
     { who: 'katarina', mood: 'happy', text: 'Deal. And careful on the shiny ice. You slide.' },
@@ -122,7 +125,7 @@ const EH_DIALOGUE = {
   l2_warden: [
     { who: 'warden', text: 'Turn back, little ones, or freeze where you stand.' },
     { who: 'katarina', text: '(flipping through her sketchbook) Wait. I drew him earlier. See the crack in his chest? That’s the weak spot!' },
-    { who: 'kosta', mood: 'happy', text: 'Hit the crack when it glows!' },
+    { who: 'kosta', mood: 'happy', text: 'Hit the crack when it glows! Fire melts ice, Katarina!' },
     { who: 'vasilije', mood: 'happy', text: 'You heard her!' },
   ],
   l2_finish: [
@@ -268,6 +271,7 @@ function ehPortrait(who, mood = 'neutral') {
 // preloaded at start-up, so switching speakers shows the real art at once instead of flashing the stand-in.
 const ehPortraitCache = {};
 function ehResolvePortrait(who, mood) {
+  if (PORTRAIT_SKIP[who + '|' + mood]) mood = PORTRAIT_SKIP[who + '|' + mood];
   const key = who + '|' + mood, f = PORTRAIT_FILE[who];
   if (!ehPortraitCache[key]) ehPortraitCache[key] = !f ? Promise.resolve('missing') : new Promise(done => {
     const tries = [...new Set([PORTRAIT_MOOD[mood] || mood, PORTRAIT_DEFAULT[who] || 'neutral'])].map(m => EHS_A + `ui/portraits/portrait_${f}_${m}.png`);
@@ -283,7 +287,7 @@ function ehPreloadPortraits() {
 }
 function Portrait({ who, mood = 'neutral', size = 128 }) {
   const ref = React.useRef(null);
-  const known = () => { const p = ehPortraitCache[who + '|' + mood]; return p && p.result; };
+  const known = () => { const p = ehPortraitCache[who + '|' + (PORTRAIT_SKIP[who + '|' + mood] || mood)]; return p && p.result; };
   const [res, setRes] = React.useState(known);   // undefined = still loading, Image = real art, 'missing' = use the stand-in
   React.useEffect(() => { let on = true; const k = known(); setRes(k); if (!k) ehResolvePortrait(who, mood).then(r => on && setRes(r)); return () => { on = false; }; }, [who, mood]);
   const stand = res === 'missing' || (!PORTRAIT_FILE[who] && SPRITE_PORTRAIT[who]);

@@ -38,8 +38,8 @@ The players are the real kids, so nobody is ever the butt of the joke. Teasing s
 | | Star of | Age | Element | Companion | Looks | Personality |
 |---|---|---|---|---|---|---|
 | **Konstantin (Kosta)** | Level 4 · The Hollow Keep | 13 | **Light**: Aurel's powers (the halo) | Golden eagle | Brown hair, sweatshirt and sweatpants | The eldest. Thinks the oldest should be captain. Competes with Vasilije. Learns to share the lead. |
-| **Katarina** | Level 2 · The Frostfang Peaks | 11 | **Ice**: Rime's powers | Cheetah | Golden hair, t-shirt and sweatpants, carries a sketchbook | The smartest. Knows everything about animals, explores, researches, draws everything she sees. |
-| **Vasilije** | Level 3 · Cinderdeep Caves | 9 | **Fire**: Cinder's powers | Fire fox (orange) | Dark golden hair, **orange** clothes | Bold, fast, always first in. Wants to be captain. Loves orange and foxes. |
+| **Katarina** | Level 2 · The Frostfang Peaks | 11 | **Fire**: Cinder's powers | Cheetah | Golden hair, t-shirt and sweatpants, carries a sketchbook | The smartest. Knows everything about animals, explores, researches, draws everything she sees. |
+| **Vasilije** | Level 3 · Cinderdeep Caves | 9 | **Ice**: Rime's powers | Fire fox (orange) | Dark golden hair, **orange** clothes | Bold, fast, always first in. Wants to be captain. Loves orange and foxes. |
 | **Dimitrije** | Level 1 · The Whispering Forest | 7 | **Air**: Wisp's powers | Puppy | Blond hair, t-shirt and shorts | The youngest and most agile. Works hard, never complains: "Okej." |
 
 **Companions** join in their child's level and follow that child from then on. Only their own child can befriend them. When the player switches to a different hero, the pet runs off the left of the screen, and it comes back when its child is picked again:
@@ -170,6 +170,8 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Start**
 - **Vasilije:** "It's FREEZING."
 - **Katarina:** "Told you. Socks."
+- **Vasilije:** "Easy for you. Your stone is fire. Mine is ICE. Up here!"
+- **Katarina:** "Wait till the caves. You'll love yours down there."
 
 **Companion: the cheetah.** A cheetah, lost in the snow, is shivering behind a rock, a long way from home. Mrak's wardens must have brought it here.
 - **Katarina:** "A cheetah? Up HERE? You must be freezing."
@@ -218,7 +220,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 - **Kosta:** "Maybe."
 
 **Knights**
-- **Cinder:** "Your fire is young, but it burns true."
+- **Cinder** *(to Katarina)*: "Your fire is young, but it burns true."
 - **Jolt:** "Finally, some SPEED around here!"
 
 **Magma Colossus**
