@@ -201,7 +201,7 @@ const EH_SR = {
   'Hit the glowing core, Vasilije!': 'Gađaj užareno jezgro, Vasilije!',
   "It's cooling down! Vasilije, this one's yours!": 'Hladi se! Vasilije, ovaj je tvoj!',
   "That's for Baba!": 'Ovo je za babu!',
-  'the family photo, all four of you in it': 'porodična fotografija, na kojoj ste sva četvoro',
+  'the family photo, all four of you in it': 'porodična fotografija, na kojoj ste svo četvoro',
   'Vasilije, I am proud of you.': 'Vasilije, ponosna sam na tebe.',
   'Kosta, it is dark where I am now. You will know what to do.': 'Kosta, mračno je tu gde sam sada. Znaćeš šta treba da radiš.',
   'Make your bed before you come.': 'Namesti krevet pre nego što kreneš.',
