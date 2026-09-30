@@ -45,6 +45,9 @@ const EH_DIALOGUE = {
   l1_blight: [
     { who: 'vasilije', mood: 'ali', text: 'My legs are dead. How are you not tired?' },
     { who: 'dimitrije', mood: 'happy', text: 'Football. Every day.' },
+    { who: 'katarina', mood: 'ali', text: "I'm not tired. I'm just hungry." },
+    { who: 'kosta', mood: 'happy', text: "You're always hungry." },
+    { who: 'katarina', text: 'Exactly. So let’s find Baba. She has the cookies.' },
     { who: 'kosta', mood: 'happy', text: 'You were right back there, Mita. Lead the way.' },
     { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
     { who: 'blightwarden', text: "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains." },
@@ -57,7 +60,7 @@ const EH_NOTES = {
     lines: ['Dimitrije, well done, my fast boy.', 'Katarina, it is cold where they are taking me.', 'Put on your socks. The warm ones.'],
     replies: [
       { who: 'katarina', mood: 'ali', text: 'Ali Vera! The warm ones are so itchy…' },
-      { who: 'dimitrije', mood: 'happy', text: 'I packed extra. Here.' },
+      { who: 'dimitrije', mood: 'happy', text: 'I packed extra soft ones. Here.' },
       { who: 'vasilije', mood: 'happy', text: 'Mita, you were right. We were arguing and you just… went.' },
       { who: 'kosta', mood: 'happy', text: 'Yeah. Less arguing, more going. Good leading, Mita.' },
       { who: 'dimitrije', mood: 'happy', text: 'Thanks. Now let’s go get Baba.' },
@@ -69,7 +72,8 @@ const INTRO_NOTE = ['Mrak has taken me. Don’t be scared.', 'Each of you has a 
 // scene: duration (s) and timed lines { at, who, mood, text } ; who null = narration caption
 const INTRO = [
   { d: 6,  lines: [{ at: 1.0, who: null, text: "New Year's Eve, at Baba Vera's." }] },
-  { d: 8,  lines: [{ at: 1.0, who: 'baba', mood: 'stern', text: 'Wash your hands before you eat!' }, { at: 3.4, who: 'all', text: 'Ali Veraaa!' }, { at: 5.6, who: 'dimitrije', mood: 'happy', text: 'Already did.' }] },
+  { d: 9,  lines: [{ at: 0.6, who: 'katarina', mood: 'happy', text: "Baba, can I have a cookie? I'm SO hungry." }, { at: 2.6, who: 'baba', mood: 'stern', text: 'Wash your hands before you eat!' },
+                   { at: 4.8, who: 'all', text: 'Ali Veraaa!' }, { at: 6.8, who: 'dimitrije', mood: 'happy', text: 'Already did.' }] },
   { d: 8,  lines: [{ at: 0.8, who: 'baba', mood: 'stern', text: 'And pick up your toys. All of them.' }, { at: 3.2, who: 'vasilije', mood: 'ali', text: "They're Kosta's toys!" }, { at: 5.4, who: 'kosta', mood: 'ali', text: 'Half of them are YOURS.' }] },
   { d: 7,  lines: [] },
   { d: 5,  lines: [{ at: 2.2, who: 'baba', mood: 'worried', text: 'Children—!' }] },
@@ -304,11 +308,11 @@ function IntroCutscene({ onDone }) {
     const scenes = [
       t => { forest(t * 20); house(470 - t * 5, 230, t); snow(t); },
       t => { kitchen(); table(150, 250); cookies(200, 250);
-        const e = Math.min(1, Math.max(0, (t - 0.4) / 1.6)), hop = t > 3.6 && t < 4.4 ? -Math.abs(Math.sin((t - 3.6) * 8)) * 10 : 0;
+        const e = Math.min(1, Math.max(0, (t - 0.4) / 1.6)), hop = t > 4.8 && t < 5.6 ? -Math.abs(Math.sin((t - 4.8) * 8)) * 10 : 0;
         const tx = [150, 205, 255, 300], xs = tx.map((x, i) => -60 + (x + 60) * e);
-        if (t > 5.6) xs[3] = Math.max(60, 300 - (t - 5.6) * 160);
-        KIDS.forEach((k, i) => fig(ehKidFigure(k, e < 1 || (i === 3 && t > 5.6 && xs[3] > 60) ? 1 + Math.floor(t * 8) % 2 : 0), xs[i], 300 + hop, 3, i === 3 && t > 5.6));
-        fig(ehBabaFigure(t > 1 && t < 3 && Math.floor(t * 4) % 2 ? 1 : 0), 420, 300, 3, true); cookies(404, 236 - (t < 1 ? t * 10 : 10)); },
+        if (t > 6.8) xs[3] = Math.max(60, 300 - (t - 6.8) * 160);
+        KIDS.forEach((k, i) => fig(ehKidFigure(k, e < 1 || (i === 3 && t > 6.8 && xs[3] > 60) ? 1 + Math.floor(t * 8) % 2 : 0), xs[i], 300 + hop, 3, i === 3 && t > 6.8));
+        fig(ehBabaFigure(t > 2.6 && t < 4.6 && Math.floor(t * 4) % 2 ? 1 : 0), 420, 300, 3, true); cookies(404, 236 - (t < 1 ? t * 10 : 10)); },
       t => { R(PAL.plum, 0, 0, 640, 360); R(PAL.slate, 0, 0, 640, 12); R(PAL.moss, 0, 300, 640, 140); R(PAL.pine, 120, 300, 400, 40);
         R(PAL.ink, 80, 70, 64, 92); R(PAL.ember, 84, 74, 56, 84); g.fillStyle = PAL.gold; g.font = '8px Silkscreen, monospace'; g.textAlign = 'center';
         ['THE RISE', 'OF THE', 'KARATE', 'BADASS'].forEach((w, i) => g.fillText(w, 112, 96 + i * 14)); R(PAL.bone, 100, 144, 24, 2);

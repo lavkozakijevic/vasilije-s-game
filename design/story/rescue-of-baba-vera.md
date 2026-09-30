@@ -26,6 +26,7 @@ The players are the real kids, so nobody is ever the butt of the joke. Teasing s
   - *pick up your toys*
 - **"Ali Vera!"** ("But Vera!") The kids complain every time.
 - **Dimitrije gets on with it.** He rarely complains and is usually already doing what Baba asked. His "Okej" is saved for the moments that count.
+- **Katarina is always hungry.** She says it at least once a level, usually at the worst possible moment, and her answer to everything is "let's find Baba, she has the cookies."
 - **Kosta and Vasilije** argue about who should be captain. Nobody is captain yet; the team hasn't decided. The story's answer, which the kids reach on their own by level 3: whoever's level it is leads, and in the end they don't need a captain at all.
 
 ---
@@ -90,7 +91,7 @@ About 70 seconds. It plays automatically on START. A **SKIP ▶** button appears
 | # | Time | Scene | Text |
 |---|---|---|---|
 | 1 | 0–6s | Night. Snowy village, one warm glowing house at the forest's edge. Slow pan. | *New Year's Eve, at Baba Vera's.* |
-| 2 | 6–14s | Kitchen. Baba Vera pulls a tray of cookies out of the oven. The four kids pile in. | **Baba:** "Wash your hands before you eat!" · **Kids:** "Ali Veraaa!" · **Dimitrije:** "Already did." *(he's already at the sink)* |
+| 2 | 6–15s | Kitchen. Baba Vera pulls a tray of cookies out of the oven. The four kids pile in. | **Katarina:** "Baba, can I have a cookie? I'm SO hungry." · **Baba:** "Wash your hands before you eat!" · **Kids:** "Ali Veraaa!" · **Dimitrije:** "Already did." *(he's already at the sink)* |
 | 3 | 14–21s | Living room: toys everywhere, a football, a phone on a tripod (they're filming). Poster on the wall: *The Rise of the Karate Badass.* | **Baba:** "And pick up your toys. All of them." · **Vasilije:** "They're Kosta's toys!" · **Kosta:** "Half of them are YOURS." |
 | 4 | 21–28s | Window. Storm clouds roll in and a huge shadow with a crown of thorns rises over the forest. Two cold eyes open. | |
 | 5 | 28–33s | The lights flicker… and go out. Black screen. | **Baba (off-screen):** "Children—!" |
@@ -143,6 +144,9 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Before the Blightwarden**
 - **Vasilije:** "My legs are dead. How are you not tired?"
 - **Dimitrije:** "Football. Every day."
+- **Katarina:** "I'm not tired. I'm just hungry."
+- **Kosta:** "You're always hungry."
+- **Katarina:** "Exactly. So let's find Baba. She has the cookies."
 - **Kosta:** "You were right back there, Mita. Lead the way."
 - **Dimitrije:** "Okej."
 - **Blightwarden:** "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains."
@@ -157,7 +161,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 > — Baba
 
 - **Katarina:** "Ali Vera! The warm ones are so itchy…"
-- **Dimitrije:** "I packed extra. Here."
+- **Dimitrije:** "I packed extra soft ones. Here."
 - **Vasilije:** "Mita, you were right. We were arguing and you just… went."
 - **Kosta:** "Yeah. Less arguing, more going. Good leading, Mita."
 - **Dimitrije:** "Thanks. Now let's go get Baba."
@@ -170,7 +174,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Companion: the snow leopard**
 - **Katarina:** "A snow leopard! They can't roar, you know. They chuff. …Hello, you." *(chuff)*
 - **Kosta:** "How do you know everything?"
-- **Katarina:** "I read."
+- **Katarina:** "I read." *(pause)* "Snow leopards can go a week between meals. I can't even go an hour. I'm hungry."
 
 **Knights**
 - **Rime:** "Ice keeps what it loves. I will keep you safe."
@@ -200,6 +204,7 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 - **Vasilije:** "An ORANGE fox. That's MY fox."
 - **Katarina:** "Red foxes are actually orange, you know."
 - **Vasilije:** "Best colour."
+- **Katarina:** "It's so hot down here. Like an oven. …Now I'm thinking about cookies. I'm hungry."
 
 **The trap.** Vasilije charges ahead alone, a gate slams, and lava starts rising.
 - **Vasilije:** "…Guys? GUYS?"
@@ -231,6 +236,8 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Start.** The keep sits on top of a sheer cliff. A golden eagle lands in front of Kosta.
 - **Katarina:** "A golden eagle! Their wingspan is over two metres!"
 - **Kosta:** "Hold on, everyone." *(the eagle carries them up)*
+- **Katarina:** *(mid-air)* "When we get Baba back, I'm eating ALL the cookies."
+- **Vasilije, Kosta and Dimitrije:** "Ali Katarina!"
 
 **Knights**
 - **Aurel:** "Light finds the lost. Lead on, Konstantin."
@@ -265,6 +272,9 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
    - **Baba:** "No 'ali'. Wash your hands. There are cookies."
    - **All four:** "HE SAID IT!"
 2. Baba's kitchen: warm and crowded. Four kids, Baba, three wardens squeezed at the table, the four animals, and Mrak at the end with a cookie.
+   - **Katarina:** *(mouth full)* "Finally. I was SO hungry."
+   - **Baba:** "Did you wash your hands?"
+   - **Katarina:** "…Ali Vera."
 3. Midnight. Fireworks over the snowy yard. The kids play football, and Mrak is in goal (badly).
    - **Baba:** "Make your beds before you sleep!"
    - **All:** "Ali Veraaa!"
