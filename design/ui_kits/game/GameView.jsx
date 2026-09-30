@@ -40,7 +40,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
-      const map = await (await fetch(EHA + 'maps/forest_mock.tmj')).json();
+      const map = await (await fetch(EHA + 'maps/forest_mock.tmj', { cache: 'no-cache' })).json();
       // tile layers: ids (-1 = empty) plus horizontal-flip flags (Tiled keeps flips in the gid's top bits)
       const L = n => { const l = map.layers.find(l => l.name === n); if (!l) return null; return { id: l.data.map(g => (g % 0x20000000) - 1), flip: l.data.map(g => g >= 0x80000000) }; };
       const GL = L('ground'), DBL = L('decor_back'), DL = L('decor'), FGL = L('foreground'), ground = GL.id;
@@ -156,7 +156,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           const L1 = keys.ArrowLeft || keys.KeyA, R1 = keys.ArrowRight || keys.KeyD;
           if (H.hurtT <= 0) { H.vx = (R1 ? 1.8 : 0) - (L1 ? 1.8 : 0); if (H.vx) H.face = Math.sign(H.vx); if (H.attackT > 0 && H.ground) H.vx *= 0.3; }
           if (jumpBuf > 0) jumpBuf--;
-          if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
+          if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; H.jumpT = tick; H.jumpV = -8.3; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
           if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0) { H.attackT = 24; H.fired = false; }
           if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
           if (wantHero >= 0 && wantHero < ROSTER.length && wantHero !== H.hero) { H.hero = wantHero; H.swapT = 40; H.attackT = 0; fx('i_' + ROSTER[wantHero].el, 4, 12, H.x, H.y, 32); }
@@ -183,7 +183,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             const row = Math.floor((H.y + 33) / 32) * MW;
             for (const px of [H.x + 12, H.x + 16, H.x + 20]) { const i = row + Math.floor(px / 32), id = ground[i];
               // bounce mushroom: the tileset says 2x jump velocity, which would fly off the top of the 360px view, so it's ~1.45x (about 6 tiles)
-              if (id >= 63 && id <= 67) { H.vy = -12; H.ground = false; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
+              if (id >= 63 && id <= 67) { H.vy = -12; H.ground = false; H.jumpT = tick; H.jumpV = -12; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
               if (id >= 56 && id <= 58 && crumble[i] == null) crumble[i] = 0; } }
           else { H.y = ny; H.ground = false; }
           if (H.vy < 0 && EH_SOLID.has(tileAt(H.x + 16, H.y + 8))) { H.vy = 0; }
@@ -211,24 +211,44 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         ST.forEach(s => { if (s.wakeT < 0 || s.woke) return; if (++s.wakeT >= 36) { s.woke = true;
           ROSTER.push({ id: 'k_' + s.el, el: s.el, name: EH_KNIGHTS[s.el], kid: false }); fx('i_' + s.el, 4, 12, s.x, s.y, 32);
           say(`${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story('l1_knight_' + s.el); } });
+        // the puppy runs on the ground like the heroes: gravity, landing, hops over walls and pits (the eagle will just fly)
+        const pupStep = (vx, wantUp, dropDown) => {
+          const land = y => { const ty = Math.floor((y + 32) / 32); for (const t of [ty, ty + 1]) { const g = surface(PUP.x + 16, t); if (g == null || (dropDown && EH_PLAT.has(tileAt(PUP.x + 16, t * 32)))) continue; if (y + 32 >= g - 1 && y + 32 <= g + 8) return g; } return null; };
+          const d = Math.sign(vx), ax = d < 0 ? PUP.x + 6 : PUP.x + 26;
+          if (vx && !EH_SOLID.has(tileAt(ax + vx, PUP.y + 20)) && !EH_SOLID.has(tileAt(ax + vx, PUP.y + 6))) PUP.x += vx;
+          const g0 = PUP.vy >= 0 ? land(PUP.y) : null; PUP.gr = g0 != null;
+          if (PUP.gr) { PUP.y = g0 - 32; PUP.vy = 0;
+            const wall = d && (EH_SOLID.has(tileAt(ax + d * 6, PUP.y + 20)) || EH_SOLID.has(tileAt(ax + d * 6, PUP.y + 6)));
+            const gap = d && (() => { const fx2 = PUP.x + 16 + d * 36; for (let t = Math.floor((PUP.y + 32) / 32); t < MH; t++) { const id = tileAt(fx2, t * 32); if (id === 31 || id === 32) return true; if (surface(fx2, t) != null) return false; } return true; })();   // a pit or water: hop it; a ledge: just drop down
+            if (wantUp) PUP.vy = wantUp; else if (wall || gap) PUP.vy = -8.3; }
+          else { PUP.vy = Math.min(7, PUP.vy + 0.35); if (PUP.vy < 0 && EH_SOLID.has(tileAt(PUP.x + 16, PUP.y + PUP.vy))) PUP.vy = 0; }
+          PUP.y += PUP.vy;
+        };
         if (PUP) {
           PUP.t++;
           const isOwner = ROSTER[H.hero].id === PUP.owner;
           if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) {
               if (isOwner) { PUP.st = 'follow'; story('l1_puppy'); } else if (!PUP.hinted) { PUP.hinted = true; say(`THE PUPPY WAITS FOR ${PUP.ownerName} · PRESS ${PUP.ownerKey}`); } } }
           else if (!isOwner && PUP.st !== 'gone') {   // not the owner: run off the left edge of the screen
-            PUP.st = 'away'; PUP.barkT = 0; PUP.face = -1; PUP.anim = 'run'; PUP.x -= 3.2; PUP.y += (H.y - PUP.y) * 0.1;
+            if (PUP.st !== 'away') { PUP.st = 'away'; PUP.vy = 0; }
+            PUP.barkT = 0; PUP.face = -1;
+            pupStep(-3.2, false);
             if (PUP.x < cam - 48) PUP.st = 'gone';
           }
           else if (!isOwner) { /* gone: off screen until the owner is back */ }
           else {
-            if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; }   // owner is back: run in from the left
-            PUP.st = 'follow';
+            if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; for (let t = Math.max(0, Math.floor(H.y / 32)); t < MH; t++) { const g = surface(PUP.x + 16, t); if (g != null) { PUP.y = g - 32; break; } } }   // re-enter standing on the ground   // owner is back: run in from the left
+            PUP.st = 'follow'; if (PUP.vy == null) { PUP.vy = 0; PUP.stuck = 0; }
             const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 700 || Math.abs(H.y - PUP.y) > 200;
-            if (far) { PUP.x = tx; PUP.y = H.y; }
-            const sp = Math.abs(dx) > 80 ? 3.6 : 2.4; PUP.x += Math.max(-sp, Math.min(sp, dx * 0.12)); PUP.y += (H.y - PUP.y) * 0.18;
+            if (far || (PUP.stuck = PUP.stuck || 0, PUP.stuck = Math.abs(dx) > 60 || H.y + 16 - PUP.y < -40 ? PUP.stuck + 1 : 0) > 240) { const puff = () => { fx('fx_dust_land', 4, 12, PUP.x - 8, PUP.y + 4, 32); fx('fx_dust_land', 4, 12, PUP.x + 8, PUP.y + 4, 32); }; puff(); PUP.x = tx; PUP.y = H.y + 16; PUP.vy = 0; PUP.stuck = 0; puff(); }   // lost or stuck: catch up
+            const sp = Math.abs(dx) > 80 ? 3.6 : 2.4, vx = Math.abs(dx) > 6 ? Math.max(-sp, Math.min(sp, dx * 0.12)) : 0;
+            // hop up after the owner when he is higher up and close by; drop through one-way ledges when he is below
+            const hf = H.y + 48 - (PUP.y + 32), down = H.ground && hf > 40;   // hf: owner's feet vs the puppy's
+            // jump with Dimitrije: same jump, a moment after him (a mushroom bounce too, if the puppy is on it)
+            const up = H.jumpT != null && tick - H.jumpT >= 4 && tick - H.jumpT <= 10 && PUP.lastJ !== H.jumpT && Math.abs(H.x - PUP.x) < 120 ? (PUP.lastJ = H.jumpT, H.jumpV) : 0;
+            pupStep(vx, up, down);
             if (Math.abs(dx) > 2) PUP.face = Math.sign(dx);
-            PUP.anim = Math.abs(H.y - PUP.y) > 6 || !H.ground ? 'jump' : Math.abs(dx) > 6 ? 'run' : 'idle';
+            PUP.anim = !PUP.gr ? 'jump' : vx ? 'run' : 'idle';
             if (PUP.barkT > 0) { if (++PUP.barkT > 24) PUP.barkT = 0; if (PUP.barkT === 18) GM.forEach(g => { if (!g.got && Math.hypot(g.x - PUP.x, g.y - PUP.y) < 140) fx('fx_heart', 5, 14, g.x - 8, g.y - 8, 32); }); }
             else if (--PUP.cool <= 0 && GM.some(g => !g.got && Math.hypot(g.x - PUP.x, g.y - PUP.y) < 140)) { PUP.barkT = 1; PUP.cool = 240; }
           }
@@ -370,7 +390,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           if (f < 3) drawStrip(img['st_' + s.el], 1, 0, s.x, s.y, 32); else drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32);
           if (f >= 0) drawStrip(img.st_awaken, 6, f, s.x, s.y, 32); });
         if (PUP && PUP.st !== 'gone') { if (PUP.st === 'wait') drawStrip(img.yarn, 6, (tick / 6) % 6, PUP.x + 20, PUP.y + 15, 16);
-          const a = PUP.barkT > 0 ? 'special' : PUP.anim, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = a === 'special' ? PUP.barkT / 6 : a === 'jump' ? (PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
+          const a = PUP.barkT > 0 ? 'special' : PUP.anim, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = a === 'special' ? PUP.barkT / 6 : a === 'jump' ? (PUP.st === 'away' ? (PUP.vy < 0 ? 0 : 1) : PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
           drawStrip(img['pup_' + a], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         if (BALL) drawStrip(img.ball, 4, Math.floor(Math.abs(BALL.roll) / 6) % 4, BALL.x, BALL.y, 16);
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
