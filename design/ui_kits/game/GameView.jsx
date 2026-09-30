@@ -1,8 +1,9 @@
 // Forest level runtime: Tiled .tmj map, parallax, 8 switchable heroes, Rotroot / Mothwing / Sporecap enemies,
 // checkpoints, Elder Rotroot mid-boss arena (thorn gates) and Blightwarden final boss. Renders at 640x360, 60 ticks/s.
 const EHA = '../../../assets/';
-const EH_SOLID = new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,24,25,30]);
-const EH_PLAT = new Set([19,20,21,22,23]);
+// tile ids from tileset_forest.tsj: 63-67 bounce mushroom, 68/69/71/73 hollow log shell, 56-58 crumble planks, 60-62 rope bridge (59 = crumbled, gone)
+const EH_SOLID = new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,24,25,30,63,64,65,66,67,68,69,71,73]);
+const EH_PLAT = new Set([19,20,21,22,23,56,57,58,60,61,62]);
 const EH_HAZ = new Set([26,27,28,29,36]);
 const EH_HERO = { idle:4, run:8, jump:2, fall:2, land:2, attack:6, hurt:2, death:6 };
 const EH_ROT = { idle:4, move:6, attack:4, hurt:2, death:5 };
@@ -34,14 +35,16 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
   pausedRef.current = paused;
   React.useEffect(() => {
     let alive = true, raf = 0;
-    const keys = {}; let wantHero = -1, cycle = 0;
-    const kd = e => { keys[e.code] = true; const d = /^Digit([1-4])$/.exec(e.code); if (d) wantHero = +d[1] - 1; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
+    const keys = {}; let wantHero = -1, cycle = 0, jumpBuf = 0;   // jumpBuf remembers a jump press for a few ticks so quick taps aren't lost
+    const kd = e => { keys[e.code] = true; const d = /^Digit([1-4])$/.exec(e.code); if (d) wantHero = +d[1] - 1; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
       const map = await (await fetch(EHA + 'maps/forest_mock.tmj')).json();
-      const L = n => map.layers.find(l => l.name === n).data.map(g => g - 1);
-      const ground = L('ground'), decorB = L('decor_back'), decor = L('decor');
+      // tile layers: ids (-1 = empty) plus horizontal-flip flags (Tiled keeps flips in the gid's top bits)
+      const L = n => { const l = map.layers.find(l => l.name === n); if (!l) return null; return { id: l.data.map(g => (g % 0x20000000) - 1), flip: l.data.map(g => g >= 0x80000000) }; };
+      const GL = L('ground'), DBL = L('decor_back'), DL = L('decor'), FGL = L('foreground'), ground = GL.id;
+      const crumble = {}, bounceT = {}; let fgA = 1;   // per-tile crumble timers, bounce animations, foreground fade
       const S = EHA + 'sprites/', img = {};
       const load = async (k, p) => { img[k] = await ehImg(EHA + p); };
       await Promise.all([
@@ -116,9 +119,12 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
       const told = new Set(), story = id => { if (!told.has(id)) { told.add(id); onStory && onStory(id); } };   // each story moment plays once per run
       const hurt = dir => { if (H.inv > 0 || H.dead) return; H.hp -= 0.5; H.hurtT = 16; H.inv = 70; H.vx = -2 * dir; H.vy = -3; H.ground = false; if (H.hp <= 0) { H.dead = 1; H.vx = 0; } };
       const drawStrip = (im, n, f, x, y, w, flip) => { if (!im) return; f = Math.max(0, Math.min(n - 1, Math.floor(f))); ctx.save(); ctx.translate(Math.round(x) + (flip ? w : 0), Math.round(y)); ctx.scale(flip ? -1 : 1, 1); ctx.drawImage(im, f * w, 0, w, im.height, 0, 0, w, im.height); ctx.restore(); };
-      const drawLayer = arr => { const c0 = Math.max(0, Math.floor(cam / 32)), c1 = Math.min(MW, c0 + 22);
-        for (let r = 0; r < MH; r++) for (let c = c0; c < c1; c++) { let id = arr[r * MW + c]; if (id < 0) continue; if (id === 32) id = 32 + (Math.floor(tick / 10) % 4); if (id === 36) id = 36 + (Math.floor(tick / 6) % 4);
-          ctx.drawImage(img.tiles, (id % 8) * 32, Math.floor(id / 8) * 32, 32, 32, c * 32, r * 32, 32, 32); } };
+      const drawLayer = lay => { if (!lay) return; const c0 = Math.max(0, Math.floor(cam / 32)), c1 = Math.min(MW, c0 + 22);
+        for (let r = 0; r < MH; r++) for (let c = c0; c < c1; c++) { const i = r * MW + c; let id = lay.id[i]; if (id < 0) continue;
+          if (id === 32) id = 32 + (Math.floor(tick / 10) % 4); if (id === 36) id = 36 + (Math.floor(tick / 6) % 4); if (id === 63 && bounceT[i] != null) id = 64 + Math.min(3, Math.floor(bounceT[i] / 5));
+          const sx = (id % 8) * 32, sy = Math.floor(id / 8) * 32;
+          if (lay.flip[i]) { ctx.save(); ctx.translate(c * 32 + 32, r * 32); ctx.scale(-1, 1); ctx.drawImage(img.tiles, sx, sy, 32, 32, 0, 0, 32, 32); ctx.restore(); }
+          else ctx.drawImage(img.tiles, sx, sy, 32, 32, c * 32, r * 32, 32, 32); } };
       const resetBosses = () => {
         if (ELD && !ELD.dead) { Object.assign(ELD, { x: ELD.sx, hp: ELD.max, st: 'wait', t: 0, awake: false, hurt: 0 }); gates[0].st = 'open'; SEEDS.length = 0; }
         if (BOSS && !BOSS.dead) Object.assign(BOSS, { hp: BOSS.max, state: 'idle', t: 0, awake: false, spots: [], roots: [] });
@@ -140,7 +146,8 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         } else {
           const L1 = keys.ArrowLeft || keys.KeyA, R1 = keys.ArrowRight || keys.KeyD;
           if (H.hurtT <= 0) { H.vx = (R1 ? 1.8 : 0) - (L1 ? 1.8 : 0); if (H.vx) H.face = Math.sign(H.vx); if (H.attackT > 0 && H.ground) H.vx *= 0.3; }
-          if ((keys.Space || keys.ArrowUp || keys.KeyW) && H.ground && H.hurtT <= 0) { H.vy = -8.3; H.ground = false; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
+          if (jumpBuf > 0) jumpBuf--;
+          if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
           if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0) { H.attackT = 24; H.fired = false; }
           if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
           if (wantHero >= 0 && wantHero < ROSTER.length && wantHero !== H.hero) { H.hero = wantHero; H.swapT = 40; H.attackT = 0; fx('i_' + ROSTER[wantHero].el, 4, 12, H.x, H.y, 32); }
@@ -163,7 +170,12 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             if (okTop && s <= feet + (H.ground ? 6 : 0) && (best == null || s < best)) best = s;
           }
           if (best != null) { if (!H.ground && H.vy > 3) { H.landT = 8; fx('fx_dust_land', 4, 16, H.x, best - 16, 32); } H.y = best - 31; H.vy = 0; H.ground = true;
-            const under = tileAt(H.x + 16, H.y + 33); if (EH_SOLID.has(under) && under !== 30 && !EH_HAZ.has(tileAt(H.x + 16, H.y + 16))) safe = { x: H.x, y: H.y }; }
+            const under = tileAt(H.x + 16, H.y + 33); if (EH_SOLID.has(under) && under !== 30 && under < 63 && !EH_HAZ.has(tileAt(H.x + 16, H.y + 16))) safe = { x: H.x, y: H.y };
+            const row = Math.floor((H.y + 33) / 32) * MW;
+            for (const px of [H.x + 12, H.x + 16, H.x + 20]) { const i = row + Math.floor(px / 32), id = ground[i];
+              // bounce mushroom: the tileset says 2x jump velocity, which would fly off the top of the 360px view, so it's ~1.45x (about 6 tiles)
+              if (id >= 63 && id <= 67) { H.vy = -12; H.ground = false; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
+              if (id >= 56 && id <= 58 && crumble[i] == null) crumble[i] = 0; } }
           else { H.y = ny; H.ground = false; }
           if (H.vy < 0 && EH_SOLID.has(tileAt(H.x + 16, H.y + 8))) { H.vy = 0; }
           // hazards / water / exit
@@ -285,6 +297,9 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
             hit = true; }
           if (hit) { if (wall) fx('i_' + b.el, 4, 12, b.x - 8, b.y - 8, 32); B.splice(i, 1); } }
         for (let i = X.length - 1; i >= 0; i--) if (++X[i].t >= X[i].n * X[i].d) X.splice(i, 1);
+        // crumble planks: 450ms after being stepped on they crack, break and fall away, then grow back after 3s
+        for (const k in crumble) { const t = ++crumble[k]; ground[k] = t < 27 ? 56 : t < 36 ? 57 : t < 45 ? 58 : t < 225 ? 59 : 56; if (t >= 225) delete crumble[k]; }
+        for (const k in bounceT) if (++bounceT[k] >= 20) delete bounceT[k];
         if (toast && ++toast.t > 240) toast = null;
         const hud = H.hp + ':' + H.coins + ':' + H.hero; if (hud !== lastHud) { lastHud = hud; const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); }
       };
@@ -301,7 +316,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         for (const k of ['sky','far','mid','near']) bg(k, par[k]);
         if (arenaW > 0 && img.arena_near) { ctx.globalAlpha = arenaW; bg('arena_near', par.near); ctx.globalAlpha = 1; }
         ctx.save(); ctx.translate(-cam, 0);
-        drawLayer(decorB); drawLayer(ground); drawLayer(decor);
+        drawLayer(DBL); drawLayer(GL); drawLayer(DL);
         CP.forEach(c => { if (c.st === 'idle') drawStrip(img.cp_idle, 1, 0, c.x, c.y, 32); else if (c.st === 'activate') drawStrip(img.cp_activate, 6, c.t / 6, c.x, c.y, 32); else drawStrip(img.cp_lit, 4, (tick / 7.5) % 4, c.x, c.y, 32); });
         if (ex) drawStrip(img.arch, 4, (tick / 7.5) % 4, ex.x, ex.y, 64);
         ST.forEach(s => { if (s.woke) return; ctx.filter = 'grayscale(1) brightness(0.8)'; drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32); ctx.filter = 'none'; });
@@ -351,6 +366,10 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         if (!(H.inv > 0 && !H.dead && H.hurtT <= 0 && Math.floor(tick / 3) % 2)) drawStrip(img[`h_${hkey}_${a}`], EH_HERO[a], f, H.x, H.y, 32, H.face < 0);
         B.forEach(b => drawStrip(img['p_' + b.el], 4, (b.t / 4) % 4, b.x, b.y, 16, b.vx < 0));
         X.forEach(x => drawStrip(img[x.k], x.n, x.t / x.d, x.x, x.y, x.w));
+        if (FGL) { const hb = heroBox(); let over = false;
+          for (let r = Math.floor(hb.y / 32); r <= Math.floor((hb.y + hb.h) / 32) && !over; r++) for (let c = Math.floor(hb.x / 32); c <= Math.floor((hb.x + hb.w) / 32); c++)
+            if (r >= 0 && r < MH && c >= 0 && c < MW && FGL.id[r * MW + c] >= 0) { over = true; break; }
+          fgA += ((over ? 0.35 : 1) - fgA) * 0.15; ctx.globalAlpha = fgA; drawLayer(FGL); ctx.globalAlpha = 1; }
         ctx.restore();
         if (arenaW > 0 && img.fg) { ctx.globalAlpha = arenaW; const o = Math.round(((cam * 1.2) % 640 + 640) % 640); ctx.drawImage(img.fg, -o, 0); ctx.drawImage(img.fg, 640 - o, 0); ctx.globalAlpha = 1; }
         if (toast) { ctx.font = '8px Silkscreen, monospace'; ctx.textAlign = 'center'; const w = ctx.measureText(toast.text).width + 16;
