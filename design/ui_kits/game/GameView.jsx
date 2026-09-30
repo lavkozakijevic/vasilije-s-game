@@ -91,7 +91,8 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
       const ST = ents.filter(o => o.type === 'knight_statue').map(o => ({ el: o.name, x: o.x, y: o.y, woke: false, wakeT: -1 }));
       // puppy (Dimitrije's companion): waits on Baba's yarn, then follows the party and barks near hidden gems
       const po = ents.find(o => o.type === 'companion_puppy');
-      const PUP = po ? { x: po.x, y: po.y, st: 'wait', face: -1, anim: 'idle', t: 0, barkT: 0, cool: 120 } : null;
+      // each pet belongs to one cousin: only the owner can befriend it, and it only stays on screen while its owner is the active hero
+      const PUP = po ? { owner: 'dimitrije', ownerName: 'DIMITRIJE', ownerKey: 4, x: po.x, y: po.y, st: 'wait', face: -1, anim: 'idle', t: 0, barkT: 0, cool: 120, hinted: false } : null;
       const bo2 = ents.find(o => o.type === 'prop_football'), BALL = bo2 ? { x: bo2.x, y: bo2.y, sx: bo2.x, sy: bo2.y, vx: 0, vy: 0, roll: 0 } : null;
       const poster = ents.find(o => o.type === 'prop_poster');
       let toast = null; const say = text => { toast = { text, t: 0 }; };
@@ -212,11 +213,20 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
           say(`${EH_KNIGHTS[s.el].toUpperCase()} JOINED · Q / E TO SWITCH`); story('l1_knight_' + s.el); } });
         if (PUP) {
           PUP.t++;
-          if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) { PUP.st = 'follow'; story('l1_puppy'); } }
+          const isOwner = ROSTER[H.hero].id === PUP.owner;
+          if (PUP.st === 'wait') { if (!H.dead && Math.abs(H.x - PUP.x) < 48 && Math.abs(H.y - PUP.y) < 40) {
+              if (isOwner) { PUP.st = 'follow'; story('l1_puppy'); } else if (!PUP.hinted) { PUP.hinted = true; say(`THE PUPPY WAITS FOR ${PUP.ownerName} · PRESS ${PUP.ownerKey}`); } } }
+          else if (!isOwner && PUP.st !== 'gone') {   // not the owner: run off the left edge of the screen
+            PUP.st = 'away'; PUP.barkT = 0; PUP.face = -1; PUP.anim = 'run'; PUP.x -= 3.2; PUP.y += (H.y - PUP.y) * 0.1;
+            if (PUP.x < cam - 48) PUP.st = 'gone';
+          }
+          else if (!isOwner) { /* gone: off screen until the owner is back */ }
           else {
-            const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 260 || Math.abs(H.y - PUP.y) > 200;
+            if (PUP.st === 'gone') { PUP.x = cam - 40; PUP.y = H.y; }   // owner is back: run in from the left
+            PUP.st = 'follow';
+            const tx = H.x - 18 * H.face, dx = tx - PUP.x, far = Math.abs(dx) > 700 || Math.abs(H.y - PUP.y) > 200;
             if (far) { PUP.x = tx; PUP.y = H.y; }
-            PUP.x += Math.max(-2.4, Math.min(2.4, dx * 0.12)); PUP.y += (H.y - PUP.y) * 0.18;
+            const sp = Math.abs(dx) > 80 ? 3.6 : 2.4; PUP.x += Math.max(-sp, Math.min(sp, dx * 0.12)); PUP.y += (H.y - PUP.y) * 0.18;
             if (Math.abs(dx) > 2) PUP.face = Math.sign(dx);
             PUP.anim = Math.abs(H.y - PUP.y) > 6 || !H.ground ? 'jump' : Math.abs(dx) > 6 ? 'run' : 'idle';
             if (PUP.barkT > 0) { if (++PUP.barkT > 24) PUP.barkT = 0; if (PUP.barkT === 18) GM.forEach(g => { if (!g.got && Math.hypot(g.x - PUP.x, g.y - PUP.y) < 140) fx('fx_heart', 5, 14, g.x - 8, g.y - 8, 32); }); }
@@ -359,7 +369,7 @@ function GameView({ paused, runId, onHud, onEnd, onStory }) {
         ST.forEach(s => { if (s.woke) return; const f = s.wakeT < 0 ? -1 : Math.floor(s.wakeT / 6);
           if (f < 3) drawStrip(img['st_' + s.el], 1, 0, s.x, s.y, 32); else drawStrip(img[`h_k_${s.el}_idle`], 4, 0, s.x, s.y, 32);
           if (f >= 0) drawStrip(img.st_awaken, 6, f, s.x, s.y, 32); });
-        if (PUP) { if (PUP.st === 'wait') drawStrip(img.yarn, 6, (tick / 6) % 6, PUP.x + 20, PUP.y + 15, 16);
+        if (PUP && PUP.st !== 'gone') { if (PUP.st === 'wait') drawStrip(img.yarn, 6, (tick / 6) % 6, PUP.x + 20, PUP.y + 15, 16);
           const a = PUP.barkT > 0 ? 'special' : PUP.anim, n = { idle: 4, run: 6, jump: 2, special: 4 }[a], f = a === 'special' ? PUP.barkT / 6 : a === 'jump' ? (PUP.y < H.y ? 1 : 0) : (tick / (a === 'run' ? 5 : 12)) % n;
           drawStrip(img['pup_' + a], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         if (BALL) drawStrip(img.ball, 4, Math.floor(Math.abs(BALL.roll) / 6) % 4, BALL.x, BALL.y, 16);

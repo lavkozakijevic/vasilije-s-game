@@ -42,7 +42,7 @@ The players are the real kids, so nobody is ever the butt of the joke. Teasing s
 | **Vasilije** | Level 3 · Cinderdeep Caves | 9 | **Fire**: Cinder's powers | Fire fox (orange) | Dark golden hair, **orange** clothes | Bold, fast, always first in. Wants to be captain. Loves orange and foxes. |
 | **Dimitrije** | Level 1 · The Whispering Forest | 7 | **Air**: Wisp's powers | Puppy | Blond hair, t-shirt and shorts | The youngest and most agile. Works hard, never complains: "Okej." |
 
-**Companions** join in their child's level and follow that child from then on:
+**Companions** join in their child's level and follow that child from then on. Only their own child can befriend them. When the player switches to a different hero, the pet runs off the left of the screen, and it comes back when its child is picked again:
 - **Puppy:** barks when a gem or secret is nearby.
 - **Snow leopard:** pounces on the nearest enemy.
 - **Fire fox:** fetches coins you can't reach.
