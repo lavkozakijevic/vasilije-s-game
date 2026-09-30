@@ -571,7 +571,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
               else if (MRAK.ph === 1) {
                 if (MRAK.st === 'idle' && MRAK.t > 100) { MRAK.st = 'telegraph'; MRAK.t = 0; }
                 else if (MRAK.st === 'telegraph' && MRAK.t >= 30) { if (MRAK.n++ % 2) { MRAK.st = 'shadow_attack'; MRAK.t = 0; }
-                  else { for (let i = 0; i < 3; i++) MRAK.orbs.push({ x: front, y: MRAK.y + 50 + i * 16, t: 0 }); MRAK.st = 'idle'; MRAK.t = 0; } }
+                  else { for (let i = 0; i < 2; i++) MRAK.orbs.push({ x: front, y: MRAK.y + 50 + i * 24, t: -i * 20 }); MRAK.st = 'idle'; MRAK.t = 0; } }
                 else if (MRAK.st === 'shadow_attack') { if (MRAK.t === 15) MRAK.waves.push({ x: front - 64, img: 'mrak_wave', v: 2.33, t: 0 }); if (MRAK.t >= 30) { MRAK.st = 'idle'; MRAK.t = 0; } }
               } else if (MRAK.ph === 2) {
                 const move = ['warden_roots', 'warden_frost', 'warden_magma'][MRAK.n % 3];
@@ -586,16 +586,18 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
                   if (MRAK.t >= 36) { MRAK.st = 'idle'; MRAK.t = 0; } }
               } else {
                 if (MRAK.st === 'stagger' && MRAK.t >= 40) { MRAK.st = 'laugh'; MRAK.t = 0; }
-                if (MRAK.st === 'laugh' && MRAK.t % 170 === 169) for (let i = 0; i < 2; i++) MRAK.orbs.push({ x: front, y: MRAK.y + 50 + i * 20, t: 0 });
+                if (MRAK.st === 'laugh' && MRAK.t % 240 === 239) MRAK.orbs.push({ x: front, y: MRAK.y + 60, t: 0 });
               }
               if (overlap(heroBox(), mBody())) hurt(1);
             }
           }
           MRAK.waves.forEach(v => { v.t++; v.x -= v.v; if (!H.dead && overlap(heroBox(), { x: v.x + 4, y: GROUND_Y - 32 + 12, w: 56, h: 20 })) hurt(-1); });
           MRAK.waves = MRAK.waves.filter(v => v.x > finalL - 70 && !MRAK.dead);
-          MRAK.orbs.forEach(o => { o.t++; const ddx = H.x + 16 - o.x - 8, ddy = H.y + 16 - o.y - 8, d = Math.hypot(ddx, ddy) || 1; o.x += ddx / d * 1.5; o.y += ddy / d * 1.5;
-            if (!H.dead && overlap(heroBox(), { x: o.x + 3, y: o.y + 3, w: 10, h: 10 })) { hurt(Math.sign(ddx) || 1); o.t = 999; } });
-          MRAK.orbs = MRAK.orbs.filter(o => o.t < 240 && !MRAK.dead);
+          MRAK.orbs.forEach(o => { o.t++; if (o.t < 0) return;   // orbs aim once when thrown, then fly straight: step or jump out of the way, or shoot them
+            if (o.vx == null) { const ddx = H.x + 16 - o.x - 8, ddy = H.y + 16 - o.y - 8, d = Math.hypot(ddx, ddy) || 1; o.vx = ddx / d * 1.7; o.vy = ddy / d * 1.7; }
+            o.x += o.vx; o.y += o.vy; if (o.y > GROUND_Y) o.t = 999;
+            if (!H.dead && overlap(heroBox(), { x: o.x + 3, y: o.y + 3, w: 10, h: 10 })) { hurt(Math.sign(o.vx) || 1); o.t = 999; } });
+          MRAK.orbs = MRAK.orbs.filter(o => o.t < 400 && o.x > finalL - 40 && !MRAK.dead);
           MRAK.roots.forEach(r => { r.t++; const f = Math.floor(r.t / 5); if ((f === 2 || f === 3) && !H.dead && overlap(heroBox(), { x: r.x - 16 + 6, y: 224 + 14, w: 20, h: 50 })) hurt(Math.sign(r.x - H.x - 16) || 1); });
           MRAK.roots = MRAK.roots.filter(r => r.t < 30);
           MRAK.spikes.forEach(k => { k.t++; const f = Math.floor(k.t / 5); if (k.t >= 0 && (f === 2 || f === 3) && !H.dead && overlap(heroBox(), { x: k.x - 16 + 8, y: GROUND_Y - 64 + 6, w: 16, h: 58 })) hurt(Math.sign(k.x - H.x - 16) || 1); });
@@ -792,6 +794,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
               if ([29, 30, 31, 32].includes(ground[i])) { for (const cc of [c - 1, c, c + 1]) { const j = r * MW + cc; if (cc >= 0 && cc < MW && [29, 30, 31, 32].includes(ground[j])) { if (ground[j] === 31) SB[j] = 9; else { SB[j] = 0; ground[j] = 30; } } } break; } } }
           if (UMB && umbFight() && !hit && overlap(pb, umbBox())) { UMB.hp -= b.dmg; UMB.hurt = 10; spark(); hit = true; if (b.el === 'light') UMB.stun = 30;
             if (UMB.hp <= 0) { UMB.st = 'down'; UMB.t = 0; } }
+          if (MRAK && !hit) for (const o of MRAK.orbs) if (o.t >= 0 && overlap(pb, { x: o.x + 2, y: o.y + 2, w: 12, h: 12 })) { o.t = 999; spark(); hit = true; break; }   // shoot the orbs down
           if (MRAK && MRAK.awake && !MRAK.dead && !hit && overlap(pb, mBody())) { hit = true; spark();
             if (MRAK.st === 'phase') {}
             else if (MRAK.ph < 3) { MRAK.hp -= b.dmg * (MRAK.st === 'telegraph' && overlap(pb, mCore()) ? 2 : 1); MRAK.hurt = 10; }
@@ -965,7 +968,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           m.roots.forEach(r => drawStrip(img.roots, 6, r.t / 5, r.x - 16, 224, 32));
           m.spikes.forEach(k => { if (k.t >= 0) drawStrip(img.ice_spike, 6, k.t / 5, k.x - 16, GROUND_Y - 64, 32); });
           m.waves.forEach(v => drawStrip(img[v.img], 6, (v.t / 5) % 6, v.x, GROUND_Y - 32, 64, true));
-          m.orbs.forEach(o => drawStrip(img.mrak_orb, 4, (o.t / 6) % 4, o.x, o.y, 16));
+          m.orbs.forEach(o => { if (o.t >= 0 && o.t < 999) drawStrip(img.mrak_orb, 4, (o.t / 6) % 4, o.x, o.y, 16); });
           if (m.beamT > 0 && img.beam) { const bx0 = H.x + 24, bx1 = mBody().x + 20, by = H.y + 6, bf = Math.floor(tick / 5) % 6;   // the four stones' braided beam
             for (let x = bx0; x < bx1; x += 64) ctx.drawImage(img.beam, bf * 64, 0, Math.min(64, bx1 - x), 32, Math.round(x), by, Math.min(64, bx1 - x), 32); }
         }
