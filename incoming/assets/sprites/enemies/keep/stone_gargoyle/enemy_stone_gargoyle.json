@@ -1,0 +1,76 @@
+{
+ "id": "enemy_stone_gargoyle",
+ "type": "enemy",
+ "name": "Stone Gargoyle",
+ "biome": "keep",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "perch: feet on the ledge; flying: treat (16,16) as centre"
+ },
+ "hitbox": {
+  "x": 8,
+  "y": 8,
+  "w": 18,
+  "h": 18
+ },
+ "hp": 3,
+ "behavior": "perch until the hero is within ~100px; wake; fly up 32px; swoop at the hero in a straight dive (240px/s); fly back up and hover 1s; repeat",
+ "animations": {
+  "perch": {
+   "file": "enemy_stone_gargoyle_perch.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "still as a statue; no contact damage"
+  },
+  "wake": {
+   "file": "enemy_stone_gargoyle_wake.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "when the hero is within ~100px"
+  },
+  "fly": {
+   "file": "enemy_stone_gargoyle_fly.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "swoop": {
+   "file": "enemy_stone_gargoyle_swoop.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  },
+  "hurt": {
+   "file": "enemy_stone_gargoyle_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_stone_gargoyle_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "crumbles"
+  }
+ },
+ "palette": "elemental16.hex"
+}

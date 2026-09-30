@@ -1,0 +1,1408 @@
+{
+ "type": "tileset",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "name": "keep",
+ "tilewidth": 32,
+ "tileheight": 32,
+ "tilecount": 72,
+ "columns": 8,
+ "margin": 0,
+ "spacing": 0,
+ "image": "tileset_keep.png",
+ "imagewidth": 256,
+ "imageheight": 288,
+ "tiles": [
+  {
+   "id": 0,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_tl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 1,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_t"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_tr"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_nw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_ne"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "slope_up"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope_dir",
+     "type": "string",
+     "value": "up"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "slope_down"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "slope_dir",
+     "type": "string",
+     "value": "down"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_single"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_l"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_r"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_sw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_se"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c_cracked"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_c_banner"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_pillar"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_bl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_b"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ground_br"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "oneway_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "scaffold_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "scaffold_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "scaffold_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_0"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 0
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_1"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 1
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_2"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 2
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_3"
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 3
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "shadow_bridge_0_faint"
+    },
+    {
+     "name": "shadow_bridge",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bridge_frame",
+     "type": "int",
+     "value": 0
+    },
+    {
+     "name": "bridge_state",
+     "type": "string",
+     "value": "faint"
+    },
+    {
+     "name": "bridge_note",
+     "type": "string",
+     "value": "shows 0 (faint) until Konstantin's light touches it: 1 (100ms) -> 2 (solid while lit + 1.5s) -> 3 (200ms) -> 0. Solid (oneway) only on frame 2."
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "shadow_bridge_1_appearing"
+    },
+    {
+     "name": "shadow_bridge",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bridge_frame",
+     "type": "int",
+     "value": 1
+    },
+    {
+     "name": "bridge_state",
+     "type": "string",
+     "value": "appearing"
+    },
+    {
+     "name": "bridge_note",
+     "type": "string",
+     "value": "shows 0 (faint) until Konstantin's light touches it: 1 (100ms) -> 2 (solid while lit + 1.5s) -> 3 (200ms) -> 0. Solid (oneway) only on frame 2."
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "shadow_bridge_2_solid"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "shadow_bridge",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bridge_frame",
+     "type": "int",
+     "value": 2
+    },
+    {
+     "name": "bridge_state",
+     "type": "string",
+     "value": "solid"
+    },
+    {
+     "name": "bridge_note",
+     "type": "string",
+     "value": "shows 0 (faint) until Konstantin's light touches it: 1 (100ms) -> 2 (solid while lit + 1.5s) -> 3 (200ms) -> 0. Solid (oneway) only on frame 2."
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "shadow_bridge_3_fading"
+    },
+    {
+     "name": "shadow_bridge",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bridge_frame",
+     "type": "int",
+     "value": 3
+    },
+    {
+     "name": "bridge_state",
+     "type": "string",
+     "value": "fading"
+    },
+    {
+     "name": "bridge_note",
+     "type": "string",
+     "value": "shows 0 (faint) until Konstantin's light touches it: 1 (100ms) -> 2 (solid while lit + 1.5s) -> 3 (200ms) -> 0. Solid (oneway) only on frame 2."
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "hidden_ledge_hidden"
+    },
+    {
+     "name": "hidden_ledge",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "ledge_state",
+     "type": "string",
+     "value": "hidden"
+    },
+    {
+     "name": "ledge_note",
+     "type": "string",
+     "value": "no collision while hidden; swap to 34 (oneway) when fx_eagle_mark lands on it"
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "hidden_ledge_revealed"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "hidden_ledge",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "ledge_state",
+     "type": "string",
+     "value": "revealed"
+    },
+    {
+     "name": "ledge_note",
+     "type": "string",
+     "value": "no collision while hidden; swap to 34 (oneway) when fx_eagle_mark lands on it"
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "abyss_body"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "abyss",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "abyss_surface_0"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "abyss",
+     "type": "bool",
+     "value": true
+    }
+   ],
+   "animation": [
+    {
+     "tileid": 36,
+     "duration": 180
+    },
+    {
+     "tileid": 37,
+     "duration": 180
+    },
+    {
+     "tileid": 38,
+     "duration": 180
+    },
+    {
+     "tileid": 39,
+     "duration": 180
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "abyss_surface_1"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "abyss",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "abyss_surface_2"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "abyss",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "abyss_surface_3"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "abyss",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "iron_spikes"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_cold_torch"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tendrils_0"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    }
+   ],
+   "animation": [
+    {
+     "tileid": 42,
+     "duration": 130
+    },
+    {
+     "tileid": 43,
+     "duration": 130
+    },
+    {
+     "tileid": 44,
+     "duration": 130
+    },
+    {
+     "tileid": 45,
+     "duration": 130
+    }
+   ]
+  },
+  {
+   "id": 43,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tendrils_1"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 44,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tendrils_2"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 45,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tendrils_3"
+    },
+    {
+     "name": "hazard",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 46,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_idle"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.2
+    }
+   ]
+  },
+  {
+   "id": 47,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_0"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.2
+    }
+   ]
+  },
+  {
+   "id": 48,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_1"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.2
+    }
+   ]
+  },
+  {
+   "id": 49,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_2"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.2
+    }
+   ]
+  },
+  {
+   "id": 50,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_3"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.2
+    }
+   ]
+  },
+  {
+   "id": 51,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_end_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 52,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 53,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_interior"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 54,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 55,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_end_mid"
+    }
+   ]
+  },
+  {
+   "id": 56,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_end_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 57,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_interior_fireplace"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "note",
+     "type": "string",
+     "value": "warm fireplace; animate by nothing, or add a flicker in-engine"
+    }
+   ]
+  },
+  {
+   "id": 58,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "library_facade"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    }
+   ]
+  },
+  {
+   "id": 59,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chains_l"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 60,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chains_m"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 61,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chains_r"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 62,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chains_fringe"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 63,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chains_fill"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 64,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_chair"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 65,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_table_l"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 66,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_table_r"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 67,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_candles"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 68,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_armour"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 69,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_cobweb"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 70,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_mrak_portrait"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 71,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_yarn_door"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  }
+ ]
+}

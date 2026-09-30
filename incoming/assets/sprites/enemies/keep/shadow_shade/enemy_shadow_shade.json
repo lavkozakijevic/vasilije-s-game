@@ -1,0 +1,79 @@
+{
+ "id": "enemy_shadow_shade",
+ "type": "enemy",
+ "name": "Shadow Shade",
+ "biome": "keep",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 16,
+  "note": "centre (floating)"
+ },
+ "hitbox": {
+  "x": 8,
+  "y": 6,
+  "w": 16,
+  "h": 20
+ },
+ "hp": 2,
+ "behavior": "floats toward the hero (40px/s) and claws when within 28px. Non-light hits: play fade_out, stay invisible and intangible for 1.2s, reappear 48px away with fade_in (no damage taken). Light hits deal damage; the last light hit plays death.",
+ "vulnerableTo": [
+  "light"
+ ],
+ "animations": {
+  "fly": {
+   "file": "enemy_shadow_shade_fly.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "fade_out": {
+   "file": "enemy_shadow_shade_fade_out.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "notes": "play when hit by anything except light; it becomes intangible"
+  },
+  "fade_in": {
+   "file": "enemy_shadow_shade_fade_in.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "enemy_shadow_shade_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "claw hurts on frames 2-3"
+  },
+  "hurt": {
+   "file": "enemy_shadow_shade_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_shadow_shade_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "notes": "burns away into gold sparks (light only)"
+  }
+ },
+ "palette": "elemental16.hex"
+}

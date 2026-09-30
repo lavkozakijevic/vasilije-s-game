@@ -1,0 +1,42 @@
+{
+ "id": "hazard_chandelier",
+ "type": "hazard",
+ "name": "Falling chandelier",
+ "biome": "keep",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "origin": {
+  "x": 16,
+  "y": 0,
+  "note": "top-centre at the ceiling"
+ },
+ "hitbox": {
+  "x": 4,
+  "y": 12,
+  "w": 24,
+  "h": 12
+ },
+ "damage": 1,
+ "frames": {
+  "hang": 0,
+  "shake": [
+   1,
+   2,
+   3
+  ],
+  "fall": 4
+ },
+ "behavior": "when the hero passes below (±32px): shake for 0.6s, then fall (gravity 900px/s²); on landing spawn hazard_chandelier_crash (bottom-centre)",
+ "crash": {
+  "file": "hazard_chandelier_crash.png",
+  "frameWidth": 64,
+  "frameHeight": 32,
+  "frames": 4,
+  "fps": 14
+ },
+ "files": [
+  "hazard_chandelier.png",
+  "hazard_chandelier_crash.png"
+ ],
+ "palette": "../../palette/elemental16.hex"
+}

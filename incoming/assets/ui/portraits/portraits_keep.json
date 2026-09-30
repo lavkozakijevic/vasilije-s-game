@@ -1,0 +1,19 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "note": "additions for level 4; merge into portraits.json",
+ "portraits": [
+  {
+   "file": "portrait_umbra_spellbound.png",
+   "speaker": "Umbra",
+   "expression": "spellbound"
+  },
+  {
+   "file": "portrait_mrak_laughing.png",
+   "speaker": "Mrak",
+   "expression": "laughing"
+  }
+ ]
+}

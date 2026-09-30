@@ -1,0 +1,71 @@
+{
+ "id": "npc_umbra",
+ "type": "npc_boss",
+ "name": "Umbra (spellbound)",
+ "biome": "keep",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 8,
+  "w": 12,
+  "h": 23
+ },
+ "hp": 6,
+ "note": "Umbra under Mrak's spell: purple glowing eyes, torn cloak. Uses the hero rig; after kneel he is the normal Hearth Knight hero_shadow.",
+ "behavior": "mini-duel: dash at the hero, attack (shadow projectile = the existing fx_shadow_projectile on attack frame 3). Each light hit stuns briefly; at 0 HP play stunned, then kneel; the spell is broken.",
+ "animations": {
+  "idle": {
+   "file": "npc_umbra_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "dash": {
+   "file": "npc_umbra_dash.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 14,
+   "loop": true
+  },
+  "attack": {
+   "file": "npc_umbra_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 14,
+   "loop": false
+  },
+  "stunned": {
+   "file": "npc_umbra_stunned.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "the spell breaks: purple sparks leave him; his eyes return to frost on frames 2-3"
+  },
+  "kneel": {
+   "file": "npc_umbra_kneel.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": false,
+   "notes": "hold the last frame, then swap to the hero_shadow (Umbra) sprites"
+  }
+ },
+ "portraits": {
+  "spellbound": "../../../ui/portraits/portrait_umbra_spellbound.png",
+  "freed": "../../../ui/portraits/portrait_knight_shadow_neutral.png"
+ },
+ "palette": "elemental16.hex"
+}

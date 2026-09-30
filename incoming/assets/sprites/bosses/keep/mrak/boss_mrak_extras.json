@@ -1,0 +1,90 @@
+{
+ "id": "boss_mrak",
+ "additions": "phase 6",
+ "frameWidth": 128,
+ "frameHeight": 128,
+ "origin": {
+  "x": 64,
+  "y": 127
+ },
+ "animations": {
+  "warden_roots": {
+   "file": "boss_mrak_warden_roots.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "spawnFrame": 2,
+   "fx": "../../forest/blightwarden/fx_blightwarden_roots.png"
+  },
+  "warden_frost": {
+   "file": "boss_mrak_warden_frost.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "spawnFrame": 2,
+   "fx": "../../peaks/frost_warden/fx_ice_spike.png"
+  },
+  "warden_magma": {
+   "file": "boss_mrak_warden_magma.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "spawnFrame": 2,
+   "fx": "../../caves/magma_colossus/fx_lava_wave.png"
+  },
+  "laugh": {
+   "file": "boss_mrak_laugh.png",
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "stagger": {
+   "file": "boss_mrak_stagger.png",
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "fourStonesBeam": {
+   "file": "fx_four_stones_beam.png",
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "anchor": "left-center at the cousins; repeat along x, end cap last"
+  }
+ },
+ "phases": [
+  {
+   "phase": 1,
+   "uses": [
+    "idle",
+    "telegraph",
+    "shadow_attack",
+    "hurt"
+   ],
+   "note": "existing frames"
+  },
+  {
+   "phase": 2,
+   "uses": [
+    "summon",
+    "warden_roots",
+    "warden_frost",
+    "warden_magma"
+   ],
+   "note": "cycle the three warden attacks"
+  },
+  {
+   "phase": 3,
+   "uses": [
+    "laugh",
+    "stagger",
+    "defeat"
+   ],
+   "note": "laugh while the cousins argue; when all four fire together, draw fx_four_stones_beam and play stagger; three staggers -> defeat"
+  }
+ ]
+}

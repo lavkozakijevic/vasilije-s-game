@@ -1,0 +1,98 @@
+{
+ "id": "enemy_hollow_knight",
+ "type": "enemy",
+ "name": "Hollow Knight",
+ "biome": "keep",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 8,
+  "w": 12,
+  "h": 23
+ },
+ "hp": 4,
+ "speedPxPerSec": 30,
+ "behavior": "walks toward the hero; swings its sword within 30px (hurt frames 2-3, reach x 18-31). When a projectile approaches from the front: shield_up then shield_hold for 1.2s, blocking front hits. Light breaks the shield and damages it.",
+ "shield": {
+  "hitbox": {
+   "x": 24,
+   "y": 13,
+   "w": 5,
+   "h": 16
+  },
+  "brokenBy": [
+   "light"
+  ]
+ },
+ "sword": {
+  "hurtFrames": [
+   2,
+   3
+  ],
+  "hitbox": {
+   "x": 20,
+   "y": 10,
+   "w": 12,
+   "h": 18
+  }
+ },
+ "animations": {
+  "walk": {
+   "file": "enemy_hollow_knight_walk.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  "shield_up": {
+   "file": "enemy_hollow_knight_shield_up.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 3,
+   "fps": 12,
+   "loop": false
+  },
+  "shield_hold": {
+   "file": "enemy_hollow_knight_shield_hold.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 6,
+   "loop": true
+  },
+  "attack": {
+   "file": "enemy_hollow_knight_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 12,
+   "loop": false,
+   "notes": "sword hurts on frames 2-3"
+  },
+  "hurt": {
+   "file": "enemy_hollow_knight_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "enemy_hollow_knight_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "notes": "armour falls apart, a puff of shadow escapes"
+  }
+ },
+ "palette": "elemental16.hex"
+}
