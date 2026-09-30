@@ -1,0 +1,52 @@
+{
+ "id": "companion_puppy",
+ "type": "companion",
+ "name": "Puppy",
+ "companionOf": "hero_konstantin",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet"
+ },
+ "hitbox": {
+  "x": 6,
+  "y": 15,
+  "w": 20,
+  "h": 16
+ },
+ "follow": {
+  "offsetX": -18,
+  "note": "trail behind the child; mirror with the child"
+ },
+ "animations": {
+  "idle": {
+   "file": "companion_puppy_idle.png",
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "run": {
+   "file": "companion_puppy_run.png",
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "companion_puppy_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "special": {
+   "file": "companion_puppy_special.png",
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "special": "bark/sniff: frames 0-1 nose to the ground (sniff puffs), 2 head up, 3 bark with sound arcs. Trigger a secret reveal on frame 3.",
+ "palette": "elemental16.hex"
+}

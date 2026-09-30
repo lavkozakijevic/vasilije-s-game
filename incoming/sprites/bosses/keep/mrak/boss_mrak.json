@@ -1,0 +1,132 @@
+{
+ "id": "boss_mrak",
+ "type": "boss",
+ "name": "Mrak, the Hollow King",
+ "frameWidth": 128,
+ "frameHeight": 128,
+ "facing": "right",
+ "origin": {
+  "x": 64,
+  "y": 127,
+  "note": "bottom-centre; he hovers, the hem floats ~4px above the floor"
+ },
+ "hitbox": {
+  "x": 34,
+  "y": 10,
+  "w": 60,
+  "h": 112
+ },
+ "weakPoint": {
+  "x": 60,
+  "y": 55,
+  "w": 9,
+  "h": 9,
+  "note": "void core on his chest"
+ },
+ "animations": {
+  "idle": {
+   "file": "boss_mrak_idle.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "telegraph": {
+   "file": "boss_mrak_telegraph.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "hands gather void; play before shadow_attack"
+  },
+  "shadow_attack": {
+   "file": "boss_mrak_shadow_attack.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "notes": "spawn fx_mrak_shadow_wave on frame 3 at the front hand, ground level"
+  },
+  "summon": {
+   "file": "boss_mrak_summon.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "notes": "phase 2; warden colours (leaf, frost, flame) orbit him"
+  },
+  "hurt": {
+   "file": "boss_mrak_hurt.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 white flash"
+  },
+  "phase_change": {
+   "file": "boss_mrak_phase_change.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "notes": "burst ring on frames 2-4; switch to phase 2 after"
+  },
+  "defeat": {
+   "file": "boss_mrak_defeat.png",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "notes": "shrinks and dithers away; hold on an empty frame, then show mrak_small"
+  },
+  "wave": {
+   "file": "fx_mrak_shadow_wave.png",
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "notes": "move ~140px/s along the ground"
+  },
+  "orb": {
+   "file": "fx_mrak_orb.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 10,
+   "loop": true,
+   "notes": "homing projectile, ~90px/s"
+  },
+  "small_idle": {
+   "file": "npc_mrak_small_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true,
+   "notes": "ending: tiny Mrak in Baba's red scarf"
+  },
+  "small_shiver": {
+   "file": "npc_mrak_small_shiver.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "notes": "ending: tiny Mrak in Baba's red scarf"
+  }
+ },
+ "waveSpawn": {
+  "frame": 3,
+  "x": 112,
+  "y": 124
+ },
+ "palette": "elemental16.hex"
+}

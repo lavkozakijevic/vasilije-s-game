@@ -1,0 +1,102 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "artScale": 2,
+ "image": "ui_world_map.png",
+ "labels": "ui_world_map_labels.png",
+ "marker": {
+  "file": "ui_map_marker_baba.png",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "frames": 2,
+  "fps": 3,
+  "drawScale": 2,
+  "anchor": {
+   "x": 8,
+   "y": 15
+  }
+ },
+ "nodes": {
+  "village": {
+   "x": 44,
+   "y": 300
+  },
+  "forest": {
+   "x": 140,
+   "y": 244
+  },
+  "peaks": {
+   "x": 260,
+   "y": 176
+  },
+  "caves": {
+   "x": 452,
+   "y": 284
+  },
+  "keep": {
+   "x": 552,
+   "y": 156
+  }
+ },
+ "path": [
+  {
+   "x": 44,
+   "y": 300
+  },
+  {
+   "x": 96,
+   "y": 276
+  },
+  {
+   "x": 140,
+   "y": 244
+  },
+  {
+   "x": 172,
+   "y": 220
+  },
+  {
+   "x": 208,
+   "y": 192
+  },
+  {
+   "x": 260,
+   "y": 176
+  },
+  {
+   "x": 320,
+   "y": 192
+  },
+  {
+   "x": 364,
+   "y": 220
+  },
+  {
+   "x": 400,
+   "y": 256
+  },
+  {
+   "x": 452,
+   "y": 284
+  },
+  {
+   "x": 500,
+   "y": 264
+  },
+  {
+   "x": 524,
+   "y": 232
+  },
+  {
+   "x": 536,
+   "y": 196
+  },
+  {
+   "x": 552,
+   "y": 156
+  }
+ ],
+ "note": "path is the dotted red-yarn route in 640x360 coordinates; move the marker along it between nodes"
+}

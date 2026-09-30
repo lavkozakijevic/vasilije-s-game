@@ -1,0 +1,92 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "artScale": 2,
+ "layerOrder": [
+  "bg",
+  "chars",
+  "fg",
+  "fx",
+  "title"
+ ],
+ "scenes": [
+  {
+   "id": "ending_01_scarf",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "ending_01_scarf_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "ending_01_scarf_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "ending_01_scarf_fx.png"
+    }
+   ],
+   "motion": "slow push in toward Baba and Mrak; dust motes drift in the moonbeam"
+  },
+  {
+   "id": "ending_02_kitchen",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "ending_02_kitchen_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "ending_02_kitchen_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "ending_02_kitchen_fx.png"
+    }
+   ],
+   "motion": "slow pan left to right; steam rises from the cookies"
+  },
+  {
+   "id": "ending_03_fireworks",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "ending_03_fireworks_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "ending_03_fireworks_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "ending_03_fireworks_fx.png"
+    }
+   ],
+   "motion": "fireworks fx layer flashes burst by burst; kids run in place"
+  },
+  {
+   "id": "ending_04_credits",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "ending_04_credits_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "ending_04_credits_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "ending_04_credits_fx.png"
+    },
+    {
+     "name": "title",
+     "file": "ending_04_credits_title.png"
+    }
+   ],
+   "motion": "title layer fades in by dithered steps or slides up; stones pulse"
+  }
+ ]
+}

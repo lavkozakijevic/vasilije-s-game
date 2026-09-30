@@ -1,0 +1,52 @@
+{
+ "id": "companion_fire_fox",
+ "type": "companion",
+ "name": "Fire fox",
+ "companionOf": "hero_vasilije",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet"
+ },
+ "hitbox": {
+  "x": 5,
+  "y": 14,
+  "w": 22,
+  "h": 17
+ },
+ "follow": {
+  "offsetX": -18,
+  "note": "trail behind the child; mirror with the child"
+ },
+ "animations": {
+  "idle": {
+   "file": "companion_fire_fox_idle.png",
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "run": {
+   "file": "companion_fire_fox_run.png",
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "companion_fire_fox_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "special": {
+   "file": "companion_fire_fox_special.png",
+   "frames": 4,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "special": "dash and grab: 0 lean, 1 dash (speed streaks), 2 snap, 3 holding a gold item. Move the entity forward fast on frames 1-2; attach the grabbed item on frame 3.",
+ "palette": "elemental16.hex"
+}

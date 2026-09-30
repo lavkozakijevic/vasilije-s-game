@@ -1,0 +1,99 @@
+{
+ "id": "companion_golden_eagle",
+ "type": "companion",
+ "name": "Golden eagle",
+ "companionOf": "hero_dimitrije",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "perched: feet; flying: treat (16,16) as centre"
+ },
+ "hitbox": {
+  "x": 6,
+  "y": 8,
+  "w": 20,
+  "h": 16
+ },
+ "animations": {
+  "idle": {
+   "file": "companion_golden_eagle_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "fly": {
+   "file": "companion_golden_eagle_fly.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "glide": {
+   "file": "companion_golden_eagle_glide.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 4,
+   "loop": true
+  },
+  "dive": {
+   "file": "companion_golden_eagle_dive.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": true
+  },
+  "carry_konstantin": {
+   "file": "companion_golden_eagle_carry_konstantin.png",
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "carry_katarina": {
+   "file": "companion_golden_eagle_carry_katarina.png",
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "carry_vasilije": {
+   "file": "companion_golden_eagle_carry_vasilije.png",
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "carry_dimitrije": {
+   "file": "companion_golden_eagle_carry.png",
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": true
+  }
+ },
+ "carry": {
+  "frameWidth": 64,
+  "frameHeight": 32,
+  "default": "companion_golden_eagle_carry.png",
+  "variants": {
+   "konstantin": "companion_golden_eagle_carry_konstantin.png",
+   "katarina": "companion_golden_eagle_carry_katarina.png",
+   "vasilije": "companion_golden_eagle_carry_vasilije.png",
+   "dimitrije": "companion_golden_eagle_carry.png"
+  },
+  "note": "child hangs from one raised hand; replace the child sprite with this strip while carried and move the entity upward"
+ },
+ "palette": "elemental16.hex"
+}
