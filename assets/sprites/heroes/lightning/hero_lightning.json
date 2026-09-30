@@ -1,0 +1,104 @@
+{
+ "id": "hero_lightning",
+ "type": "hero",
+ "name": "Jolt",
+ "element": "lightning",
+ "power": "Chain bolt",
+ "signatureColor": "#ffc23d",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 8,
+  "w": 12,
+  "h": 23
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_lightning_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_lightning_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_lightning_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_lightning_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_lightning_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_lightning_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_lightning_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_lightning_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "fx_lightning_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "speedPxPerSec": 250,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 26,
+    "y": 10,
+    "note": "relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "fx_lightning_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center"
+  }
+ },
+ "icon": {
+  "file": "icon_element_lightning.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "palette": "elemental16.hex"
+}
