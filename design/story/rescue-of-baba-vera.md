@@ -138,12 +138,12 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 **Elder Rotroot (mid-boss)**
 - **Elder Rotroot:** "ROOTS CRUSH SMALL FEET!"
 - **Dimitrije:** "My feet are small. They're also fast."
-- **Vasilije:** "Get him, Dimi!"
+- **Vasilije:** "Get him, Mita!"
 
 **Before the Blightwarden**
 - **Vasilije:** "My legs are dead. How are you not tired?"
 - **Dimitrije:** "Football. Every day."
-- **Kosta:** "You were right back there, Dimi. Lead the way."
+- **Kosta:** "You were right back there, Mita. Lead the way."
 - **Dimitrije:** "Okej."
 - **Blightwarden:** "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains."
 - **Katarina:** "Over the mountains… that's where it snows."
@@ -158,8 +158,8 @@ Dialogue lines are short so they fit a pixel dialogue box with a character portr
 
 - **Katarina:** "Ali Vera! The warm ones are so itchy…"
 - **Dimitrije:** "I packed extra. Here."
-- **Vasilije:** "Dimi, you were right. We were arguing and you just… went."
-- **Kosta:** "Yeah. Less arguing, more going. Good leading, Dimi."
+- **Vasilije:** "Mita, you were right. We were arguing and you just… went."
+- **Kosta:** "Yeah. Less arguing, more going. Good leading, Mita."
 - **Dimitrije:** "Thanks. Now let's go get Baba."
 
 ### Level 2 · The Frostfang Peaks: Katarina

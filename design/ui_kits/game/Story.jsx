@@ -40,12 +40,12 @@ const EH_DIALOGUE = {
   l1_elder: [
     { who: 'elder', text: 'ROOTS CRUSH SMALL FEET!' },
     { who: 'dimitrije', text: 'My feet are small. They’re also fast.' },
-    { who: 'vasilije', mood: 'happy', text: 'Get him, Dimi!' },
+    { who: 'vasilije', mood: 'happy', text: 'Get him, Mita!' },
   ],
   l1_blight: [
     { who: 'vasilije', mood: 'ali', text: 'My legs are dead. How are you not tired?' },
     { who: 'dimitrije', mood: 'happy', text: 'Football. Every day.' },
-    { who: 'kosta', mood: 'happy', text: 'You were right back there, Dimi. Lead the way.' },
+    { who: 'kosta', mood: 'happy', text: 'You were right back there, Mita. Lead the way.' },
     { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
     { who: 'blightwarden', text: "The old woman is gone, little ones. Mrak's shadow-birds carried her over the mountains." },
     { who: 'katarina', text: 'Over the mountains… that’s where it snows.' },
@@ -58,8 +58,8 @@ const EH_NOTES = {
     replies: [
       { who: 'katarina', mood: 'ali', text: 'Ali Vera! The warm ones are so itchy…' },
       { who: 'dimitrije', mood: 'happy', text: 'I packed extra. Here.' },
-      { who: 'vasilije', mood: 'happy', text: 'Dimi, you were right. We were arguing and you just… went.' },
-      { who: 'kosta', mood: 'happy', text: 'Yeah. Less arguing, more going. Good leading, Dimi.' },
+      { who: 'vasilije', mood: 'happy', text: 'Mita, you were right. We were arguing and you just… went.' },
+      { who: 'kosta', mood: 'happy', text: 'Yeah. Less arguing, more going. Good leading, Mita.' },
       { who: 'dimitrije', mood: 'happy', text: 'Thanks. Now let’s go get Baba.' },
     ],
   },
