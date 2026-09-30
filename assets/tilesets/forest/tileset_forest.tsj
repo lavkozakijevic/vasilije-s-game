@@ -5,13 +5,13 @@
  "name": "forest",
  "tilewidth": 32,
  "tileheight": 32,
- "tilecount": 56,
+ "tilecount": 88,
  "columns": 8,
  "margin": 0,
  "spacing": 0,
  "image": "tileset_forest.png",
  "imagewidth": 256,
- "imageheight": 224,
+ "imageheight": 352,
  "tiles": [
   {
    "id": 0,
@@ -916,6 +916,541 @@
      "name": "decor",
      "type": "bool",
      "value": true
+    }
+   ]
+  },
+  {
+   "id": 56,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_0"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 0
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 57,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_1"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 1
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 58,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_2"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 2
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 59,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "crumble_3"
+    },
+    {
+     "name": "crumble",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "crumble_frame",
+     "type": "int",
+     "value": 3
+    },
+    {
+     "name": "crumble_delay_ms",
+     "type": "int",
+     "value": 450
+    }
+   ]
+  },
+  {
+   "id": 60,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "rope_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 61,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "rope_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 62,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "rope_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 63,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_idle"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 64,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_0"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 65,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_1"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 66,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_2"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 67,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "bounce_3"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2
+    }
+   ]
+  },
+  {
+   "id": 68,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_end_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 69,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_top"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 70,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_interior"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 71,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 72,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_end_mid"
+    }
+   ]
+  },
+  {
+   "id": 73,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_end_bottom"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 74,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_interior_glow"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 75,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "log_facade"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    }
+   ]
+  },
+  {
+   "id": 76,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "canopy_l"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 77,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "canopy_m"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 78,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "canopy_r"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 79,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "canopy_fringe"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 80,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "canopy_fill"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 81,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "canopy_fringe_b"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades whole layer to ~35% while hero overlaps"
     }
    ]
   }

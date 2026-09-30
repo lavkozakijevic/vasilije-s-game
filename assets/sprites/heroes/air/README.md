@@ -1,6 +1,6 @@
 # Wisp: air hero (Elemental Heroes)
 
-Moss hood, slim build, long bone scarf that streams when running.
+Bone-white hood and armour with leaf-green trim, slim build, long leaf-green scarf that streams when running (recoloured in phase 3 so Wisp no longer blends into the forest).
 Power: **Gale crescent** (`fx_air_projectile.png` + `fx_air_impact.png`).
 
 ## Files

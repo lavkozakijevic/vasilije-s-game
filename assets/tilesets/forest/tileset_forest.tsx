@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="forest" tilewidth="32" tileheight="32" spacing="0" margin="0" tilecount="56" columns="8">
- <image source="tileset_forest.png" width="256" height="224"/>
+<tileset version="1.10" tiledversion="1.10.2" name="forest" tilewidth="32" tileheight="32" tilecount="88" columns="8">
+ <image source="tileset_forest.png" width="256" height="352"/>
  <tile id="0">
   <properties>
    <property name="name" value="ground_tl"/>
@@ -353,6 +353,191 @@
   <properties>
    <property name="name" value="deco_tallgrass"/>
    <property name="decor" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="56">
+  <properties>
+   <property name="name" value="crumble_0"/>
+   <property name="oneway" type="bool" value="true"/>
+   <property name="crumble" type="bool" value="true"/>
+   <property name="crumble_frame" type="int" value="0"/>
+   <property name="crumble_delay_ms" type="int" value="450"/>
+  </properties>
+ </tile>
+ <tile id="57">
+  <properties>
+   <property name="name" value="crumble_1"/>
+   <property name="oneway" type="bool" value="true"/>
+   <property name="crumble" type="bool" value="true"/>
+   <property name="crumble_frame" type="int" value="1"/>
+   <property name="crumble_delay_ms" type="int" value="450"/>
+  </properties>
+ </tile>
+ <tile id="58">
+  <properties>
+   <property name="name" value="crumble_2"/>
+   <property name="oneway" type="bool" value="true"/>
+   <property name="crumble" type="bool" value="true"/>
+   <property name="crumble_frame" type="int" value="2"/>
+   <property name="crumble_delay_ms" type="int" value="450"/>
+  </properties>
+ </tile>
+ <tile id="59">
+  <properties>
+   <property name="name" value="crumble_3"/>
+   <property name="crumble" type="bool" value="true"/>
+   <property name="crumble_frame" type="int" value="3"/>
+   <property name="crumble_delay_ms" type="int" value="450"/>
+  </properties>
+ </tile>
+ <tile id="60">
+  <properties>
+   <property name="name" value="rope_l"/>
+   <property name="oneway" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="61">
+  <properties>
+   <property name="name" value="rope_m"/>
+   <property name="oneway" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="62">
+  <properties>
+   <property name="name" value="rope_r"/>
+   <property name="oneway" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="63">
+  <properties>
+   <property name="name" value="bounce_idle"/>
+   <property name="bounce" type="bool" value="true"/>
+   <property name="bounce_multiplier" type="float" value="2"/>
+  </properties>
+ </tile>
+ <tile id="64">
+  <properties>
+   <property name="name" value="bounce_0"/>
+   <property name="bounce" type="bool" value="true"/>
+   <property name="bounce_multiplier" type="float" value="2"/>
+  </properties>
+ </tile>
+ <tile id="65">
+  <properties>
+   <property name="name" value="bounce_1"/>
+   <property name="bounce" type="bool" value="true"/>
+   <property name="bounce_multiplier" type="float" value="2"/>
+  </properties>
+ </tile>
+ <tile id="66">
+  <properties>
+   <property name="name" value="bounce_2"/>
+   <property name="bounce" type="bool" value="true"/>
+   <property name="bounce_multiplier" type="float" value="2"/>
+  </properties>
+ </tile>
+ <tile id="67">
+  <properties>
+   <property name="name" value="bounce_3"/>
+   <property name="bounce" type="bool" value="true"/>
+   <property name="bounce_multiplier" type="float" value="2"/>
+  </properties>
+ </tile>
+ <tile id="68">
+  <properties>
+   <property name="name" value="log_end_top"/>
+   <property name="solid" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="69">
+  <properties>
+   <property name="name" value="log_top"/>
+   <property name="solid" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="70">
+  <properties>
+   <property name="name" value="log_interior"/>
+   <property name="hidden_room" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="71">
+  <properties>
+   <property name="name" value="log_bottom"/>
+   <property name="solid" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="72">
+  <properties>
+   <property name="name" value="log_end_mid"/>
+  </properties>
+ </tile>
+ <tile id="73">
+  <properties>
+   <property name="name" value="log_end_bottom"/>
+   <property name="solid" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="74">
+  <properties>
+   <property name="name" value="log_interior_glow"/>
+   <property name="hidden_room" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="75">
+  <properties>
+   <property name="name" value="log_facade"/>
+   <property name="foreground" type="bool" value="true"/>
+   <property name="fade_when_behind" type="bool" value="true"/>
+   <property name="cover_for" value="hidden_room"/>
+  </properties>
+ </tile>
+ <tile id="76">
+  <properties>
+   <property name="name" value="canopy_l"/>
+   <property name="foreground" type="bool" value="true"/>
+   <property name="fade_when_behind" type="bool" value="true"/>
+   <property name="fade_alpha_note" value="engine fades whole layer to ~35% while hero overlaps"/>
+  </properties>
+ </tile>
+ <tile id="77">
+  <properties>
+   <property name="name" value="canopy_m"/>
+   <property name="foreground" type="bool" value="true"/>
+   <property name="fade_when_behind" type="bool" value="true"/>
+   <property name="fade_alpha_note" value="engine fades whole layer to ~35% while hero overlaps"/>
+  </properties>
+ </tile>
+ <tile id="78">
+  <properties>
+   <property name="name" value="canopy_r"/>
+   <property name="foreground" type="bool" value="true"/>
+   <property name="fade_when_behind" type="bool" value="true"/>
+   <property name="fade_alpha_note" value="engine fades whole layer to ~35% while hero overlaps"/>
+  </properties>
+ </tile>
+ <tile id="79">
+  <properties>
+   <property name="name" value="canopy_fringe"/>
+   <property name="foreground" type="bool" value="true"/>
+   <property name="fade_when_behind" type="bool" value="true"/>
+   <property name="fade_alpha_note" value="engine fades whole layer to ~35% while hero overlaps"/>
+  </properties>
+ </tile>
+ <tile id="80">
+  <properties>
+   <property name="name" value="canopy_fill"/>
+   <property name="foreground" type="bool" value="true"/>
+   <property name="fade_when_behind" type="bool" value="true"/>
+   <property name="fade_alpha_note" value="engine fades whole layer to ~35% while hero overlaps"/>
+  </properties>
+ </tile>
+ <tile id="81">
+  <properties>
+   <property name="name" value="canopy_fringe_b"/>
+   <property name="foreground" type="bool" value="true"/>
+   <property name="fade_when_behind" type="bool" value="true"/>
+   <property name="fade_alpha_note" value="engine fades whole layer to ~35% while hero overlaps"/>
   </properties>
  </tile>
 </tileset>

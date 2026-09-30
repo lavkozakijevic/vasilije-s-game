@@ -31,6 +31,256 @@
    "notes": "foreground, parallax 1.2, drawn above hero + tiles"
   },
   {
+   "file": "cutscenes/intro/intro_01_village_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_01_village_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_02_kitchen_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_02_kitchen_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_02_kitchen_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_03_living_room_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_03_living_room_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_fg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_04_window_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_05_blackout_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_05_blackout_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_06_empty_chair_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_06_empty_chair_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_07_stones_box_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_07_stones_box_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_07_stones_box_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_08_kids_face_off_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_08_kids_face_off_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_08_kids_face_off_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/intro/intro_09_into_the_forest_title.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
    "file": "mockups/mock_forest_boss_arena.png",
    "width": 640,
    "height": 360,
@@ -51,6 +301,16 @@
    "fps": 0,
    "loop": false,
    "notes": "section mock: bounce climb, canopy, rope bridge, hollow log, crumble planks, Mothwing, Sporecap"
+  },
+  {
+   "file": "mockups/mock_story_cast.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
   },
   {
    "file": "sprites/bosses/forest/blightwarden/boss_blightwarden_attack.png",
@@ -723,6 +983,366 @@
    "loop": true
   },
   {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/katarina/hero_katarina_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/konstantin/hero_konstantin_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vasilije/hero_vasilije_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
    "file": "sprites/heroes/light/fx_light_respawn.png",
    "width": 192,
    "height": 32,
@@ -1076,6 +1696,66 @@
    "notes": "restores 1 heart"
   },
   {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_captive.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_cheer.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_hug.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_wag_finger.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/baba_vera/npc_baba_vera_walk.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": true
+  },
+  {
    "file": "sprites/props/forest/prop_checkpoint_shrine_activate.png",
    "width": 192,
    "height": 64,
@@ -1160,6 +1840,276 @@
    "loop": false
   },
   {
+   "file": "ui/portraits/portrait_baba_vera_stern.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_baba_vera_warm.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_baba_vera_worried.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_dimitrije_okej.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_katarina_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_katarina_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_katarina_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_air_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_earth_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_fire_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_ice_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_light_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_lightning_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_shadow_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_knight_water_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_konstantin_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_konstantin_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_konstantin_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mrak_menacing.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mrak_sad.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mrak_surprised.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_vasilije_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_vasilije_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_vasilije_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
    "file": "ui/ui_bossbar_fill.png",
    "width": 8,
    "height": 8,
@@ -1179,6 +2129,47 @@
    "fps": 0,
    "loop": false,
    "notes": "fill area x20 y4 w184 h8"
+  },
+  {
+   "file": "ui/ui_dialogue_box.png",
+   "width": 24,
+   "height": 24,
+   "frameWidth": 24,
+   "frameHeight": 24,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_name_tag.png",
+   "width": 32,
+   "height": 16,
+   "frameWidth": 32,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_note_paper.png",
+   "width": 320,
+   "height": 200,
+   "frameWidth": 320,
+   "frameHeight": 200,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_skip_button.png",
+   "width": 160,
+   "height": 20,
+   "frameWidth": 80,
+   "frameHeight": 20,
+   "frames": 2,
+   "fps": 0,
+   "loop": false,
+   "notes": "frame 0 normal, frame 1 hover"
   }
  ]
 }
