@@ -82,6 +82,7 @@ EH_LV.l6 = { id: 'l6', map: 'maps/attic_l6.tmj', tiles: 'tilesets/attic/tileset_
     ice: new Set(), noSafe: id => id >= 58 && id <= 62 } };
 const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'];
 const EH_RAT = { idle:4, run:6, chase:6, hurt:2, death:5 };
+const EH_SPIDER = { idle:4, drop:2, climb:4, hurt:2, death:5 }, EH_WASP = { fly:4, attack:4, hurt:2, death:5 };
 const EH_CAT = { idle:4, sit:4, run:6, hide:4, found:4 };
 const EH_TOY_NAMES = { football: ['the football', 'fudbalsku loptu'], lego: ['the Lego', 'lego kockice'], teddy: ['the teddy', 'medu'], car: ['the toy car', 'autić'], stick: ['the stick', 'štap'],
   crayons: ['the crayons', 'bojice'], markers: ['the markers', 'flomastere'], pencils: ['the pencils', 'olovke'], chessboard: ['the chessboard', 'šahovsku tablu'], cards: ['the cards', 'karte'],
@@ -103,8 +104,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
   pausedRef.current = paused;
   React.useEffect(() => {
     let alive = true, raf = 0;
-    const keys = {}; let wantHero = -1, cycle = 0, jumpBuf = 0;   // jumpBuf remembers a jump press for a few ticks so quick taps aren't lost
-    const kd = e => { keys[e.code] = true; const d = /^Digit([1-6])$/.exec(e.code); if (d) wantHero = 'k' + d[1]; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
+    const keys = {}; let wantHero = -1, cycle = 0, jumpBuf = 0, spaceBuf = 0;   // jumpBuf remembers a jump press for a few ticks so quick taps aren't lost
+    const kd = e => { keys[e.code] = true; const d = /^Digit([1-6])$/.exec(e.code); if (d) wantHero = 'k' + d[1]; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'Space' && !e.repeat) spaceBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
@@ -167,7 +168,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           ...['open', 'closing', 'closed', 'opening'].map(k => load('cg_' + k, `sprites/props/caves/prop_cave_gate_${k}.png`)),
           load('rlava', 'backgrounds/caves/rising_lava.png'), load('rlava_body', 'backgrounds/caves/rising_lava_body.png')] : []),
         ...(LV.cat ? [...Object.keys(EH_RAT).map(k => load('rat_' + k, `sprites/enemies/attic/rat/enemy_rat_${k}.png`)), load('ratling', 'sprites/enemies/attic/rat/enemy_rat_small_run.png'),
-          ...Object.keys(EH_CAT).map(k => load('cat_' + k, `sprites/npc/mishika/npc_mishika_${k}.png`)), load('rope', 'sprites/props/attic/prop_rope.png'), load('hatch_glow', 'sprites/props/attic/prop_hatch_glow.png'),
+          ...Object.keys(EH_CAT).map(k => load('cat_' + k, `sprites/npc/mishika/npc_mishika_${k}.png`)), load('rope', 'sprites/props/attic/prop_rope.png'), load('wasp_nest', 'sprites/props/attic/prop_wasp_nest.png'),
+          ...Object.keys(EH_SPIDER).map(k => load('sp_' + k, `sprites/enemies/attic/spider/enemy_spider_${k}.png`)), ...Object.keys(EH_WASP).map(k => load('wa_' + k, `sprites/enemies/attic/wasp/enemy_wasp_${k}.png`)), load('hatch_glow', 'sprites/props/attic/prop_hatch_glow.png'),
           ...['idle', 'run', 'jump', 'fall', 'land', 'hurt'].map(k => load('carry_' + k, `sprites/heroes/kids/dimitrije/hero_dimitrije_carry_${k}.png`)),
           load('ui_timer', 'ui/ui_timer.png'), load('ui_cat', 'ui/ui_cat_icon.png'), load('ui_hatch', 'ui/ui_hatch_icon.png')] : []),
         ...(LV.toys ? [...Object.keys(EH_TOY_NAMES).map(k => load('toy_' + k, `sprites/items/toys/toy_${k}.png`)), load('fx_toy_pickup', 'sprites/items/toys/fx_toy_pickup.png'),
@@ -250,7 +252,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       // Mishika: hides twice when Mita gets close (hide, then she is at the next spot); the third time she leaps into his arms
       const SPOTS = of('cat_spot').sort((a, b) => a.name.localeCompare(b.name)), CAT = SPOTS.length ? { i: 0, x: SPOTS[0].x, y: SPOTS[0].y, st: 'sit', t: 0 } : null;
       const ROPES = of('rope').map(o => ({ x: o.x, y: o.y, a: 0.2, w: 0 })), HATCH = ents.find(o => o.type === 'hatch');
-      const ROPE_L = 176, ropeKnot = r => ({ x: r.x + Math.sin(r.a) * ROPE_L, y: r.y + Math.cos(r.a) * ROPE_L });   // the rope is a pendulum: a = angle, w = swing speed
+      const WASP_HOMES = [[14, 70], [31, 60], [48, 64], [60, 90]], ROPE_L = 176, ropeKnot = r => ({ x: r.x + Math.sin(r.a) * ROPE_L, y: r.y + Math.cos(r.a) * ROPE_L });   // the rope is a pendulum: a = angle, w = swing speed
       const FIREB = [], TRIG = of('story_trigger'), SB = {};   // SB: shadow-bridge tiles lit by light shots
       // the eagle ride up the cliff plays before the keep level starts
       const RIDE = LV.ride ? { t: 0, on: true } : null;
@@ -354,7 +356,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           const L1 = keys.ArrowLeft || keys.KeyA, R1 = keys.ArrowRight || keys.KeyD;
           if (H.hurtT <= 0) { let tv = ((R1 ? 1.8 : 0) - (L1 ? 1.8 : 0)) * (H.slowT > 0 ? 0.5 : 1); if (tv) H.face = Math.sign(tv); if (H.attackT > 0 && H.ground) tv *= 0.3;
             H.vx = H.ice && H.ground ? H.vx + (tv - H.vx) * 0.06 : tv; }   // packed ice: the hero slides a little
-          if (jumpBuf > 0) jumpBuf--;
+          if (jumpBuf > 0) jumpBuf--; if (spaceBuf > 0) spaceBuf--;
           if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; H.jumpT = tick; H.jumpV = -8.3; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
           if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0 && !H.carry) { H.attackT = 24; H.fired = false; }
           if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
@@ -416,15 +418,15 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             // the attic wakes up: the rats come back, spiders drop from the ceiling, wasps leave their nest
             E.forEach(e => { if ((e.kind === 'rat' || e.kind === 'ratling') && e.dead) Object.assign(e, { dead: 0, hurt: 0, hp: 1, x: e.sx, chase: false }); });
             [9, 18, 27, 34, 45, 51, 59].forEach(c => E.push({ kind: 'spider', x: c * 32 + 16, y: 40, top: 40, low: 150 + (c % 3) * 30, st: 'up', t: (c * 17) % 90, dir: 1, hp: 1, hurt: 0, dead: 0 }));
-            [[14, 70], [31, 60], [48, 64], [60, 90]].forEach(([c, y]) => E.push({ kind: 'wasp', x: c * 32, y, bx: c * 32, by: y, t: c * 7, dir: -1, hp: 1, hurt: 0, dead: 0 }));
+            WASP_HOMES.forEach(([c, y]) => E.push({ kind: 'wasp', x: c * 32, y, bx: c * 32, by: y, t: c * 7, dir: -1, hp: 1, hurt: 0, dead: 0 }));
             say(window.EH_LANG === 'sr' ? 'PAZI! PAUCI I OSE!' : 'WATCH OUT! SPIDERS AND WASPS!'); } }
         if (H.carry && HATCH && TIMER && TIMER.st === 'run' && !H.dead && overlap(heroBox(), { x: HATCH.x, y: HATCH.y - 40, w: 64, h: 48 })) { TIMER.st = 'won'; TIMER.t = 0; }
         ROPES.forEach(r => { r.w += -0.0016 * Math.sin(r.a); r.w *= H.rope === r ? 0.997 : 0.99; r.a = Math.max(-0.75, Math.min(0.75, r.a + r.w)); if (H.rope !== r && Math.abs(r.a) < 0.02 && Math.abs(r.w) < 0.002) r.w += 0.004; });
         if (ROPES.length && !H.dead) { if (H.ropeCd > 0) H.ropeCd--;
-          if (!H.rope && !H.ground && !(H.ropeCd > 0)) for (const r of ROPES) { const kn = ropeKnot(r); if (overlap(heroBox(), { x: kn.x - 10, y: kn.y - 30, w: 20, h: 40 })) { H.rope = r; r.w += (H.vx || 0) / ROPE_L * 0.6; jumpBuf = 0; break; } }
+          if (!H.rope && !H.ground && !(H.ropeCd > 0)) for (const r of ROPES) { const kn = ropeKnot(r); if (overlap(heroBox(), { x: kn.x - 10, y: kn.y - 30, w: 20, h: 40 })) { H.rope = r; r.w += (H.vx || 0) / ROPE_L * 0.6; jumpBuf = spaceBuf = 0; break; } }
           if (H.rope) { const r = H.rope, kn = ropeKnot(r); H.x = kn.x - 16; H.y = kn.y - 20; H.vy = 0; H.ground = false;   // hanging on: left/right pumps the swing, Space jumps off with the swing's speed, down drops
             const R = keys.ArrowRight || keys.KeyD, L = keys.ArrowLeft || keys.KeyA; if (R) { r.w += 0.0007; H.face = 1; } if (L) { r.w -= 0.0007; H.face = -1; }
-            if (jumpBuf > 0 && keys.Space) { jumpBuf = 0; H.rope = null; H.ropeCd = 20; const v = r.w * ROPE_L; H.vy = -6.5 - Math.abs(v) * 0.4; H.boost = Math.max(-3.5, Math.min(3.5, v * Math.cos(r.a) * 0.9 + (R ? 0.8 : L ? -0.8 : 0))); }
+            if (spaceBuf > 0) { jumpBuf = spaceBuf = 0; H.rope = null; H.ropeCd = 20; const v = r.w * ROPE_L; H.vy = -6.5 - Math.abs(v) * 0.4; H.boost = Math.max(-3.5, Math.min(3.5, v * Math.cos(r.a) * 0.9 + (R ? 0.8 : L ? -0.8 : 0))); }
             else if (keys.ArrowDown || keys.KeyS) { H.rope = null; H.ropeCd = 25; } } }
         // ---- pickups / checkpoints ----
         const near = (o, w = 16) => Math.abs(H.x + 16 - (o.x + w / 2)) < 14 && Math.abs(H.y + 20 - (o.y + 8)) < 18;
@@ -598,7 +600,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             else if (e.st === 'climb') { e.y = Math.max(e.top, e.y - 1.2); if (e.y <= e.top) { e.st = 'up'; e.t = 0; } } }
           else if (e.kind === 'wasp') {   // buzzes in a loop around its spot and darts at Mita when he passes under it
             e.t++; const ddx = H.x + 16 - e.x, ddy = H.y + 12 - e.y, dd = Math.hypot(ddx, ddy) || 1;
-            if (dd < 140) { e.x += ddx / dd * 1.0; e.y += ddy / dd * 1.0 + Math.sin(e.t / 5) * 0.8; e.dir = Math.sign(ddx) || e.dir; }
+            e.atk = dd < 140; if (e.atk) { e.x += ddx / dd * 1.0; e.y += ddy / dd * 1.0 + Math.sin(e.t / 5) * 0.8; e.dir = Math.sign(ddx) || e.dir; }
             else { e.x += (e.bx + Math.sin(e.t / 40) * 40 - e.x) * 0.05; e.y += (e.by + Math.sin(e.t / 13) * 10 - e.y) * 0.05; e.dir = Math.cos(e.t / 40) > 0 ? 1 : -1; } }
           else if (e.kind === 'ratling') { const nx = e.x + 1.83 * e.dir; if (!floorAt(nx + 12 + e.dir * 8, e.y - 16) || T.solid.has(tileAt(nx + 12 + e.dir * 10, e.y + 8))) e.dir *= -1; else e.x = nx; }
           else if (e.kind === 'shade') {
@@ -962,6 +964,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           drawStrip(img[`pet_${PUP.id}_${a}`], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
         GM.forEach((g, i) => { if (!g.got) drawStrip(img.gem, 6, (tick / 7.5 + i) % 6, g.x, g.y, 16); });
+        if (LV.cat) WASP_HOMES.forEach(([c], i) => drawStrip(img.wasp_nest, 4, (tick / 10 + i) % 4, c * 32 - 16, 40, 32));
         ROPES.forEach(r => { for (let i = 0; i <= ROPE_L; i += 2) { const px = Math.round(r.x + Math.sin(r.a) * i), py = Math.round(r.y + Math.cos(r.a) * i); ctx.fillStyle = '#1a1420'; ctx.fillRect(px - 2, py, 4, 2); ctx.fillStyle = i % 8 < 4 ? '#b0884e' : '#8a6236'; ctx.fillRect(px - 1, py, 2, 2); }
           const kn = ropeKnot(r); ctx.fillStyle = '#1a1420'; ctx.fillRect(Math.round(kn.x) - 4, Math.round(kn.y) - 3, 8, 7); ctx.fillStyle = '#b0884e'; ctx.fillRect(Math.round(kn.x) - 3, Math.round(kn.y) - 2, 6, 5); });
         if (H.carry && HATCH && img.hatch_glow) drawStrip(img.hatch_glow, 4, (tick / 10) % 4, HATCH.x, HATCH.y - 32, 64);
@@ -986,14 +989,11 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'shell_crack' ? (24 - e.crk) / 6 : a === 'shell_up' ? (75 - e.sh) / 5 : a === 'shell_hold' ? (tick / 10) % 2 : (tick / 7.5) % 6; drawStrip(img['gl_' + a], EH_GOLEM[a], f, e.x, e.y, 32, e.dir < 0); }
           else if (e.kind === 'rat') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.chase ? 'chase' : 'run'; const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : (tick / 4) % 6;
             drawStrip(img['rat_' + a], EH_RAT[a], f, e.x - (e.dead ? e.dead * 2 : 0), e.y, 32, e.dir < 0); }
-          else if (e.kind === 'spider') { const x = Math.round(e.x), y = Math.round(e.y) + (e.dead ? e.dead * 3 : 0), leg = Math.floor(tick / 6) % 2;   // drawn in code until Claude Design's spider arrives
-            if (!e.dead) { ctx.fillStyle = '#d8d0e0'; ctx.fillRect(x, 32, 1, y - 36); }
-            ctx.fillStyle = '#14101c'; for (const s of [-1, 1]) for (let k = 0; k < 4; k++) { ctx.fillRect(x + s * 5, y - 3 + k * 2, s * (5 + (k + leg) % 2 * 2), 1); ctx.fillRect(x + s * (10 + (k + leg) % 2 * 2) - (s < 0 ? 0 : 1), y - 2 + k * 2, 1, 3); }
-            ctx.fillRect(x - 6, y - 5, 12, 11); ctx.fillStyle = e.hurt ? '#e8e0f0' : '#4a3a5a'; ctx.fillRect(x - 5, y - 4, 10, 9); ctx.fillStyle = '#e04040'; ctx.fillRect(x - 3, y + 1, 2, 2); ctx.fillRect(x + 1, y + 1, 2, 2); }
-          else if (e.kind === 'wasp') { const x = Math.round(e.x), y = Math.round(e.y) + (e.dead ? e.dead * 3 : 0), wf = Math.floor(tick / 2) % 2, d = e.dir;
-            ctx.fillStyle = '#14101c'; ctx.fillRect(x - 8, y - 4, 16, 9); ctx.fillStyle = e.hurt ? '#fff' : '#f0c020'; ctx.fillRect(x - 7, y - 3, 14, 7); ctx.fillStyle = '#14101c'; ctx.fillRect(x - 3, y - 3, 2, 7); ctx.fillRect(x + 1, y - 3, 2, 7);
-            ctx.fillRect(x - d * 9, y, 2, 2); ctx.fillStyle = '#e04040'; ctx.fillRect(x + d * 5 - 1, y - 2, 2, 2);
-            ctx.fillStyle = '#d8eef8'; ctx.fillRect(x - 5, y - 9 + wf * 2, 5, 4 - wf * 2); ctx.fillRect(x + 1, y - 9 + wf * 2, 5, 4 - wf * 2); }
+          else if (e.kind === 'spider') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'drop' ? 'drop' : e.st === 'climb' ? 'climb' : 'idle', f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : (tick / (a === 'drop' ? 6 : a === 'climb' ? 7.5 : 10)) % EH_SPIDER[a];
+            if (!e.dead) { ctx.fillStyle = '#d8d0e0'; ctx.fillRect(Math.round(e.x), 32, 1, Math.round(e.y) - 48); }
+            drawStrip(img['sp_' + a], EH_SPIDER[a], f, e.x - 16, e.y - 16 + (e.dead ? e.dead * 2 : 0), 32); }
+          else if (e.kind === 'wasp') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.atk ? 'attack' : 'fly', f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : (tick / 3) % 4;
+            drawStrip(img['wa_' + a], EH_WASP[a], f, e.x - 16, e.y - 16 + (e.dead ? e.dead * 2 : 0), 32, e.dir < 0); }
           else if (e.kind === 'ratling') { if (!e.dead) drawStrip(img.ratling, 6, (tick / 4) % 6, e.x, e.y, 24, e.dir < 0); }
           else if (e.kind === 'shade') { if (e.st === 'gone') return; const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'fadeout' ? 'fade_out' : e.st === 'fadein' ? 'fade_in' : e.st === 'attack' ? 'attack' : 'fly';
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'fade_out' || a === 'fade_in' ? e.t / 5 : a === 'attack' ? e.t / 6 : (tick / 7.5) % 4; drawStrip(img['sh_' + a], EH_SHADE[a], f, e.x - 16, e.y - 16, 32, e.dir < 0); }
