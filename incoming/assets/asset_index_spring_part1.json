@@ -1,0 +1,649 @@
+{
+ "game": "Elemental Heroes",
+ "level": "5 The Big Tidy-Up",
+ "note": "phase 7 part 1 entries; merge into asset_index.json",
+ "assets": [
+  {
+   "file": "cutscenes/spring/spring_01_sunrise_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/spring/spring_01_sunrise_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/gold/fx_gold_impact.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/gold/fx_gold_projectile.png",
+   "width": 128,
+   "height": 16,
+   "frameWidth": 32,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "notes": "bright head on the right; flies straight"
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/ruby/hero_ruby_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/vera/hero_vera_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/present/fx_present_explosion.png",
+   "width": 288,
+   "height": 48,
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "notes": "ribbons + confetti, no fire; damage on frames 1-2"
+  },
+  {
+   "file": "sprites/heroes/present/fx_present_projectile.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "notes": "tumbles in an arc"
+  },
+  {
+   "file": "sprites/items/toys/fx_toy_pickup.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "notes": "sparkle and poof; centre on the toy"
+  },
+  {
+   "file": "sprites/items/toys/toy_car.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_cards.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_chessboard.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_crayons.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_football.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_lego.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_markers.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_pencils.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_plush_bunny.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_plush_cat.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_plush_dino.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_stick.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_sword.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_teddy.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/items/toys/toy_uno.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "gentle bob + sparkle"
+  },
+  {
+   "file": "sprites/npc/marija/npc_marija_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/marija/npc_marija_laugh.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/marija/npc_marija_wag_finger.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/marija/npc_marija_walk.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  {
+   "file": "ui/icon_element_gold.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/icon_element_present.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_grumpy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_laughing.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_proud.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_ruby_ali_vera.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_ruby_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_ruby_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_ruby_worried.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_hero_lock.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_star_vera.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "next to a cousin who unlocked Vera"
+  },
+  {
+   "file": "ui/ui_timer.png",
+   "width": 96,
+   "height": 32,
+   "frameWidth": 96,
+   "frameHeight": 32,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "digits drawn by the engine inside x31-89, y9-23"
+  },
+  {
+   "file": "ui/ui_toy_counter_icon.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_trophy_bronze.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_trophy_gold.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_trophy_silver.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_unlock_card.png",
+   "width": 320,
+   "height": 200,
+   "frameWidth": 320,
+   "frameHeight": 200,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "title text inside x47-272, y23-38; hero portrait/sprite in the gold frame x111-209, y61-139; button/caption bar x81-238, y169-180"
+  }
+ ]
+}

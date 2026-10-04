@@ -1,0 +1,49 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "note": "additions for level 5; merge into portraits.json. Baba Vera uses the existing portrait_baba_vera_* files.",
+ "portraits": [
+  {
+   "file": "portrait_ruby_neutral.png",
+   "speaker": "Ruby",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_ruby_happy.png",
+   "speaker": "Ruby",
+   "expression": "happy"
+  },
+  {
+   "file": "portrait_ruby_worried.png",
+   "speaker": "Ruby",
+   "expression": "worried"
+  },
+  {
+   "file": "portrait_ruby_ali_vera.png",
+   "speaker": "Ruby",
+   "expression": "ali_vera"
+  },
+  {
+   "file": "portrait_marija_neutral.png",
+   "speaker": "Marija",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_marija_grumpy.png",
+   "speaker": "Marija",
+   "expression": "grumpy"
+  },
+  {
+   "file": "portrait_marija_laughing.png",
+   "speaker": "Marija",
+   "expression": "laughing"
+  },
+  {
+   "file": "portrait_marija_proud.png",
+   "speaker": "Marija",
+   "expression": "proud"
+  }
+ ]
+}

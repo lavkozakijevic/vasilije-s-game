@@ -1,0 +1,48 @@
+{
+ "id": "npc_marija",
+ "type": "npc",
+ "name": "Marija",
+ "age": 84,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "walkSpeedPxPerSec": 14,
+ "animations": {
+  "idle": {
+   "file": "npc_marija_idle.png",
+   "frames": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "walk": {
+   "file": "npc_marija_walk.png",
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "wag_finger": {
+   "file": "npc_marija_wag_finger.png",
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "laugh": {
+   "file": "npc_marija_laugh.png",
+   "frames": 4,
+   "fps": 8,
+   "loop": true
+  }
+ },
+ "notes": "Very slow shuffle; on walk frames 2-4 her front slipper slides ahead of her foot.",
+ "portraits": [
+  "../../../ui/portraits/portrait_marija_neutral.png",
+  "../../../ui/portraits/portrait_marija_grumpy.png",
+  "../../../ui/portraits/portrait_marija_laughing.png",
+  "../../../ui/portraits/portrait_marija_proud.png"
+ ],
+ "palette": "elemental16.hex"
+}

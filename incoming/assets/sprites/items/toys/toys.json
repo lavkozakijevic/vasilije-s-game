@@ -1,0 +1,89 @@
+{
+ "frameWidth": 16,
+ "frameHeight": 16,
+ "frames": 4,
+ "fps": 6,
+ "loop": true,
+ "origin": {
+  "x": 8,
+  "y": 15
+ },
+ "hitbox": {
+  "x": 2,
+  "y": 2,
+  "w": 12,
+  "h": 13
+ },
+ "timeBonusSec": 3,
+ "toys": [
+  {
+   "id": "toy_football",
+   "file": "toy_football.png"
+  },
+  {
+   "id": "toy_lego",
+   "file": "toy_lego.png"
+  },
+  {
+   "id": "toy_teddy",
+   "file": "toy_teddy.png"
+  },
+  {
+   "id": "toy_car",
+   "file": "toy_car.png"
+  },
+  {
+   "id": "toy_stick",
+   "file": "toy_stick.png"
+  },
+  {
+   "id": "toy_crayons",
+   "file": "toy_crayons.png"
+  },
+  {
+   "id": "toy_markers",
+   "file": "toy_markers.png"
+  },
+  {
+   "id": "toy_pencils",
+   "file": "toy_pencils.png"
+  },
+  {
+   "id": "toy_chessboard",
+   "file": "toy_chessboard.png"
+  },
+  {
+   "id": "toy_cards",
+   "file": "toy_cards.png"
+  },
+  {
+   "id": "toy_uno",
+   "file": "toy_uno.png"
+  },
+  {
+   "id": "toy_plush_bunny",
+   "file": "toy_plush_bunny.png"
+  },
+  {
+   "id": "toy_plush_dino",
+   "file": "toy_plush_dino.png"
+  },
+  {
+   "id": "toy_plush_cat",
+   "file": "toy_plush_cat.png"
+  },
+  {
+   "id": "toy_sword",
+   "file": "toy_sword.png"
+  }
+ ],
+ "pickupFx": {
+  "file": "fx_toy_pickup.png",
+  "frameWidth": 32,
+  "frameHeight": 32,
+  "frames": 6,
+  "fps": 14,
+  "loop": false,
+  "anchor": "center"
+ }
+}

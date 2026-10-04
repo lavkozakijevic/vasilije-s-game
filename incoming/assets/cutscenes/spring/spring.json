@@ -1,0 +1,30 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "artScale": 2,
+ "layerOrder": [
+  "bg",
+  "chars",
+  "fg",
+  "fx"
+ ],
+ "note": "02_living_room and 03_ruby follow once the room photos are in",
+ "scenes": [
+  {
+   "id": "spring_01_sunrise",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "spring_01_sunrise_bg.png"
+    },
+    {
+     "name": "fx",
+     "file": "spring_01_sunrise_fx.png"
+    }
+   ],
+   "motion": "slow pan up from the fence to the house as the sun rises; chimney smoke and petals drift; birds cross left to right"
+  }
+ ]
+}

@@ -1,0 +1,117 @@
+{
+ "id": "hero_vera",
+ "type": "hero",
+ "name": "Baba Vera",
+ "element": "gold",
+ "power": "Golden ray",
+ "unlock": "secret unlock",
+ "heightPx": 26,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 6,
+  "w": 12,
+  "h": 25
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_vera_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_vera_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_vera_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_vera_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_vera_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_vera_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_vera_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_vera_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "respawn": {
+   "file": "hero_vera_respawn.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "../../gold/fx_gold_projectile.png",
+   "frameWidth": 32,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "motion": "straight",
+   "speedPxPerSec": 320,
+   "pierce": 1,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 31,
+    "y": 15,
+    "note": "left edge of the beam; relative to frame top-left when facing right"
+   }
+  },
+  "impact": {
+   "file": "../../gold/fx_gold_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center"
+  }
+ },
+ "icon": {
+  "file": "../../../../ui/icon_element_gold.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "colors": {
+  "hair": "#5a3a24",
+  "clothes": "#2e5fa8"
+ },
+ "palette": "elemental16.hex"
+}

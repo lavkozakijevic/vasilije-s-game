@@ -1,0 +1,125 @@
+{
+ "id": "hero_ruby",
+ "type": "hero",
+ "name": "Ruby",
+ "element": "present",
+ "power": "Present lob",
+ "unlock": "finish Level 5 (The Big Tidy-Up)",
+ "heightPx": 25,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 11,
+  "y": 7,
+  "w": 10,
+  "h": 24
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_ruby_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_ruby_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_ruby_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_ruby_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_ruby_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_ruby_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_ruby_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_ruby_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "respawn": {
+   "file": "hero_ruby_respawn.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "../../present/fx_present_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "motion": "arc",
+   "velocity": {
+    "x": 170,
+    "y": -260
+   },
+   "gravityPxPerSec2": 700,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 30,
+    "y": 16,
+    "note": "relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "../../present/fx_present_explosion.png",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center",
+   "hurtFrames": [
+    1,
+    2
+   ],
+   "radiusPx": 20
+  }
+ },
+ "icon": {
+  "file": "../../../../ui/icon_element_present.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "colors": {
+  "hair": "#a8703c",
+  "clothes": "#8e1f1f"
+ },
+ "palette": "elemental16.hex"
+}
