@@ -252,6 +252,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
       const FW_ANG = 0.5, fwMouth = () => ({ x: FW.x + 27, y: FW.y + 29 });   // the breath cone angles down to reach the ground
       const SNOW = [], BIGS = []; let shake = 0;
       const floorAt = (x, y) => surface(x, Math.floor((y + 32) / 32)) != null;
+      // a finished run: coins and gems picked up, the totals, and the time from level start to the exit (seconds of play; pauses and dialogues don't count)
+      const runStats = () => ({ gems: GM.filter(g => g.got).length, gemTotal: GM.length, coinsGot: C.filter(c => c.got).length, coinTotal: C.length, time: Math.round(tick / 6) / 10 });
       let tick = 0, lastHud = '';
       const told = new Set(), story = id => { if (!told.has(id)) { told.add(id); onStory && onStory(id); } };   // each story moment plays once per run
       const hurt = dir => { if (H.inv > 0 || H.dead) return; H.hp -= 0.5; H.hurtT = 16; H.inv = 70; H.vx = -2 * dir; H.vy = -3; H.ground = false; if (H.hp <= 0) { H.dead = 1; H.vx = 0; } };
@@ -339,7 +341,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           const tw = tileAt(H.x + 16, H.y + 28);
           if (T.water.includes(tw)) { if (T.lava) fx('fx_lava_splash', 4, 14, H.x, GROUND_Y - 16, 32); else fx('fx_splash_water', 5, 14, H.x, GROUND_Y - 32, 32); H.inv = 0; hurt(1); if (!H.dead) Object.assign(H, safe, { vx: 0, vy: 0, inv: 70 }); }
           if (H.y > 380) { H.hp = 0; H.dead = 1; }
-          if (ex && (!BOSS || BOSS.dead > 70) && (!FW || FW.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins, { gems: GM.filter(g => g.got).length, gemTotal: GM.length });
+          if (ex && (!BOSS || BOSS.dead > 70) && (!FW || FW.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins, runStats());
         }
         // ---- pickups / checkpoints ----
         const near = (o, w = 16) => Math.abs(H.x + 16 - (o.x + w / 2)) < 14 && Math.abs(H.y + 20 - (o.y + 8)) < 18;
@@ -561,7 +563,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           if (MRAK.hurt > 0) MRAK.hurt--; if (MRAK.beamT > 0) MRAK.beamT--;
           const cg2 = MRAK.cage; if (cg2) cg2.t++;
           if (MRAK.dead) { MRAK.dead++; if (cg2 && MRAK.dead === 70) { cg2.st = 'opening'; cg2.t = 0; } if (cg2 && cg2.st === 'opening' && cg2.t >= 45) cg2.st = 'open';
-            if (MRAK.dead === 130) story('l4_free'); if (MRAK.dead === 160) onEnd('complete', H.coins, { gems: GM.filter(g => g.got).length, gemTotal: GM.length }); }
+            if (MRAK.dead === 130) story('l4_free'); if (MRAK.dead === 160) onEnd('complete', H.coins, runStats()); }
           else {
             if (!MRAK.awake && H.x > LW - 600) { story('l4_mrak'); MRAK.awake = true; MRAK.t = 60; }
             if (MRAK.awake && !H.dead) {

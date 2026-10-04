@@ -13,7 +13,7 @@ function ParallaxBackdrop({ dim }) {
   );
 }
 
-function TitleScreen({ onStart, onSelect, lang, onLang }) {
+function TitleScreen({ onStart, onSelect, onBoard, lang, onLang }) {
   const { PixelButton, Sprite } = EHK;
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
@@ -28,6 +28,7 @@ function TitleScreen({ onStart, onSelect, lang, onLang }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 21, alignItems: 'center', marginTop: 48 }}>
           <PixelButton size="lg" onClick={onStart}>{T('Start')}</PixelButton>
           <PixelButton variant="secondary" onClick={onSelect}>{T('Level Select')}</PixelButton>
+          <PixelButton variant="secondary" onClick={onBoard}>{T('Leaderboard')}</PixelButton>
         </div>
       </div>
       <div style={{ position: 'absolute', left: 48, bottom: 72, display: 'flex', gap: 0 }}>{['konstantin', 'katarina', 'vasilije', 'dimitrije'].map(k => <Sprite key={k} src={EHK_A + `sprites/heroes/kids/${k}/hero_${k}_idle.png`} frames={4} frame={0} scale={4} />)}</div>
@@ -56,7 +57,7 @@ function PauseMenu({ onResume, onRestart, onQuit }) {
   );
 }
 
-function ResultPanel({ kind, coins, gems, gemTotal, onRetry, onQuit, onContinue }) {
+function ResultPanel({ kind, coins, gems, gemTotal, coinsGot, coinTotal, time, newBest, full, veraNew, onRetry, onQuit, onContinue }) {
   const { PixelPanel, PixelButton, CoinCounter } = EHK;
   const win = kind === 'complete';
   return (
@@ -64,7 +65,10 @@ function ResultPanel({ kind, coins, gems, gemTotal, onRetry, onQuit, onContinue 
       <PixelPanel title={T(win ? 'Level Complete' : 'Game Over')} tone={win ? 'stone' : 'dark'} style={{ width: 560 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
           {win ? <CoinCounter count={coins} scale={3} src={EHK_A + 'sprites/items/item_coin_spin.png'} /> : <div style={{ fontSize: 24, textAlign: 'center' }}>{T('The flame goes out. For now.')}</div>}
-          {win && gemTotal > 0 && <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18 }}>{T('GEMS')} {gems}/{gemTotal}</div>}
+          {win && gemTotal > 0 && <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18, textAlign: 'center', lineHeight: 1.6 }}>
+            {coinTotal > 0 && <>{T('COINS')} {coinsGot}/{coinTotal} · </>}{T('GEMS')} {gems}/{gemTotal}{full ? ' ✓' : ''}
+            {time != null && <div>{T('TIME')} {ehFmtTime(time)}{newBest ? <span style={{ color: 'var(--eh-gold)' }}> · {T('NEW BEST!')}</span> : ''}</div>}
+            {veraNew && <div style={{ color: 'var(--eh-gold)' }}>★ {T('BABA VERA UNLOCKED!')}</div>}</div>}
           <div style={{ display: 'flex', gap: 21 }}>
             {win && onContinue && <PixelButton onClick={onContinue}>{T('Continue ▶')}</PixelButton>}
             <PixelButton variant={win ? 'secondary' : 'primary'} onClick={onRetry}>{T(win ? 'Play again' : 'Retry')}</PixelButton>
