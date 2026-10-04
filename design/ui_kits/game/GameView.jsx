@@ -73,7 +73,16 @@ EH_LV.l5 = { id: 'l5', map: 'maps/house_l5.tmj', tiles: 'tilesets/house/tileset_
   shrine: 'sprites/props/forest/prop_checkpoint_shrine_', arch: null, star: null, starKey: 0, knights: [], pet: null, toys: true, solo: true, noBg: true,
   T: { solid: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,22,23,44,60,61,62,63,64,65,66,67,68,69]), plat: new Set([24,25,26,27,28,29,30,31,32,33,34,35,40,41,42,43,45,46,47,48,49,50,55,56,59]),
     feetHaz: [], bodyHaz: [], water: [], anim: {}, crumble: [999, 999, 999, 999], bounce: [60, 61, 62, 63, 64], bounce2: [65, 66, 67, 68, 69], ice: new Set(), noSafe: id => id >= 60 && id <= 69 } };
-const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5'];
+// Level 6, Mishika in the Attic: only Mita; 90 seconds to find Marija's blue cat (she hides twice), then 90 new seconds
+// to carry her back to the hatch. Rats chase him; swinging ropes, beams, creaky boards, a mattress trampoline.
+EH_LV.l6 = { id: 'l6', map: 'maps/attic_l6.tmj', tiles: 'tilesets/attic/tileset_attic.png', bg: 'backgrounds/attic/bg_attic_', fg: 'backgrounds/attic/fg_attic_dust.png', fgAlways: true,
+  shrine: 'sprites/props/forest/prop_checkpoint_shrine_', arch: null, star: null, starKey: 0, knights: [], pet: null, solo: 'dimitrije', cat: true, timer: 90,
+  T: { solid: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,24,30,31,32,33,34,35,36,37,38,39,40,43,44,45,46,58,59,60,61,62]),
+    plat: new Set([20,21,22,23,25,26,27,28,41,42,54,56,57,83,84]), feetHaz: [], bodyHaz: [], water: [], anim: {}, crumble: [26, 27, 28, 29], bounce: [58, 59, 60, 61, 62],
+    ice: new Set(), noSafe: id => id >= 58 && id <= 62 } };
+const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'];
+const EH_RAT = { idle:4, run:6, chase:6, hurt:2, death:5 };
+const EH_CAT = { idle:4, sit:4, run:6, hide:4, found:4 };
 const EH_TOY_NAMES = { football: ['the football', 'fudbalsku loptu'], lego: ['the Lego', 'lego kockice'], teddy: ['the teddy', 'medu'], car: ['the toy car', 'autić'], stick: ['the stick', 'štap'],
   crayons: ['the crayons', 'bojice'], markers: ['the markers', 'flomastere'], pencils: ['the pencils', 'olovke'], chessboard: ['the chessboard', 'šahovsku tablu'], cards: ['the cards', 'karte'],
   uno: ['the Uno cards', 'UNO karte'], plush_bunny: ['the plush bunny', 'plišanog zeku'], plush_dino: ['the plush dino', 'plišanog dinosaurusa'], plush_cat: ['the plush cat', 'plišanu mačku'], sword: ['the toy sword', 'drveni mač'] };
@@ -157,6 +166,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           load('scarf', 'sprites/items/item_baba_family_photo.png'),
           ...['open', 'closing', 'closed', 'opening'].map(k => load('cg_' + k, `sprites/props/caves/prop_cave_gate_${k}.png`)),
           load('rlava', 'backgrounds/caves/rising_lava.png'), load('rlava_body', 'backgrounds/caves/rising_lava_body.png')] : []),
+        ...(LV.cat ? [...Object.keys(EH_RAT).map(k => load('rat_' + k, `sprites/enemies/attic/rat/enemy_rat_${k}.png`)), load('ratling', 'sprites/enemies/attic/rat/enemy_rat_small_run.png'),
+          ...Object.keys(EH_CAT).map(k => load('cat_' + k, `sprites/npc/mishika/npc_mishika_${k}.png`)), load('rope', 'sprites/props/attic/prop_rope.png'), load('hatch_glow', 'sprites/props/attic/prop_hatch_glow.png'),
+          ...['idle', 'run', 'jump', 'fall', 'land', 'hurt'].map(k => load('carry_' + k, `sprites/heroes/kids/dimitrije/hero_dimitrije_carry_${k}.png`)),
+          load('ui_timer', 'ui/ui_timer.png'), load('ui_cat', 'ui/ui_cat_icon.png'), load('ui_hatch', 'ui/ui_hatch_icon.png')] : []),
         ...(LV.toys ? [...Object.keys(EH_TOY_NAMES).map(k => load('toy_' + k, `sprites/items/toys/toy_${k}.png`)), load('fx_toy_pickup', 'sprites/items/toys/fx_toy_pickup.png'),
           load('ui_timer', 'ui/ui_timer.png'), load('ui_toybox', 'ui/ui_toy_counter_icon.png'), ...['idle', 'walk', 'wag_finger', 'laugh'].map(k => load('mj_' + k, `sprites/npc/marija/npc_marija_${k}.png`))] : []),
         ...(LV.id === 'l4' ? [
@@ -181,7 +194,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       const ents = map.layers.find(l => l.name === 'entities').objects, of = t => ents.filter(o => o.type === t);
       const sp = ents.find(o => o.name === 'player_spawn');
       const spawn = { x: sp ? sp.x : 64, y: sp ? sp.y : 257 }; let safe = { ...spawn };
-      const SOLO = LV.solo ? EH_COUSINS.find(c => c.id === ({ kosta: 'konstantin' }[player] || player)) || EH_COUSINS[0] : null;
+      const SOLO = LV.solo ? EH_COUSINS.find(c => c.id === (typeof LV.solo === 'string' ? LV.solo : ({ kosta: 'konstantin' }[player] || player))) || EH_COUSINS[0] : null;
       const ROSTER = SOLO ? [{ ...SOLO }] : [...EH_COUSINS.map(c => ({ ...c })), ...EH_EXTRA.filter(x => heroes.includes(x.id)).map(x => ({ ...x })), ...before.flatMap(l => EH_LV[l].knights).map(el => ({ id: 'k_' + el, el, name: EH_KNIGHTS[el], kid: false }))];   // knights woken in earlier levels come along
       const H = { ...spawn, vx: 0, vy: 0, face: 1, ground: true, attackT: 0, hurtT: 0, inv: 0, landT: 0, dead: 0, hp: 4, coins: 0, fired: false, hero: Math.max(0, ROSTER.findIndex(r => r.id === EH_STAR)), swapT: 0 };
       // Hearth Knight statues: touching one wakes the knight, who joins the roster
@@ -209,10 +222,12 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         // keep: shadow shades (only light hurts them; anything else makes them fade away and come back), stone gargoyles, hollow knights (light breaks their shield)
         ...of('enemy_shadow_shade').map(o => ({ kind: 'shade', x: o.x + 16, y: o.y + 16, dir: -1, hp: 2, hurt: 0, dead: 0, st: 'fly', t: 0 })),
         ...of('enemy_stone_gargoyle').map(o => ({ kind: 'garg', x: o.x + 16, y: o.y + 16, px: o.x + 16, py: o.y + 16, dir: -1, hp: 3, hurt: 0, dead: 0, st: 'perch', t: 0, tx: 0, ty: 0 })),
+        ...of('enemy_rat').map(o => ({ kind: 'rat', x: o.x, y: o.y, x0: o.x - 96, x1: o.x + 96, dir: -1, hp: 1, hurt: 0, dead: 0, chase: false })),
+        ...of('enemy_rat_small').map(o => ({ kind: 'ratling', x: o.x, y: o.y + 16, dir: 1, hp: 1, hurt: 0, dead: 0 })),
         ...of('enemy_hollow_knight').map(o => ({ kind: 'hknight', x: o.x, y: o.y, x0: o.x - 80, x1: o.x + 80, dir: -1, hp: 4, hurt: 0, dead: 0, sh: 0, atk: 0 })),
       ];
       const EBOX = { rot: e => ({ x: e.x + 9, y: e.y + 12, w: 14, h: 20 }), moth: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 14 }), spore: e => ({ x: e.x + 6, y: e.y + 9, w: 20, h: 22 }),
-        wolf: e => ({ x: e.x + 5, y: e.y + 14, w: 22, h: 17 }), slime: e => ({ x: e.x + 6, y: e.y + 14 + e.hy, w: 20, h: 17 }), bat: e => ({ x: e.x - 8, y: e.y - 8, w: 16, h: 14 }), golem: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }),
+        wolf: e => ({ x: e.x + 5, y: e.y + 14, w: 22, h: 17 }), slime: e => ({ x: e.x + 6, y: e.y + 14 + e.hy, w: 20, h: 17 }), bat: e => ({ x: e.x - 8, y: e.y - 8, w: 16, h: 14 }), golem: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }), rat: e => ({ x: e.x + 4, y: e.y + 22, w: 22, h: 9 }), ratling: e => ({ x: e.x + 3, y: e.y + 9, w: 18, h: 6 }),
         shade: e => e.st === 'gone' ? { x: -999, y: -999, w: 0, h: 0 } : { x: e.x - 8, y: e.y - 10, w: 16, h: 20 }, garg: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 18 }), hknight: e => ({ x: e.x + 10, y: e.y + 8, w: 12, h: 23 }), sprite: e => ({ x: e.x - 9, y: e.y - 9, w: 18, h: 18 }), frost: e => ({ x: e.x + 5, y: e.y + 10, w: 22, h: 21 }) };
       const ebox = e => EBOX[e.kind](e);
       const ICE = [...of('hazard_icicle').map(o => ({ k: 'icicle', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 })), ...of('hazard_falling_rock').map(o => ({ k: 'rock', x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 })), ...of('hazard_chandelier').map(o => ({ k: 'chand', w: 32, x: o.x, y: o.y, y0: o.y, st: 'hang', t: 0, vy: 0 }))];
@@ -229,8 +244,13 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       const mrakDown = () => { MRAK.dead = 1; MRAK.st = 'defeat'; MRAK.waves = []; MRAK.orbs = []; MRAK.roots = []; MRAK.spikes = []; MRAK.spots = []; MRAK.beamT = 40; };
       // toys (level 5): find them all in 60 seconds
       const TOYS = of('toy').map(o => ({ k: o.name, x: o.x, y: o.y, got: false }));
-      const TIMER = LV.toys ? { left: 60 * 60, st: 'run', t: 0 } : null;
+      const TIMER = LV.toys || LV.cat ? { left: 60 * 60, st: 'run', t: 0 } : null;
       const MARIJA = { on: false, x: 0, y: GROUND_Y - 32, t: 0 };
+      if (TIMER && LV.timer) TIMER.left = LV.timer * 60;
+      // Mishika: hides twice when Mita gets close (hide, then she is at the next spot); the third time she leaps into his arms
+      const SPOTS = of('cat_spot').sort((a, b) => a.name.localeCompare(b.name)), CAT = SPOTS.length ? { i: 0, x: SPOTS[0].x, y: SPOTS[0].y, st: 'sit', t: 0 } : null;
+      const ROPES = of('rope').map(o => ({ x: o.x, y: o.y })), HATCH = ents.find(o => o.type === 'hatch');
+      const ropeKnot = r => { const f = Math.floor(tick / 7.5) % 8; return { x: r.x + Math.round(Math.sin(f / 8 * Math.PI * 2) * 7), y: r.y + 80 }; };
       const FIREB = [], TRIG = of('story_trigger'), SB = {};   // SB: shadow-bridge tiles lit by light shots
       // the eagle ride up the cliff plays before the keep level starts
       const RIDE = LV.ride ? { t: 0, on: true } : null;
@@ -305,7 +325,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         if (RIDE && RIDE.on) { RIDE.t++; if (RIDE.t === 1) { const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); } if (RIDE.t === 50) story(LV.id + '_start'); if (RIDE.t >= 230) RIDE.on = false; return; }   // the eagle carries Kosta up the cliff
         if (tick === 1 && !RIDE) story(LV.id + '_start');
         if (TIMER) {
-          if (TIMER.st === 'run') { if (--TIMER.left <= 0) { TIMER.left = 0; TIMER.st = 'lost'; TIMER.t = 0; MARIJA.on = true; MARIJA.x = Math.min(cam + 560, H.x + 220); } }
+          if (TIMER.st === 'run') { if (--TIMER.left <= 0) { TIMER.left = 0; TIMER.st = LV.cat ? 'timeup' : 'lost'; TIMER.t = 0; if (!LV.cat) { MARIJA.on = true; MARIJA.x = Math.min(cam + 560, H.x + 220); } } }
+          else if (TIMER.st === 'timeup') { TIMER.t++; if (TIMER.t === 2) story('l6_lost'); if (TIMER.t === 4) onEnd('timeup', 0, { carrying: !!H.carry }); return; }
           else if (TIMER.st === 'lost') {   // grandma Marija shuffles in, counts what was left, and the level starts again
             TIMER.t++; if (MARIJA.x > H.x + 70) MARIJA.x -= 0.6;
             if (TIMER.t === 150) { const left = TOYS.filter(t => !t.got), sr = window.EH_LANG === 'sr', names = left.slice(0, 4).map(t => (EH_TOY_NAMES[t.k] || [t.k, t.k])[sr ? 1 : 0]);
@@ -318,7 +339,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
               story('l5_lost'); }
             if (TIMER.t === 152) onEnd('retry');
             return; }
-          else if (TIMER.st === 'won') { TIMER.t++; if (TIMER.t === 2) story('l5_win'); if (TIMER.t === 4) onEnd('complete', 0, { ...runStats(), toys: TOYS.length }); return; }
+          else if (TIMER.st === 'won') { TIMER.t++; if (TIMER.t === 2) story(LV.cat ? 'l6_win' : 'l5_win'); if (TIMER.t === 4) onEnd('complete', 0, { ...runStats(), toys: TOYS.length }); return; }
         }
         const HR = ROSTER[H.hero], PW = EH_POWER[HR.el];
         // ---- hero input ----
@@ -335,7 +356,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             H.vx = H.ice && H.ground ? H.vx + (tv - H.vx) * 0.06 : tv; }   // packed ice: the hero slides a little
           if (jumpBuf > 0) jumpBuf--;
           if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; H.jumpT = tick; H.jumpV = -8.3; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
-          if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0) { H.attackT = 24; H.fired = false; }
+          if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0 && !H.carry) { H.attackT = 24; H.fired = false; }
           if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
           if (TRAP && TRAP.st === 'rising' && typeof wantHero === 'string') wantHero = -1;
           if (TRAP && TRAP.st === 'rising' && wantHero >= 0 && wantHero !== H.hero) { wantHero = -1; say(window.EH_LANG === 'sr' ? 'VASILIJE JE SAM! PENJI SE!' : 'VASILIJE IS ON HIS OWN! CLIMB!'); }
@@ -347,7 +368,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           B.push({ x: H.x + (H.face > 0 ? 26 : -10), y: H.y + (HR.kid ? 14 : 10), vx: PW.v * H.face, vy: PW.arc ? (PW.vy || -3.2) : 0, g: PW.g || 0.2, t: 0, el: HR.el, who: HR.id, dmg: PW.dmg, arc: !!PW.arc, pierce: !!PW.pierce, bomb: !!PW.bomb, hit: new Set() }); } }
         if (H.hurtT > 0) H.hurtT--; if (H.inv > 0) H.inv--; if (H.landT > 0) H.landT--; if (H.swapT > 0) H.swapT--; if (H.slowT > 0) H.slowT--;
         // ---- hero physics ----
-        if (!H.dead) {
+        if (!H.dead && !H.rope) {
+          if (H.boost && !H.ground) { H.vx += H.boost; H.boost *= 0.95; if (Math.abs(H.boost) < 0.1) H.boost = 0; } else if (H.ground) H.boost = 0;
           H.vy = Math.min(7, H.vy + 0.35);
           const nx = H.x + H.vx; const edge = H.vx > 0 ? nx + 22 : nx + 10;
           if (!(T.solid.has(tileAt(edge, H.y + 14)) || T.solid.has(tileAt(edge, H.y + 24)))) H.x = Math.min(LW - 20, Math.max(-8, nx));
@@ -387,6 +409,16 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         }
         if (TIMER && TIMER.st === 'run' && !H.dead) TOYS.forEach(t => { if (!t.got && Math.abs(H.x + 16 - (t.x + 8)) < 16 && Math.abs(H.y + 20 - (t.y + 8)) < 20) { t.got = true; fx('fx_toy_pickup', 6, 14, t.x - 8, t.y - 8, 32);
             if (TOYS.every(x => x.got)) { TIMER.st = 'won'; TIMER.t = 0; } } });
+        if (CAT && TIMER && TIMER.st === 'run') { CAT.t++;
+          if ((CAT.st === 'sit' || CAT.st === 'idle') && !H.dead && Math.abs(H.x - CAT.x) < 64 && Math.abs(H.y - CAT.y) < 48) { CAT.st = CAT.i < SPOTS.length - 1 ? 'hide' : 'found'; CAT.t = 0; }
+          else if (CAT.st === 'hide' && CAT.t >= 24) { CAT.i++; CAT.x = SPOTS[CAT.i].x; CAT.y = SPOTS[CAT.i].y; CAT.st = 'sit'; CAT.t = 0; say(window.EH_LANG === 'sr' ? 'MIŠIKA JE POBEGLA! TRAŽI DALJE!' : 'MISHIKA RAN OFF! KEEP LOOKING!'); }
+          else if (CAT.st === 'found' && CAT.t >= 30) { CAT.st = 'carried'; H.carry = true; TIMER.left = LV.timer * 60; story('l6_found'); } }
+        if (H.carry && HATCH && TIMER && TIMER.st === 'run' && !H.dead && overlap(heroBox(), { x: HATCH.x, y: HATCH.y - 40, w: 64, h: 48 })) { TIMER.st = 'won'; TIMER.t = 0; }
+        if (ROPES.length && !H.dead) { if (H.ropeCd > 0) H.ropeCd--;
+          if (!H.rope && !H.ground && !(H.ropeCd > 0)) for (const r of ROPES) { const kn = ropeKnot(r); if (overlap(heroBox(), { x: kn.x - 8, y: kn.y - 16, w: 16, h: 32 })) { H.rope = r; break; } }
+          if (H.rope) { const kn = ropeKnot(H.rope); H.x = kn.x - 16; H.y = kn.y - 20; H.vy = 0; H.ground = false;   // hanging on: jump lets go with a push, down drops
+            if (keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) { jumpBuf = 0; H.rope = null; H.ropeCd = 20; H.vy = -7; H.boost = 2.4 * ((keys.ArrowRight || keys.KeyD) ? 1 : (keys.ArrowLeft || keys.KeyA) ? -1 : H.face); }
+            else if (keys.ArrowDown || keys.KeyS) { H.rope = null; H.ropeCd = 25; } } }
         // ---- pickups / checkpoints ----
         const near = (o, w = 16) => Math.abs(H.x + 16 - (o.x + w / 2)) < 14 && Math.abs(H.y + 20 - (o.y + 8)) < 18;
         if (!H.dead) {
@@ -548,6 +580,12 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
               const stop = nx < e.x0 || nx > e.x1 || !floorAt(nx + 16 + e.dir * 12, e.y) || T.solid.has(tileAt(nx + 16 + e.dir * 14, e.y + 20));
               if (!stop) e.x = nx; else if (!chase) e.dir *= -1; }
           }
+          else if (e.kind === 'rat') {   // scurries; chases Mita when he is close on the same level, gives up 200px away
+            if (!H.dead && Math.abs(H.y - e.y) < 28 && Math.abs(dx) < 128) e.chase = true; if (Math.abs(dx) > 200 || Math.abs(H.y - e.y) > 60) e.chase = false;
+            if (e.chase) e.dir = Math.sign(dx) || e.dir; const nx = e.x + (e.chase ? 2 : 1.17) * e.dir;
+            const stop = (!e.chase && (nx < e.x0 || nx > e.x1)) || !floorAt(nx + 16 + e.dir * 10, e.y) || T.solid.has(tileAt(nx + 16 + e.dir * 12, e.y + 24));
+            if (!stop) e.x = nx; else if (!e.chase) e.dir *= -1; }
+          else if (e.kind === 'ratling') { const nx = e.x + 1.83 * e.dir; if (!floorAt(nx + 12 + e.dir * 8, e.y - 16) || T.solid.has(tileAt(nx + 12 + e.dir * 10, e.y + 8))) e.dir *= -1; else e.x = nx; }
           else if (e.kind === 'shade') {
             e.t++; const ddx = H.x + 16 - e.x, ddy = H.y + 16 - e.y, dd = Math.hypot(ddx, ddy) || 1;
             if (e.st === 'fly') { if (dd < 300) { e.x += ddx / dd * 0.67; e.y += ddy / dd * 0.67; e.dir = Math.sign(ddx) || e.dir; } if (dd < 28) { e.st = 'attack'; e.t = 0; } }
@@ -909,6 +947,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           drawStrip(img[`pet_${PUP.id}_${a}`], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
         GM.forEach((g, i) => { if (!g.got) drawStrip(img.gem, 6, (tick / 7.5 + i) % 6, g.x, g.y, 16); });
+        ROPES.forEach(r => drawStrip(img.rope, 8, Math.floor(tick / 7.5) % 8, r.x - 8, r.y, 16));
+        if (H.carry && HATCH && img.hatch_glow) drawStrip(img.hatch_glow, 4, (tick / 10) % 4, HATCH.x, HATCH.y - 32, 64);
+        if (CAT && CAT.st !== 'carried') { const a = CAT.st === 'hide' ? 'hide' : CAT.st === 'found' ? 'found' : 'sit', f = a === 'hide' ? CAT.t / 6 : a === 'found' ? CAT.t / 7.5 : (tick / 10) % 4;
+          drawStrip(img['cat_' + a], 4, f, CAT.x, CAT.y, 32, H.x < CAT.x); }
         TOYS.forEach((t, i) => { if (!t.got) drawStrip(img['toy_' + t.k], 4, (tick / 10 + i) % 4, t.x, t.y, 16); });
         if (MARIJA.on) { const walking = TIMER && TIMER.t < 150 && MARIJA.x > H.x + 70; drawStrip(img[walking ? 'mj_walk' : 'mj_wag_finger'], 4 + (walking ? 2 : 0), (tick / (walking ? 12 : 8)) % (walking ? 6 : 4), MARIJA.x, MARIJA.y, 32, true); }
         HP.forEach((h, i) => { if (!h.got) drawStrip(img.heart, 6, (tick / 7.5 + i) % 6, h.x, h.y, 16); });
@@ -926,6 +968,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'hang' ? (tick / 20) % 2 : (tick / 5) % 4; drawStrip(img['bt_' + a], EH_BAT[a], f, e.x - 16, e.y - 16, 32, e.dir < 0); }
           else if (e.kind === 'golem') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.crk > 0 ? 'shell_crack' : e.sh > 60 ? 'shell_up' : e.sh > 0 ? 'shell_hold' : 'walk';
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'shell_crack' ? (24 - e.crk) / 6 : a === 'shell_up' ? (75 - e.sh) / 5 : a === 'shell_hold' ? (tick / 10) % 2 : (tick / 7.5) % 6; drawStrip(img['gl_' + a], EH_GOLEM[a], f, e.x, e.y, 32, e.dir < 0); }
+          else if (e.kind === 'rat') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.chase ? 'chase' : 'run'; const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : (tick / 4) % 6;
+            drawStrip(img['rat_' + a], EH_RAT[a], f, e.x - (e.dead ? e.dead * 2 : 0), e.y, 32, e.dir < 0); }
+          else if (e.kind === 'ratling') { if (!e.dead) drawStrip(img.ratling, 6, (tick / 4) % 6, e.x, e.y, 24, e.dir < 0); }
           else if (e.kind === 'shade') { if (e.st === 'gone') return; const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'fadeout' ? 'fade_out' : e.st === 'fadein' ? 'fade_in' : e.st === 'attack' ? 'attack' : 'fly';
             const f = e.dead ? e.dead / 6 : e.hurt ? (14 - e.hurt) / 7 : a === 'fade_out' || a === 'fade_in' ? e.t / 5 : a === 'attack' ? e.t / 6 : (tick / 7.5) % 4; drawStrip(img['sh_' + a], EH_SHADE[a], f, e.x - 16, e.y - 16, 32, e.dir < 0); }
           else if (e.kind === 'garg') { const a = e.dead ? 'death' : e.hurt ? 'hurt' : e.st === 'perch' ? 'perch' : e.st === 'wake' ? 'wake' : e.st === 'swoop' ? 'swoop' : 'fly';
@@ -1037,7 +1082,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         else if (H.landT > 0) { a = 'land'; f = H.landT > 4 ? 0 : 1; }
         else if (Math.abs(H.vx) > 0.1) { a = 'run'; f = (tick / 5) % 8; }
         else { a = 'idle'; f = (tick / 10) % 4; }
-        if (!(H.inv > 0 && !H.dead && H.hurtT <= 0 && Math.floor(tick / 3) % 2)) drawStrip(img[`h_${hkey}_${a}`], EH_HERO[a], f, H.x, H.y, 32, H.face < 0);
+        const carryImg = H.carry && img['carry_' + a];   // Mita with Mishika in his arms
+        if (!(H.inv > 0 && !H.dead && H.hurtT <= 0 && Math.floor(tick / 3) % 2)) drawStrip(carryImg || img[`h_${hkey}_${a}`], EH_HERO[a], f, H.x, H.y, 32, H.face < 0);
         B.forEach(b => drawStrip(img['p_' + b.el], 4, (b.t / 4) % 4, b.x, b.y, b.el === 'gold' ? 32 : 16, b.vx < 0));
         X.forEach(x => drawStrip(img[x.k], x.n, x.t / x.d, x.x, x.y, x.w));
         if (FGL) { const hb = heroBox(); let over = false;
@@ -1058,8 +1104,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           const sec = Math.ceil(TIMER.left / 60), tx = 320 - 48; if (img.ui_timer) ctx.drawImage(img.ui_timer, tx, 4);
           ctx.font = '16px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; ctx.fillStyle = sec <= 10 && Math.floor(tick / 15) % 2 ? '#e0521f' : '#e8e0d0';
           ctx.fillText(`${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`, tx + 60, 4 + 22);
-          const got = TOYS.filter(t => t.got).length; if (img.ui_toybox) ctx.drawImage(img.ui_toybox, 640 - 120, 46);
-          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#0d0b14'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 99, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 100, 58); }
+          if (LV.cat) { const ic = H.carry ? img.ui_hatch : img.ui_cat, txt = H.carry ? (window.EH_LANG === 'sr' ? 'NAZAD DO OTVORA' : 'BACK TO THE HATCH') : (window.EH_LANG === 'sr' ? 'NAĐI MIŠIKU' : 'FIND MISHIKA');
+            if (ic) ctx.drawImage(ic, 640 - 150, 46); ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#0d0b14'; ctx.fillText(txt, 640 - 129, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(txt, 640 - 130, 58); }
+          const got = TOYS.filter(t => t.got).length; if (TOYS.length && img.ui_toybox) ctx.drawImage(img.ui_toybox, 640 - 120, 46);
+          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; if (TOYS.length) { ctx.fillStyle = '#0d0b14'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 99, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 100, 58); } }
         if (MRAK && MRAK.awake && !MRAK.dead && MRAK.ph === 3) {   // the four stones: each cousin must hit him (gold Kosta, orange Katarina, frost Vasilije, green Dimitrije)
           [['konstantin', '#ffc23d'], ['katarina', '#e0521f'], ['vasilije', '#7fd4e8'], ['dimitrije', '#6fae3e']].forEach(([id, c], i) => { const x = 320 - 38 + i * 20, on = MRAK.lit.has(id);
             ctx.fillStyle = '#0d0b14'; ctx.fillRect(x - 1, 51, 14, 14); ctx.fillStyle = c; ctx.globalAlpha = on ? 1 : 0.3; ctx.fillRect(x, 52, 12, 12); ctx.globalAlpha = 1; if (on) { ctx.fillStyle = '#e8e0d0'; ctx.fillRect(x + 2, 54, 3, 3); } }); }

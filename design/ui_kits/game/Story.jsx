@@ -16,10 +16,10 @@ const CAST = {
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
-const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', umbra_sb: 'Umbra', ruby: 'Rubi', marija: 'Grandma Marija', boys: 'Kosta, Vasilije & Dimitrije', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
+const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', umbra_sb: 'Umbra', ruby: 'Rubi', marija: 'Grandma Marija', mishika: 'Mishika', boys: 'Kosta, Vasilije & Dimitrije', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
 // sprite-based portraits for characters that already have art
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
-const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus', umbra_sb: 'umbra', ruby: 'ruby', marija: 'marija',
+const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus', umbra_sb: 'umbra', ruby: 'ruby', marija: 'marija', mishika: 'mishika',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
 // PORTRAIT_SKIP can stand a mood in for one that needs redrawing, e.g. { 'vasilije|ali': 'neutral' }
 const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = {}, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing', umbra_sb: 'spellbound' };
@@ -239,6 +239,28 @@ const EH_DIALOGUE = {
     { who: 'marija', mood: 'proud', text: "Well, well… I can't believe it. You've grown so much, and you tidied up all the toys on your own!" },
     { who: 'ruby', mood: 'happy', text: 'Wow, fantastic! Kids, I knew I could count on you.' },
     { who: 'ruby', mood: 'happy', text: 'So now you can count on me!' },
+  ],
+  // ---- Level 6 · Mishika in the Attic (only Mita)
+  l6_start: [
+    { who: 'marija', mood: 'grumpy', text: 'Mishika? Mishika! Where is my little cat?' },
+    { who: 'ruby', mood: 'worried', text: 'I heard something in the attic. She must be hiding up there with the old boxes.' },
+    { who: 'ruby', text: 'Mita, you are the best climber. Go up and find her, quickly: you have ninety seconds!' },
+    { who: 'ruby', mood: 'worried', text: 'And watch out for the rats!' },
+    { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
+  ],
+  l6_found: [
+    { who: 'mishika', mood: 'happy', text: 'Mrrreow!' },
+    { who: 'dimitrije', mood: 'happy', text: 'Got you! Now hold on tight. Back to the hatch!' },
+    { who: 'ruby', text: 'Ninety seconds to bring her down, Mita!' },
+  ],
+  l6_win: [
+    { who: 'marija', mood: 'happy', text: 'Mishika! My little one! Come here.' },
+    { who: 'marija', mood: 'happy', text: 'Thank you, Mita. You climbed all the way up there for her. You are my hero.' },
+    { who: 'mishika', mood: 'happy', text: 'Prrrr…' },
+    { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
+  ],
+  l6_lost: [
+    { who: 'ruby', mood: 'sad', text: 'Oh no, time is up! Too bad. Try again!' },
   ],
   l4_free: [
     { who: 'baba', mood: 'warm', text: 'My brave ones! You came all this way.' },

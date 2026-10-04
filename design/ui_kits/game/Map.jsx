@@ -6,7 +6,8 @@ const EH_LEVELS = [
   { id: 'l2', node: 'peaks',  name: 'The Frostfang Peaks',   star: 'Katarina',  ready: true },
   { id: 'l3', node: 'caves',  name: 'Cinderdeep Caves',      star: 'Vasilije',  ready: true },
   { id: 'l4', node: 'keep',   name: 'The Hollow Keep',       star: 'Kosta',     ready: true },
-  { id: 'l5', node: 'village', name: 'The Big Tidy-Up',      star: 'Everyone',  ready: true },
+  { id: 'l5', node: 'village', name: 'The Big Tidy-Up',      star: 'Everyone',  ready: true, at: [130, 40] },   // at: card position (640x360 map) in the empty top-left corner
+  { id: 'l6', node: 'village', name: 'Mishika in the Attic', star: 'Dimitrije', ready: true, at: [130, 112] },
 ];
 const EH_TRAVEL = {
   l2: ['Over the mountains…', 'Mrak’s shadow-birds carried Baba to The Frostfang Peaks.'],
@@ -54,11 +55,12 @@ function WorldMap({ mode, onPlay, onBack }) {
     const n = map && map.nodes[lv.node]; if (!n) return null;
     const r = prog.levels[lv.id] || {}, open = lv.ready && (i === 0 || (prog.levels[EH_LEVELS[i - 1].id] || {}).done);
     return (
-      <div key={lv.id} style={{ position: 'absolute', left: n.x * 2 + (lv.node === 'village' ? 96 : 0), top: n.y * 2 + (lv.node === 'caves' ? -110 : lv.node === 'village' ? -150 : 18), transform: 'translateX(-50%)', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', whiteSpace: 'nowrap', background: 'rgba(20,16,28,.82)', padding: '6px 10px', border: '2px solid var(--eh-ink)' }}>
-        <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1} · {T(lv.star).toUpperCase()}</div>{window.EH_LANG === 'sr' && <div style={{ fontSize: 14, marginTop: 2 }}>{T(lv.name).toUpperCase()}</div>}
+      <div key={lv.id} style={{ position: 'absolute', left: lv.at ? lv.at[0] * 2 : n.x * 2, top: lv.at ? lv.at[1] * 2 : n.y * 2 + (lv.node === 'caves' ? -110 : 18), transform: 'translateX(-50%)', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', whiteSpace: 'nowrap', background: 'rgba(20,16,28,.82)', padding: '6px 10px', border: '2px solid var(--eh-ink)' }}>
+        <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1} · {T(lv.star).toUpperCase()}</div>{(window.EH_LANG === 'sr' || lv.at) && <div style={{ fontSize: 14, marginTop: 2 }}>{T(lv.name).toUpperCase()}</div>}
         {mode === 'select' && open ? <div style={{ marginTop: 6 }}><PixelButton size="sm" onClick={() => onPlay(lv.id)}>{T(r.done ? 'Play again' : 'Play')}</PixelButton></div>
           : <div style={{ marginTop: 4, color: 'var(--eh-stone)' }}>{!lv.ready ? T('COMING SOON') : mode === 'select' ? (window.EH_LANG === 'sr' ? `PRVO PREĐI NIVO ${i}` : `FINISH LEVEL ${i} FIRST`) : ''}</div>}
-        {r.done && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')} · {T('COINS')} ×{String(r.coins).padStart(3, '0')} · {T('GEMS')} {r.gems}/{r.gemTotal}</div>}
+        {r.done && lv.at && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')}</div>}
+        {r.done && !lv.at && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')} · {T('COINS')} ×{String(r.coins).padStart(3, '0')} · {T('GEMS')} {r.gems}/{r.gemTotal}</div>}
       </div>
     );
   };
