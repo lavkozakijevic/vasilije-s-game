@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // the shared leaderboard: one document per cousin; anyone with the game can read and update scores, nothing else
+    match /scores/{player} {
+      allow read: if true;
+      allow write: if player in ['kosta', 'katarina', 'vasilije', 'dimitrije']
+        && request.resource.data.keys().hasOnly(['data', 'updated'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 5000;
+      allow delete: if player in ['kosta', 'katarina', 'vasilije', 'dimitrije'];
+    }
+  }
+}

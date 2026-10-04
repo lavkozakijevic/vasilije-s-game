@@ -27,9 +27,39 @@ function ehRecordRun(player, level, r) {
   P[level] = { coins: Math.max(o.coins || 0, r.coinsGot || 0), coinTotal: r.coinTotal || o.coinTotal || 0, gems: Math.max(o.gems || 0, r.gems || 0), gemTotal: r.gemTotal || o.gemTotal || 0,
     time: newBest ? r.time : o.time, full: !!(o.full || full), runs: (o.runs || 0) + 1 };
   const veraBefore = !!P.vera; P.vera = EH_STAT_LEVELS.every(l => P[l] && P[l].full);
-  EH_STORE.save(s);
+  EH_STORE.save(s); ehSync();
   return { newBest, full, veraNew: P.vera && !veraBefore };
 }
+// ---- online copy (Cloud Firestore over its REST API: one document per cousin in the "scores" collection)
+// The browser copy is used instantly; ehSync merges it with the online one (best of both) in the background.
+const EH_CLOUD = (() => { const c = window.EH_FIREBASE || {}; return c.projectId && c.apiKey ? { base: `https://firestore.googleapis.com/v1/projects/${c.projectId}/databases/(default)/documents/scores`, key: c.apiKey } : null; })();
+function ehMergePlayer(a = {}, b = {}) {
+  const out = {};
+  for (const l of new Set([...Object.keys(a), ...Object.keys(b)])) { if (l === 'vera') continue; const x = a[l] || {}, y = b[l] || {};
+    const t = [x.time, y.time].filter(v => v != null);
+    out[l] = { coins: Math.max(x.coins || 0, y.coins || 0), coinTotal: x.coinTotal || y.coinTotal || 0, gems: Math.max(x.gems || 0, y.gems || 0), gemTotal: x.gemTotal || y.gemTotal || 0,
+      time: t.length ? Math.min(...t) : null, full: !!(x.full || y.full), runs: Math.max(x.runs || 0, y.runs || 0) }; }
+  out.vera = EH_STAT_LEVELS.every(l => out[l] && out[l].full);
+  return out;
+}
+let ehCloudState = EH_CLOUD ? 'syncing' : 'local';
+async function ehSync() {
+  if (!EH_CLOUD) return 'local';
+  try {
+    const r = await fetch(`${EH_CLOUD.base}?key=${EH_CLOUD.key}&pageSize=20`); if (!r.ok) throw new Error(r.status);
+    const remote = {}; ((await r.json()).documents || []).forEach(d => { try { remote[d.name.split('/').pop()] = JSON.parse(d.fields.data.stringValue); } catch (e) {} });
+    const s = EH_STORE.load();
+    for (const p of EH_PLAYERS) { const m = ehMergePlayer(s.players[p.id], remote[p.id]); s.players[p.id] = m;
+      if (JSON.stringify(m) !== JSON.stringify(ehMergePlayer(remote[p.id]))) await ehCloudPut(p.id, m); }
+    EH_STORE.save(s); ehCloudState = 'online'; return 'online';
+  } catch (e) { ehCloudState = 'offline'; return 'offline'; }
+}
+function ehCloudPut(player, data) {
+  return fetch(`${EH_CLOUD.base}/${player}?key=${EH_CLOUD.key}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields: { data: { stringValue: JSON.stringify(data) }, updated: { timestampValue: new Date().toISOString() } } }) }).then(r => { if (!r.ok) throw new Error(r.status); });
+}
+async function ehCloudReset() { if (!EH_CLOUD) return; for (const p of EH_PLAYERS) try { await fetch(`${EH_CLOUD.base}/${p.id}?key=${EH_CLOUD.key}`, { method: 'DELETE' }); } catch (e) {} }
+ehSync();   // pull everyone's scores when the game opens (Vera unlocks follow you to any device)
 const ehVeraUnlocked = player => { const P = EH_STORE.load().players[player]; return !!(P && P.vera); };
 const ehFmtTime = t => t == null ? '—' : `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 
@@ -62,6 +92,8 @@ function Leaderboard({ onBack }) {
   const { PixelButton, Sprite } = EHK;
   const [ver, setVer] = React.useState(0), [sure, setSure] = React.useState(false);
   const s = React.useMemo(() => EH_STORE.load(), [ver]);
+  const [cloud, setCloud] = React.useState(ehCloudState);
+  React.useEffect(() => { let on = true; ehSync().then(st => { if (on) { setCloud(st); setVer(v => v + 1); } }); return () => { on = false; }; }, []);
   const fastest = Object.fromEntries(EH_STAT_LEVELS.map(l => { let best = null; EH_PLAYERS.forEach(p => { const r = (s.players[p.id] || {})[l]; if (r && r.time != null && (best == null || r.time < best.t)) best = { t: r.time, p: p.id }; }); return [l, best && best.p]; }));
   const cell = { fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textAlign: 'center', padding: '8px 6px', borderBottom: '2px solid var(--eh-plum)' };
   return (
@@ -85,11 +117,12 @@ function Leaderboard({ onBack }) {
       </table>
       <div style={{ position: 'absolute', left: 40, right: 40, bottom: 92, fontFamily: 'var(--font-body)', fontSize: 20, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', textAlign: 'center' }}>
         {T('✓ = every coin and gem in one play. Do that in all four levels to unlock Baba Vera as a hero.')}</div>
+      <div style={{ position: 'absolute', right: 40, top: 46, fontFamily: 'var(--font-ui)', fontSize: 13, color: cloud === 'online' ? 'var(--eh-leaf)' : 'var(--eh-stone)', textShadow: 'var(--text-outline)' }}>{T(cloud === 'online' ? '● ONLINE · SHARED' : cloud === 'local' ? '● THIS DEVICE ONLY' : cloud === 'syncing' ? '● CONNECTING…' : '● OFFLINE · THIS DEVICE')}</div>
       <div style={{ position: 'absolute', right: 32, bottom: 28 }}><PixelButton variant="secondary" onClick={onBack}>{T('Title')}</PixelButton></div>
       <div style={{ position: 'absolute', left: 32, bottom: 28, display: 'flex', gap: 12, alignItems: 'center' }}>
         {!sure ? <PixelButton variant="secondary" size="sm" onClick={() => setSure(true)}>{T('Reset scores')}</PixelButton>
-          : <><span style={{ fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)' }}>{T('Erase all scores?')}</span>
-            <PixelButton size="sm" onClick={() => { EH_STORE.reset(); setSure(false); setVer(v => v + 1); }}>{T('Yes, erase')}</PixelButton>
+          : <><span style={{ fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)' }}>{T(EH_CLOUD ? 'Erase all scores on every device?' : 'Erase all scores?')}</span>
+            <PixelButton size="sm" onClick={async () => { EH_STORE.reset(); await ehCloudReset(); setSure(false); setVer(v => v + 1); }}>{T('Yes, erase')}</PixelButton>
             <PixelButton variant="secondary" size="sm" onClick={() => setSure(false)}>{T('No')}</PixelButton></>}
       </div>
     </div>
