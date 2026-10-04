@@ -66,10 +66,11 @@ EH_LV.l4 = { id: 'l4', map: 'maps/keep_l4.tmj', tiles: 'tilesets/keep/tileset_ke
   T: { solid: new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,46,47,48,49,50,51,52,54,56]), plat: new Set([19,20,21,22,23,24,25,26,27,31,34]),
     feetHaz: [40], bodyHaz: [42], water: [35, 36], anim: { 36: [36, 4, 10], 42: [42, 4, 8] }, crumble: [25, 26, 27, 28], bounce: [46, 47, 48, 49, 50], ice: new Set(), noSafe: id => id === 31 || (id >= 46 && id <= 50),
     bridge: true, hidden: true } };
-// Level 5, the Big Tidy-Up: the living room, no enemies; pick up every toy before the timer runs out (60s + 3s per toy).
+// Level 5, the Big Tidy-Up: the living room, no enemies; pick up every toy in 60 seconds.
+// The room is built from tiles at the kids' scale (walls, windows, low ceiling), so the painted backgrounds are not drawn.
 // Only the chosen cousin plays (no knights, no pets).
 EH_LV.l5 = { id: 'l5', map: 'maps/house_l5.tmj', tiles: 'tilesets/house/tileset_house.png', bg: 'backgrounds/house/bg_house_', fg: 'backgrounds/house/fg_house_sunbeams.png', fgAlways: true,
-  shrine: 'sprites/props/forest/prop_checkpoint_shrine_', arch: null, star: null, starKey: 0, knights: [], pet: null, toys: true, solo: true,
+  shrine: 'sprites/props/forest/prop_checkpoint_shrine_', arch: null, star: null, starKey: 0, knights: [], pet: null, toys: true, solo: true, noBg: true,
   T: { solid: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,22,23,44,60,61,62,63,64,65,66,67,68,69]), plat: new Set([24,25,26,27,28,29,30,31,32,33,34,35,40,41,42,43,45,46,47,48,49,50,55,56,59]),
     feetHaz: [], bodyHaz: [], water: [], anim: {}, crumble: [999, 999, 999, 999], bounce: [60, 61, 62, 63, 64], bounce2: [65, 66, 67, 68, 69], ice: new Set(), noSafe: id => id >= 60 && id <= 69 } };
 const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5'];
@@ -226,7 +227,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       const salBox = () => ({ x: SAL.x + 6, y: SAL.y + 34, w: 56, h: 29 }), salUp = () => SAL && !SAL.dead && (SAL.st === 'idle' || SAL.st === 'spit' || SAL.st === 'surface' || (SAL.st === 'dive' && SAL.t < 16));
       const bd = (b, boss) => b.el === 'gold' ? Math.ceil(boss.max / 3) : b.dmg;   // damage a shot does to a boss (Vera: three hits for any boss)
       const mrakDown = () => { MRAK.dead = 1; MRAK.st = 'defeat'; MRAK.waves = []; MRAK.orbs = []; MRAK.roots = []; MRAK.spikes = []; MRAK.spots = []; MRAK.beamT = 40; };
-      // toys (level 5): each picked up adds 3 seconds; the clock starts at 60
+      // toys (level 5): find them all in 60 seconds
       const TOYS = of('toy').map(o => ({ k: o.name, x: o.x, y: o.y, got: false }));
       const TIMER = LV.toys ? { left: 60 * 60, st: 'run', t: 0 } : null;
       const MARIJA = { on: false, x: 0, y: GROUND_Y - 32, t: 0 };
@@ -384,7 +385,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           if (H.y > 380) { H.hp = 0; H.dead = 1; }
           if (ex && (!BOSS || BOSS.dead > 70) && (!FW || FW.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins, runStats());
         }
-        if (TIMER && TIMER.st === 'run' && !H.dead) TOYS.forEach(t => { if (!t.got && Math.abs(H.x + 16 - (t.x + 8)) < 16 && Math.abs(H.y + 20 - (t.y + 8)) < 20) { t.got = true; TIMER.left += 3 * 60; fx('fx_toy_pickup', 6, 14, t.x - 8, t.y - 8, 32);
+        if (TIMER && TIMER.st === 'run' && !H.dead) TOYS.forEach(t => { if (!t.got && Math.abs(H.x + 16 - (t.x + 8)) < 16 && Math.abs(H.y + 20 - (t.y + 8)) < 20) { t.got = true; fx('fx_toy_pickup', 6, 14, t.x - 8, t.y - 8, 32);
             if (TOYS.every(x => x.got)) { TIMER.st = 'won'; TIMER.t = 0; } } });
         // ---- pickups / checkpoints ----
         const near = (o, w = 16) => Math.abs(H.x + 16 - (o.x + w / 2)) < 14 && Math.abs(H.y + 20 - (o.y + 8)) < 18;
@@ -894,7 +895,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         const arenaW = Math.min(1, (gates.length ? ov(gates[0].x, gates[1].x + 32) : 0) + ov(finalL, LW));
         const par = { sky: 0, far: 0.1, mid: 0.25, near: 0.45 };
         const bg = (k, p) => { const o = Math.round(((cam * p) % 640 + 640) % 640); ctx.drawImage(img[k], -o, 0); ctx.drawImage(img[k], 640 - o, 0); };
-        for (const k of ['sky','far','mid','near']) bg(k, par[k]);
+        if (LV.noBg) { ctx.fillStyle = '#e8e0d0'; ctx.fillRect(0, 0, 640, 360); } else for (const k of ['sky','far','mid','near']) bg(k, par[k]);
         if (arenaW > 0 && img.arena_near) { ctx.globalAlpha = arenaW; bg('arena_near', par.near); ctx.globalAlpha = 1; }
         ctx.save(); ctx.translate(-cam + (shake > 0 ? Math.round(Math.random() * 4 - 2) : 0), shake > 0 ? Math.round(Math.random() * 4 - 2) : 0);
         drawLayer(DBL); drawLayer(GL); drawLayer(DL);

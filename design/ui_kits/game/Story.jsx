@@ -233,7 +233,7 @@ const EH_DIALOGUE = {
   ],
   // ---- Level 5 · The Big Tidy-Up (spring in Ivanovo)
   l5_start: [
-    { who: 'ruby', text: 'Every toy you pick up gives you three more seconds. Look everywhere: on the TV, on the chandelier, under the bed, in the cupboard!' },
+    { who: 'ruby', text: 'One minute! Look everywhere: on the TV, on the chandeliers, under the beds, inside the cupboards!' },
   ],
   l5_win: [
     { who: 'marija', mood: 'proud', text: "Well, well… I can't believe it. You've grown so much, and you tidied up all the toys on your own!" },
@@ -648,13 +648,18 @@ function IntroCutscene({ onDone }) {
 // Claude Design panels in cutscenes/ending (bg, chars, fx, + title on the credits), lines from the story bible section 6.
 const SPRING = [
   { d: 9, lines: [{ at: 1.5, who: null, text: 'Spring has come to Ivanovo.' }] },
-  { d: 8, lines: [] },
-  { d: 10, lines: [{ at: 0.8, who: 'ruby', mood: 'worried', text: 'Kids! Wake up! Look at this mess!' },
-    { at: 2.4, who: 'ruby', mood: 'worried', text: 'Toys everywhere! Grandma Marija will be up any minute.' },
-    { at: 4.0, who: 'ruby', mood: 'worried', text: "If she finds them, she'll take a shovel and throw them all in the trash!" },
-    { at: 5.6, who: 'vasilije', mood: 'ali', text: 'ALL of them?!' },
-    { at: 7.0, who: 'ruby', mood: 'happy', text: 'Then pick them up. Quickly! You have one minute!' },
-    { at: 8.4, who: 'dimitrije', mood: 'okej', text: 'Okej.' }] },
+  { d: 9, lines: [{ at: 1.2, who: null, text: 'Baba Vera was home. The house was warm again, and full of toys.' },
+    { at: 3.0, who: 'kosta', mood: 'happy', text: 'Good morning, everyone!' },
+    { at: 4.6, who: 'katarina', text: '(yawning) Is it breakfast yet? I’m hungry.' },
+    { at: 6.4, who: 'vasilije', text: 'Five more minutes…' }] },
+  { d: 14, lines: [{ at: 0.8, who: 'ruby', mood: 'happy', text: 'Good morning, kids!' },
+    { at: 2.2, who: 'all', mood: 'happy', text: 'Hi, Rubi!' },
+    { at: 3.6, who: 'ruby', mood: 'worried', text: 'Look at this room. The toys are out again!' },
+    { at: 5.2, who: 'ruby', mood: 'worried', text: 'Grandma Marija is still sleeping, but she will be up soon.' },
+    { at: 6.8, who: 'ruby', mood: 'worried', text: "Pick them all up before she wakes, or she'll take a shovel and throw them in the trash. You'll lose those toys!" },
+    { at: 8.6, who: 'vasilije', mood: 'ali', text: 'ALL of them?!' },
+    { at: 10.0, who: 'ruby', mood: 'happy', text: 'Then hurry. You have one minute!' },
+    { at: 11.6, who: 'dimitrije', mood: 'okej', text: 'Okej.' }] },
 ];
 const ENDING = [
   { d: 14, top: true, lines: [{ at: 1.0, who: 'mrak', mood: 'sad', text: 'I only wanted… somewhere warm.' },
