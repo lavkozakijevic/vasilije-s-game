@@ -34,7 +34,7 @@ beam(6, 13, 21); spot('spot1', 20, 6)
 ent('enemy_rat', 'rat', 16 * 32, 257)
 # creaky boards up to the second beam; the rope over the baby rats
 row(6, 22, [26, 26, 26, 26]); beam(4, 26, 33); put(decor_back, 3, 24, 73)
-ent('rope', 'rope', 36 * 32 + 16, 160)
+ent('rope', 'rope', 36 * 32 + 16, 64)
 for c in (35, 36, 37): ent('enemy_rat_small', 'baby_rat', c * 32, 257)
 ent('enemy_rat', 'rat', 30 * 32, 257); skylight(38); put(decor_back, 3, 40, 72)
 # suitcases, the rocking chair, the mattress up to the third beam
