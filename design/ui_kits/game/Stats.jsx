@@ -8,6 +8,7 @@ const EH_PLAYERS = [
   { id: 'dimitrije', name: 'Dimitrije', sprite: 'dimitrije', key: 4 },
 ];
 const EH_STAT_LEVELS = ['l1', 'l2', 'l3', 'l4'];   // the levels that count for Vera (all coins + all gems in one play each)
+const EH_BOARD_LEVELS = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'];   // shown on the leaderboard (5 and 6 have no coins or gems: best time only)
 
 // ---- storage (this browser for now): { players: { kosta: { l1: { coins, coinTotal, gems, gemTotal, time, full } } } }
 const EH_STORE = {
@@ -94,8 +95,8 @@ function Leaderboard({ onBack }) {
   const s = React.useMemo(() => EH_STORE.load(), [ver]);
   const [cloud, setCloud] = React.useState(ehCloudState);
   React.useEffect(() => { let on = true; ehSync().then(st => { if (on) { setCloud(st); setVer(v => v + 1); } }); return () => { on = false; }; }, []);
-  const fastest = Object.fromEntries(EH_STAT_LEVELS.map(l => { let best = null; EH_PLAYERS.forEach(p => { const r = (s.players[p.id] || {})[l]; if (r && r.time != null && (best == null || r.time < best.t)) best = { t: r.time, p: p.id }; }); return [l, best && best.p]; }));
-  const cell = { fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textAlign: 'center', padding: '8px 6px', borderBottom: '2px solid var(--eh-plum)' };
+  const fastest = Object.fromEntries(EH_BOARD_LEVELS.map(l => { let best = null; EH_PLAYERS.forEach(p => { const r = (s.players[p.id] || {})[l]; if (r && r.time != null && (best == null || r.time < best.t)) best = { t: r.time, p: p.id }; }); return [l, best && best.p]; }));
+  const cell = { fontFamily: 'var(--font-ui)', fontSize: 12, color: 'var(--eh-bone)', textAlign: 'center', padding: '8px 6px', borderBottom: '2px solid var(--eh-plum)' };
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--eh-ink)' }}>
       <ParallaxBackdrop dim />
@@ -103,14 +104,14 @@ function Leaderboard({ onBack }) {
       <table style={{ position: 'absolute', left: 40, right: 40, top: 120, width: 1200, borderCollapse: 'collapse', background: 'rgba(20,16,28,.88)', border: '4px solid var(--eh-ink)' }}>
         <thead><tr>
           <th style={{ ...cell, width: 200 }}></th>
-          {EH_STAT_LEVELS.map((l, i) => <th key={l} style={{ ...cell, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1}<div style={{ fontSize: 11, color: 'var(--eh-stone)', marginTop: 4 }}>{T('COINS')} · {T('GEMS')} · {T('TIME')}</div></th>)}
+          {EH_BOARD_LEVELS.map((l, i) => <th key={l} style={{ ...cell, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1}<div style={{ fontSize: 10, color: 'var(--eh-stone)', marginTop: 4 }}>{i < 4 ? `${T('COINS')} · ${T('GEMS')}` : T('TIME')}</div></th>)}
           <th style={{ ...cell, color: 'var(--eh-gold)', width: 150 }}>BABA VERA</th>
         </tr></thead>
         <tbody>{EH_PLAYERS.map(p => { const P = s.players[p.id] || {}, perfect = EH_STAT_LEVELS.filter(l => P[l] && P[l].full).length;
           return (<tr key={p.id}>
             <td style={{ ...cell, textAlign: 'left' }}><div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><Sprite src={EHK_A + `sprites/heroes/kids/${p.sprite}/hero_${p.sprite}_idle.png`} frames={4} frame={0} scale={2} /><span style={{ fontSize: 18 }}>{p.name.toUpperCase()}</span></div></td>
-            {EH_STAT_LEVELS.map(l => { const r = P[l]; return <td key={l} style={cell}>{!r ? <span style={{ color: 'var(--eh-stone)' }}>—</span> : <>
-              <div>{r.coins}/{r.coinTotal} · {r.gems}/{r.gemTotal}{r.full ? ' ✓' : ''}</div>
+            {EH_BOARD_LEVELS.map(l => { const r = P[l]; return <td key={l} style={cell}>{!r ? <span style={{ color: 'var(--eh-stone)' }}>—</span> : <>
+              {r.coinTotal > 0 && <div>{r.coins}/{r.coinTotal} · {r.gems}/{r.gemTotal}{r.full ? ' ✓' : ''}</div>}
               <div style={{ marginTop: 4, color: fastest[l] === p.id ? 'var(--eh-gold)' : 'var(--eh-bone)' }}>{fastest[l] === p.id ? '🏆 ' : ''}{ehFmtTime(r.time)}</div></>}</td>; })}
             <td style={{ ...cell, color: P.vera ? 'var(--eh-gold)' : 'var(--eh-stone)' }}>{P.vera ? '★ ' + T('UNLOCKED') : `${perfect}/4`}</td>
           </tr>); })}</tbody>
