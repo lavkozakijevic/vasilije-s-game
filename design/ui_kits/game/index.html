@@ -1,16 +1,16 @@
 <!-- @dsCard group="Game" viewport="1280x720" name="Forest level (playable)" subtitle="Title → play → pause → results" -->
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Elemental Heroes · The Rescue of Baba Vera</title><link rel="stylesheet" href="../../styles.css?v=20261004a">
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Elemental Heroes · The Rescue of Baba Vera</title><link rel="stylesheet" href="../../styles.css?v=20261004b">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script src="../../_ds_bundle.js?v=20261004a"></script>
+<script src="../../_ds_bundle.js?v=20261004b"></script>
 <style>html,body{margin:0;height:100%;background:var(--eh-ink);overflow:hidden}#fit{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:0 0}</style></head><body><div id="fit"><div id="root" style="position:relative;width:1280px;height:720px;overflow:hidden"></div></div>
-<script type="text/babel" src="I18n.jsx?v=20261004a"></script>
-<script type="text/babel" src="GameView.jsx?v=20261004a"></script>
-<script type="text/babel" src="Screens.jsx?v=20261004a"></script>
-<script type="text/babel" src="Story.jsx?v=20261004a"></script>
-<script type="text/babel" src="Stats.jsx?v=20261004a"></script>
-<script type="text/babel" src="Map.jsx?v=20261004a"></script>
+<script type="text/babel" src="I18n.jsx?v=20261004b"></script>
+<script type="text/babel" src="GameView.jsx?v=20261004b"></script>
+<script type="text/babel" src="Screens.jsx?v=20261004b"></script>
+<script type="text/babel" src="Story.jsx?v=20261004b"></script>
+<script type="text/babel" src="Stats.jsx?v=20261004b"></script>
+<script type="text/babel" src="Map.jsx?v=20261004b"></script>
 <script type="text/babel">
 function fit(){let s=Math.min(innerWidth/1280,innerHeight/720);if(!isFinite(s)||s<=0)s=1;document.getElementById('fit').style.transform=`scale(${s}) translate(-50%,-50%)`;}
 addEventListener('resize',fit);addEventListener('load',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
@@ -41,7 +41,7 @@ function App(){
   if(screen==='intro')return <IntroCutscene onDone={()=>setScreen('who')}/>;
   if(screen==='ending')return <EndingCutscene onDone={()=>{history.replaceState(null,'',location.pathname+location.search);setScreen(res&&res.kind==='complete'?'result':'title');}}/>;
   return(<div style={{position:'absolute',inset:0}}>
-    <GameView key={level+run} level={level} runId={run} paused={screen!=='play'} onHud={setHud} onEnd={end} onStory={story}/>
+    <GameView key={level+run} level={level} runId={run} heroes={[...(localStorage.getItem('eh_ruby')==='1'?['ruby']:[]),...(ehVeraUnlocked(player)?['vera']:[])]} paused={screen!=='play'} onHud={setHud} onEnd={end} onStory={story}/>
     <Hud hp={hud.hp} coins={hud.coins} element={hud.element} name={hud.name}/>
     {screen==='dialog'&&dialog&&<DialogueRunner key={dialog} lines={EH_DIALOGUE[dialog]} onDone={()=>{setDialog(null);setScreen('play');}}/>}
     {screen==='note'&&<NoteScreen level={level} onDone={()=>setScreen('result')}/>}

@@ -33,6 +33,8 @@ const EH_MRAK = { idle:4, telegraph:4, shadow_attack:6, summon:6, hurt:2, phase_
 const EH_POWER = {
   fire: { v: 4.2, dmg: 1 }, water: { v: 3.6, dmg: 1 }, earth: { v: 3.4, dmg: 2, arc: true }, air: { v: 5.2, dmg: 1, pierce: true },
   ice: { v: 4.8, dmg: 1 }, lightning: { v: 6.5, dmg: 1 }, shadow: { v: 3.2, dmg: 2 }, light: { v: 5.6, dmg: 1, pierce: true },
+  // Ruby: a present lobbed in an arc that bursts where it lands (hurts everything near); Vera: a golden ray (one hit for any enemy, three for any boss)
+  present: { v: 2.83, dmg: 2, arc: true, vy: -4.33, g: 0.194, bomb: true }, gold: { v: 5.33, dmg: 1, pierce: true },
 };
 const EH_COUSINS = [
   { id: 'konstantin', el: 'light', name: 'Kosta', kid: true },
@@ -41,7 +43,9 @@ const EH_COUSINS = [
   { id: 'dimitrije',  el: 'air',   name: 'Dimitrije', kid: true },
 ];
 const EH_KNIGHTS = { fire: 'Cinder', water: 'Brine', earth: 'Basalt', air: 'Wisp', ice: 'Rime', lightning: 'Jolt', shadow: 'Umbra', light: 'Aurel' };
-const EH_ELEMENTS = Object.keys(EH_POWER);
+const EH_ELEMENTS = ['fire', 'water', 'earth', 'air', 'ice', 'lightning', 'shadow', 'light'];   // the knights' elements
+// unlockable heroes (keys 5 and 6): Ruby after the toy level, Baba Vera for a cousin with perfect runs of levels 1-4
+const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Ruby', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }];
 // Per-level setup. Each level has a star cousin: the level starts with them and only they can land the final blow on its boss.
 // T = the tileset's rules (ids from its .tsj): solid, one-way, hazards, water, animated tiles, crumble planks, bounce tile, slippery ice.
 const EH_LV = {
@@ -73,7 +77,7 @@ const EH_PETS = {
 const GROUND_Y = 288;
 function ehImg(src){ return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; }); }
 
-function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
+function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes = [] }) {
   const LV = EH_LV[level] || EH_LV.l1, T = LV.T, EH_STAR = LV.star, before = EH_LV_ORDER.slice(0, EH_LV_ORDER.indexOf(LV.id));
   const cv = React.useRef(null);
   const pausedRef = React.useRef(paused);
@@ -81,7 +85,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
   React.useEffect(() => {
     let alive = true, raf = 0;
     const keys = {}; let wantHero = -1, cycle = 0, jumpBuf = 0;   // jumpBuf remembers a jump press for a few ticks so quick taps aren't lost
-    const kd = e => { keys[e.code] = true; const d = /^Digit([1-4])$/.exec(e.code); if (d) wantHero = +d[1] - 1; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
+    const kd = e => { keys[e.code] = true; const d = /^Digit([1-6])$/.exec(e.code); if (d) wantHero = 'k' + d[1]; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
@@ -104,7 +108,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         ...EH_ELEMENTS.map(el => load('st_' + el, `sprites/statues/statue_knight_${el}.png`)), load('st_awaken', 'sprites/statues/fx_statue_awaken.png'),
         ...Object.values(EH_PETS).flatMap(pt => (pt.fly ? ['fly', 'glide', 'dive', 'carry_konstantin'] : ['idle', 'run', 'jump', 'special']).map(k => load(`pet_${pt.id}_${k}`, `sprites/companions/${pt.sprite}/${pt.sprite}_${k}.png`))),
         load('yarn', 'sprites/items/item_yarn_ball.png'),
-        ...EH_COUSINS.flatMap(c => [...Object.keys(EH_HERO), 'respawn'].map(k => load(`h_${c.id}_${k}`, `sprites/heroes/kids/${c.id}/hero_${c.id}_${k}.png`))),
+        load('p_present', 'sprites/heroes/present/fx_present_projectile.png'), load('boom', 'sprites/heroes/present/fx_present_explosion.png'), load('i_present', 'sprites/heroes/present/fx_present_projectile.png'),
+        load('p_gold', 'sprites/heroes/gold/fx_gold_projectile.png'), load('i_gold', 'sprites/heroes/gold/fx_gold_impact.png'),
+        ...[...EH_COUSINS, ...EH_EXTRA].flatMap(c => [...Object.keys(EH_HERO), 'respawn'].map(k => load(`h_${c.id}_${k}`, `sprites/heroes/kids/${c.id}/hero_${c.id}_${k}.png`))),
         ...EH_ELEMENTS.flatMap(el => [
           ...Object.keys(EH_HERO).map(k => load(`h_k_${el}_${k}`, `sprites/heroes/${el}/hero_${el}_${k}.png`)),
           load('p_' + el, `sprites/heroes/${el}/fx_${el}_projectile.png`), load('i_' + el, `sprites/heroes/${el}/fx_${el}_impact.png`),
@@ -163,7 +169,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
       const ents = map.layers.find(l => l.name === 'entities').objects, of = t => ents.filter(o => o.type === t);
       const sp = ents.find(o => o.name === 'player_spawn');
       const spawn = { x: sp ? sp.x : 64, y: sp ? sp.y : 257 }; let safe = { ...spawn };
-      const ROSTER = [...EH_COUSINS.map(c => ({ ...c })), ...before.flatMap(l => EH_LV[l].knights).map(el => ({ id: 'k_' + el, el, name: EH_KNIGHTS[el], kid: false }))];   // knights woken in earlier levels come along
+      const ROSTER = [...EH_COUSINS.map(c => ({ ...c })), ...EH_EXTRA.filter(x => heroes.includes(x.id)).map(x => ({ ...x })), ...before.flatMap(l => EH_LV[l].knights).map(el => ({ id: 'k_' + el, el, name: EH_KNIGHTS[el], kid: false }))];   // knights woken in earlier levels come along
       const H = { ...spawn, vx: 0, vy: 0, face: 1, ground: true, attackT: 0, hurtT: 0, inv: 0, landT: 0, dead: 0, hp: 4, coins: 0, fired: false, hero: ROSTER.findIndex(r => r.id === EH_STAR), swapT: 0 };
       // Hearth Knight statues: touching one wakes the knight, who joins the roster
       const ST = ents.filter(o => o.type === 'knight_statue').map(o => ({ el: o.name, x: o.x, y: o.y, woke: false, wakeT: -1 }));
@@ -206,6 +212,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
       const so = ents.find(o => o.type === 'boss_lava_salamander'), sa = ents.find(o => o.type === 'sal_arena');
       const SAL = so ? { x: so.x, y: so.y, hp: 12, max: 12, st: 'wait', t: 0, n: 0, dir: -1, hurt: 0, dead: 0, awake: false, name: 'LAVA SALAMANDER', aL: sa ? sa.x : so.x - 320, aR: sa ? sa.x + sa.width : so.x + 320 } : null;
       const salBox = () => ({ x: SAL.x + 6, y: SAL.y + 34, w: 56, h: 29 }), salUp = () => SAL && !SAL.dead && (SAL.st === 'idle' || SAL.st === 'spit' || SAL.st === 'surface' || (SAL.st === 'dive' && SAL.t < 16));
+      const bd = (b, boss) => b.el === 'gold' ? Math.ceil(boss.max / 3) : b.dmg;   // damage a shot does to a boss (Vera: three hits for any boss)
       const mrakDown = () => { MRAK.dead = 1; MRAK.st = 'defeat'; MRAK.waves = []; MRAK.orbs = []; MRAK.roots = []; MRAK.spikes = []; MRAK.spots = []; MRAK.beamT = 40; };
       const FIREB = [], TRIG = of('story_trigger'), SB = {};   // SB: shadow-bridge tiles lit by light shots
       // the eagle ride up the cliff plays before the keep level starts
@@ -297,12 +304,14 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
           if ((keys.Space || keys.ArrowUp || keys.KeyW || jumpBuf > 0) && H.ground && H.hurtT <= 0) { jumpBuf = 0; H.vy = -8.3; H.ground = false; H.jumpT = tick; H.jumpV = -8.3; fx('fx_dust_jump', 4, 16, H.x, H.y + 31 - 16, 32); }
           if ((keys.KeyJ || keys.KeyF || keys.KeyX) && H.attackT <= 0 && H.hurtT <= 0) { H.attackT = 24; H.fired = false; }
           if (cycle) { wantHero = (H.hero + cycle + ROSTER.length) % ROSTER.length; cycle = 0; }
+          if (TRAP && TRAP.st === 'rising' && typeof wantHero === 'string') wantHero = -1;
           if (TRAP && TRAP.st === 'rising' && wantHero >= 0 && wantHero !== H.hero) { wantHero = -1; say(window.EH_LANG === 'sr' ? 'VASILIJE JE SAM! PENJI SE!' : 'VASILIJE IS ON HIS OWN! CLIMB!'); }
+          if (typeof wantHero === 'string') { const n = +wantHero.slice(1); wantHero = n <= 4 ? n - 1 : ROSTER.findIndex(r => r.key === n); }   // keys 1-4 cousins, 5 Ruby, 6 Vera (when unlocked)
           if (wantHero >= 0 && wantHero < ROSTER.length && wantHero !== H.hero) { H.hero = wantHero; H.swapT = 40; H.attackT = 0; fx('i_' + ROSTER[wantHero].el, 4, 12, H.x, H.y, 32); }
           wantHero = -1;
         }
         if (H.attackT > 0) { H.attackT--; if (!H.fired && H.attackT <= 12) { H.fired = true;
-          B.push({ x: H.x + (H.face > 0 ? 26 : -10), y: H.y + (HR.kid ? 14 : 10), vx: PW.v * H.face, vy: PW.arc ? -3.2 : 0, t: 0, el: HR.el, who: HR.id, dmg: PW.dmg, arc: !!PW.arc, pierce: !!PW.pierce, hit: new Set() }); } }
+          B.push({ x: H.x + (H.face > 0 ? 26 : -10), y: H.y + (HR.kid ? 14 : 10), vx: PW.v * H.face, vy: PW.arc ? (PW.vy || -3.2) : 0, g: PW.g || 0.2, t: 0, el: HR.el, who: HR.id, dmg: PW.dmg, arc: !!PW.arc, pierce: !!PW.pierce, bomb: !!PW.bomb, hit: new Set() }); } }
         if (H.hurtT > 0) H.hurtT--; if (H.inv > 0) H.inv--; if (H.landT > 0) H.landT--; if (H.swapT > 0) H.swapT--; if (H.slowT > 0) H.slowT--;
         // ---- hero physics ----
         if (!H.dead) {
@@ -772,25 +781,30 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         }
         // ---- hero projectiles ----
         for (let i = B.length - 1; i >= 0; i--) { const b = B[i]; b.x += b.vx; b.t++;
-          if (b.arc) { b.vy = Math.min(6, b.vy + 0.2); b.y += b.vy; }
+          if (b.arc) { b.vy = Math.min(6, b.vy + b.g); b.y += b.vy; }
+          if (b.bomb) {   // Ruby's present: flies until it touches the floor or an enemy, then bursts and hurts everything around it
+            const sb = { x: b.x + 3, y: b.y + 3, w: 10, h: 10 }, row = Math.floor((b.y + 14) / 32), sf = surface(b.x + 8, row);
+            const land = T.solid.has(tileAt(b.x + 8, b.y + 8)) || (b.vy > 0 && sf != null && b.y + 14 >= sf) || E.some(e => !e.dead && overlap(sb, ebox(e))) || b.y > 380;
+            if (!land) { if (b.x < cam - 16 || b.x > cam + 656) B.splice(i, 1); continue; }
+            b.boom = true; b.pierce = true; fx('boom', 6, 12, b.x + 8 - 24, b.y + 8 - 24, 48); shake = Math.max(shake, 4); }
           let hit = T.solid.has(tileAt(b.x + 8, b.y + 8)) || b.x < cam - 16 || b.x > cam + 656 || b.y > 380, wall = hit;
           for (const g of gates) if (g.st !== 'open' && b.x + 12 > g.x && b.x + 4 < g.x + 32) { hit = wall = true; }
-          const pb = { x: b.x + 3, y: b.y + 3, w: 10, h: 10 };
+          const pb = b.boom ? { x: b.x + 8 - 36, y: b.y + 8 - 36, w: 72, h: 72 } : b.el === 'gold' ? { x: b.x + 2, y: b.y + 4, w: 28, h: 8 } : { x: b.x + 3, y: b.y + 3, w: 10, h: 10 };
           const spark = () => fx('fx_hit_spark', 3, 18, b.x, b.y, 16);
           for (const e of E) { if (hit) break; if (!e.dead && !b.hit.has(e) && overlap(pb, ebox(e))) { b.hit.add(e);
             // frostling: a shot at its face is blocked by its ice shield, unless it is fire or light (they break it)
-            if (e.kind === 'shade' && b.el !== 'light') { if (e.st === 'fly' || e.st === 'attack') { e.st = 'fadeout'; e.t = 0; } hit = wall = true; continue; }
-            if (e.kind === 'garg' && e.st === 'perch') { e.st = 'wake'; e.t = 0; hit = wall = true; continue; }
+            if (e.kind === 'shade' && b.el !== 'light' && b.el !== 'gold') { if (e.st === 'fly' || e.st === 'attack') { e.st = 'fadeout'; e.t = 0; } hit = wall = true; continue; }
+            if (e.kind === 'garg' && e.st === 'perch' && b.el !== 'gold') { e.st = 'wake'; e.t = 0; hit = wall = true; continue; }
             const brk = EH_SHIELD[e.kind];
-            if (brk && Math.sign(b.vx) === -e.dir && !brk.includes(b.el)) { if (e.sh <= 0) e.sh = 75; else e.sh = Math.max(e.sh, 20); hit = wall = true; continue; }
+            if (brk && Math.sign(b.vx) === -e.dir && !brk.includes(b.el) && b.el !== 'gold' && !b.boom) { if (e.sh <= 0) e.sh = 75; else e.sh = Math.max(e.sh, 20); hit = wall = true; continue; }
             if (brk) { if (e.kind === 'golem' && e.sh > 0) e.crk = 24; e.sh = 0; }
             if (e.kind === 'slime' && (b.el === 'ice' || b.el === 'water')) e.frz = 150;
-            damage(e, b.dmg); spark(); if (!b.pierce) hit = true; } }
-          if (T.lava && (b.el === 'ice' || b.el === 'water')) {   // ice (and water) shots freeze the lava under them into a crust you can stand on
+            damage(e, b.el === 'gold' ? 99 : b.dmg); spark(); if (!b.pierce) hit = true; } }
+          if (T.lava && (b.el === 'ice' || b.el === 'water' || b.el === 'gold')) {   // ice (and water) shots freeze the lava under them into a crust you can stand on
             const c = Math.floor((b.x + 8) / 32), r0 = Math.floor((b.y + 8) / 32), inPool = SAL && !SAL.dead && b.x > SAL.aL && b.x < SAL.aR;
             for (let r = r0; r <= r0 + 3 && r < MH && !inPool; r++) { const i = r * MW + c; if (T.solid.has(ground[i]) && ground[i] !== 35 && ground[i] !== 36) break;
               if (ground[i] === 30 || ground[i] === 37) { for (const cc of [c - 1, c, c + 1]) { const j = r * MW + cc; if (cc >= 0 && cc < MW && (ground[j] === 30 || ground[j] === 37)) { CRUST[j] = 0; ground[j] = 34; } } break; } } }
-          if (T.bridge && b.el === 'light') {   // Kosta's (and Aurel's) light makes the shadow bridge solid for a few seconds
+          if (T.bridge && (b.el === 'light' || b.el === 'gold')) {   // Kosta's (and Aurel's) light makes the shadow bridge solid for a few seconds
             const c = Math.floor((b.x + 8) / 32), r0 = Math.floor((b.y + 8) / 32);
             for (let r = r0; r <= r0 + 3 && r < MH; r++) { const i = r * MW + c; if (T.solid.has(ground[i])) break;
               if ([29, 30, 31, 32].includes(ground[i])) { for (const cc of [c - 1, c, c + 1]) { const j = r * MW + cc; if (cc >= 0 && cc < MW && [29, 30, 31, 32].includes(ground[j])) { if (ground[j] === 31) SB[j] = 9; else { SB[j] = 0; ground[j] = 30; } } } break; } } }
@@ -798,30 +812,31 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
             if (UMB.hp <= 0) { UMB.st = 'down'; UMB.t = 0; } }
           if (MRAK && !hit) for (const o of MRAK.orbs) if (o.t >= 0 && overlap(pb, { x: o.x + 2, y: o.y + 2, w: 12, h: 12 })) { o.t = 999; spark(); hit = true; break; }   // shoot the orbs down
           if (MRAK && MRAK.awake && !MRAK.dead && !hit && overlap(pb, mBody())) { hit = true; spark();
-            if (MRAK.st === 'phase') {}
+            if (b.who === 'vera') { MRAK.hp -= bd(b, MRAK); MRAK.hurt = 10; if (MRAK.hp <= 0) mrakDown(); }   // Baba Vera needs nobody's help
+            else if (MRAK.st === 'phase') {}
             else if (MRAK.ph < 3) { MRAK.hp -= b.dmg * (MRAK.st === 'telegraph' && overlap(pb, mCore()) ? 2 : 1); MRAK.hurt = 10; }
             else { const RH = ROSTER.find(r => r.id === b.who); MRAK.hurt = 6;
               if (MRAK.callStar) { if (b.who === EH_STAR) mrakDown(); }
-              else if (RH && RH.kid) { MRAK.lit.add(b.who); MRAK.last = b.who;
+              else if (RH && EH_COUSINS.some(c => c.id === b.who)) { MRAK.lit.add(b.who); MRAK.last = b.who;
                 if (MRAK.lit.size === 4) { MRAK.lit.clear(); MRAK.beamT = 40; MRAK.st = 'stagger'; MRAK.t = 0; MRAK.stag++; MRAK.hp = Math.max(1, MRAK.hp - 3);
                   if (MRAK.stag >= 3) { if (b.who === EH_STAR) mrakDown(); else { MRAK.hp = 1; MRAK.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish.konstantin : 'PRESS 1 · KOSTA FINISHES IT'); story('l4_finish'); } } } } } }
-          if (SAL && SAL.awake && !SAL.dead && !hit && salUp() && overlap(pb, salBox())) { SAL.hp -= b.dmg * (b.el === 'ice' || b.el === 'water' ? 2 : 1); SAL.hurt = 10; spark(); hit = true;
+          if (SAL && SAL.awake && !SAL.dead && !hit && salUp() && overlap(pb, salBox())) { SAL.hp -= b.el === 'gold' ? bd(b, SAL) : b.dmg * (b.el === 'ice' || b.el === 'water' ? 2 : 1); SAL.hurt = 10; spark(); hit = true;
             if (SAL.hp <= 0) { SAL.dead = 1; FIREB.length = 0; } }
-          if (YETI && YETI.awake && !YETI.dead && !hit && overlap(pb, yetiBox())) { YETI.hp -= b.dmg; YETI.hurt = 10; spark(); hit = true;
+          if (YETI && YETI.awake && !YETI.dead && !hit && overlap(pb, yetiBox())) { YETI.hp -= bd(b, YETI); YETI.hurt = 10; spark(); hit = true;
             if (YETI.hp <= 0) { YETI.dead = 1; BIGS.length = 0; SNOW.length = 0; } }
           if (FW && !FW.dead && !hit && overlap(pb, fwBody())) {
-            FW.hp -= b.dmg * (fwGlow() && overlap(pb, fwWeak()) ? 2 : 1); FW.hurt = 10; FW.awake = true; spark();
-            if (FW.hp <= 0 && b.who !== EH_STAR) { FW.hp = 1; if (!FW.callStar) { FW.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish[EH_STAR] : `PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
+            FW.hp -= b.el === 'gold' ? bd(b, FW) : b.dmg * (fwGlow() && overlap(pb, fwWeak()) ? 2 : 1); FW.hurt = 10; FW.awake = true; spark();
+            if (FW.hp <= 0 && b.who !== EH_STAR && b.who !== 'vera') { FW.hp = 1; if (!FW.callStar) { FW.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish[EH_STAR] : `PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
             if (FW.hp <= 0) { FW.dead = 1; FW.spots = []; FW.spikes = []; FW.breath = null; FW.waves = []; FW.rain = []; }
             hit = true; }
-          if (ELD && ELD.awake && !ELD.dead && !hit && overlap(pb, elderBox())) { ELD.hp -= b.dmg; ELD.hurt = 10; spark(); hit = true;
+          if (ELD && ELD.awake && !ELD.dead && !hit && overlap(pb, elderBox())) { ELD.hp -= bd(b, ELD); ELD.hurt = 10; spark(); hit = true;
             if (ELD.hp <= 0) { ELD.dead = 1; SEEDS.length = 0; gates.forEach(g => { if (g.st !== 'open') { g.st = 'opening'; g.t = 0; } }); } }
           if (BOSS && !BOSS.dead && !hit && overlap(pb, bossBody())) {
-            BOSS.hp -= b.dmg * (overlap(pb, bossWeak()) ? 2 : 1); BOSS.hurt = 10; BOSS.awake = true; spark();
-            if (BOSS.hp <= 0 && b.who !== EH_STAR) { BOSS.hp = 1; if (!BOSS.callStar) { BOSS.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish[EH_STAR] : `PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
+            BOSS.hp -= b.el === 'gold' ? bd(b, BOSS) : b.dmg * (overlap(pb, bossWeak()) ? 2 : 1); BOSS.hurt = 10; BOSS.awake = true; spark();
+            if (BOSS.hp <= 0 && b.who !== EH_STAR && b.who !== 'vera') { BOSS.hp = 1; if (!BOSS.callStar) { BOSS.callStar = true; say(window.EH_LANG === 'sr' ? EH_SR_HINT.finish[EH_STAR] : `PRESS ${LV.starKey} · ${EH_STAR.toUpperCase()} FINISHES IT`); story(LV.id + '_finish'); } }
             if (BOSS.hp <= 0) { BOSS.dead = 1; BOSS.spots = []; BOSS.roots = []; }
             hit = true; }
-          if (hit) { if (wall) fx('i_' + b.el, 4, 12, b.x - 8, b.y - 8, 32); B.splice(i, 1); } }
+          if (hit || b.boom) { if (wall && !b.boom) fx('i_' + b.el, 4, 12, b.x - 8, b.y - 8, 32); B.splice(i, 1); } }
         for (let i = X.length - 1; i >= 0; i--) if (++X[i].t >= X[i].n * X[i].d) X.splice(i, 1);
         // crumble planks: 450ms after being stepped on they crack, break and fall away, then grow back after 3s
         for (const k in crumble) { const t = ++crumble[k]; const cr = T.crumble; ground[k] = t < 27 ? cr[0] : t < 36 ? cr[1] : t < 45 ? cr[2] : t < 225 ? cr[3] : cr[0]; if (t >= 225) delete crumble[k]; }
@@ -986,7 +1001,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory }) {
         else if (Math.abs(H.vx) > 0.1) { a = 'run'; f = (tick / 5) % 8; }
         else { a = 'idle'; f = (tick / 10) % 4; }
         if (!(H.inv > 0 && !H.dead && H.hurtT <= 0 && Math.floor(tick / 3) % 2)) drawStrip(img[`h_${hkey}_${a}`], EH_HERO[a], f, H.x, H.y, 32, H.face < 0);
-        B.forEach(b => drawStrip(img['p_' + b.el], 4, (b.t / 4) % 4, b.x, b.y, 16, b.vx < 0));
+        B.forEach(b => drawStrip(img['p_' + b.el], 4, (b.t / 4) % 4, b.x, b.y, b.el === 'gold' ? 32 : 16, b.vx < 0));
         X.forEach(x => drawStrip(img[x.k], x.n, x.t / x.d, x.x, x.y, x.w));
         if (FGL) { const hb = heroBox(); let over = false;
           for (let r = Math.floor(hb.y / 32); r <= Math.floor((hb.y + hb.h) / 32) && !over; r++) for (let c = Math.floor(hb.x / 32); c <= Math.floor((hb.x + hb.w) / 32); c++)
