@@ -1,0 +1,144 @@
+{
+ "game": "Elemental Heroes",
+ "level": "5 The Big Tidy-Up",
+ "note": "phase 7 part 2 entries; merge into asset_index.json",
+ "assets": [
+  {
+   "file": "backgrounds/house/bg_house_far.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.2 (back wall; the windows are transparent so the sky layer shows through); tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house/bg_house_mid.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.45; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house/bg_house_near.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.7; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house/bg_house_sky.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0 (the spring garden, seen through the far layer's windows); tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house/fg_house_sunbeams.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "transparent foreground, parallax 1.2; sunbeams + dust motes"
+  },
+  {
+   "file": "cutscenes/spring/spring_02_living_room_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/spring/spring_02_living_room_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/spring/spring_02_living_room_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/spring/spring_03_ruby_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/spring/spring_03_ruby_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/spring/spring_03_ruby_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "mockups/mock_house.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "living room section: daybed (bounce + under-bed room), sideboard cupboard, chandelier platform, toys"
+  },
+  {
+   "file": "tilesets/house/tileset_house.png",
+   "width": 256,
+   "height": 384,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 0,
+   "loop": false,
+   "notes": "ids 0-93, 8 columns, no margin/spacing"
+  }
+ ]
+}

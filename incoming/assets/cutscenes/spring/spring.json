@@ -1,0 +1,65 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "artScale": 2,
+ "layerOrder": [
+  "bg",
+  "chars",
+  "fg",
+  "fx"
+ ],
+ "scenes": [
+  {
+   "id": "spring_01_sunrise",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "spring_01_sunrise_bg.png"
+    },
+    {
+     "name": "fx",
+     "file": "spring_01_sunrise_fx.png"
+    }
+   ],
+   "motion": "slow pan up from the fence to the house as the sun rises; chimney smoke and petals drift; birds cross left to right"
+  },
+  {
+   "id": "spring_02_living_room",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "spring_02_living_room_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "spring_02_living_room_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "spring_02_living_room_fx.png"
+    }
+   ],
+   "motion": "slow push in; dust floats in the sunbeam; Vasilije's Zz drift up; Konstantin's stretch can bob 1px"
+  },
+  {
+   "id": "spring_03_ruby",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "spring_03_ruby_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "spring_03_ruby_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "spring_03_ruby_fx.png"
+    }
+   ],
+   "motion": "hold, then a small shake as Ruby calls; the call lines pulse"
+  }
+ ]
+}

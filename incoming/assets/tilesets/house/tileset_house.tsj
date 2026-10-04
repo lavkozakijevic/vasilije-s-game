@@ -1,0 +1,1722 @@
+{
+ "type": "tileset",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "name": "house",
+ "tilewidth": 32,
+ "tileheight": 32,
+ "tilecount": 96,
+ "columns": 8,
+ "margin": 0,
+ "spacing": 0,
+ "image": "tileset_house.png",
+ "imagewidth": 256,
+ "imageheight": 384,
+ "tiles": [
+  {
+   "id": 0,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_tl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 1,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_t"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_tr"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_nw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_ne"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "stair_step"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "carpet_t"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_single"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_l"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_c"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_r"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_sw"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "inner_se"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "carpet_tl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "carpet_tr"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_pillar"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_bl"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_b"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "floor_br"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "wall"
+    },
+    {
+     "name": "wall",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "wall_skirting"
+    },
+    {
+     "name": "wall",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "wall_corner"
+    },
+    {
+     "name": "wall",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ceiling"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "ceiling_edge"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "sofa_seat_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "sofa_seat_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "sofa_seat_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_red_top"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_red_seat"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_teal_top"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_teal_seat"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "coffee_table_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "coffee_table_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "sideboard_top_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "sideboard_top_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "sideboard_top_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cupboard_facade_l"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cupboard_facade_m"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cupboard_facade_r"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cupboard_interior"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cupboard_shelf"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tv_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tv_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 43,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "drawers_top"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 44,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "drawers_body"
+    },
+    {
+     "name": "solid",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 45,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "shelf_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 46,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "shelf_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 47,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "shelf_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 48,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "window_sill_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 49,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "window_sill_m"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 50,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "window_sill_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 51,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "window_tl"
+    },
+    {
+     "name": "wall",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 52,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "window_tr"
+    },
+    {
+     "name": "wall",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 53,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "window_bl"
+    },
+    {
+     "name": "wall",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 54,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "window_br"
+    },
+    {
+     "name": "wall",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 55,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chandelier_l"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 56,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chandelier_r"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 57,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "chandelier_chain"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 58,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lamp"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 59,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "lamp_stand"
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "furniture",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 60,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cushion_idle"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 1.8
+    }
+   ]
+  },
+  {
+   "id": 61,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cushion_0"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 1.8
+    }
+   ]
+  },
+  {
+   "id": 62,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cushion_1"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 1.8
+    }
+   ]
+  },
+  {
+   "id": 63,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cushion_2"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 1.8
+    }
+   ]
+  },
+  {
+   "id": 64,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cushion_3"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 1.8
+    }
+   ]
+  },
+  {
+   "id": 65,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "mattress_idle"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.4
+    }
+   ]
+  },
+  {
+   "id": 66,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "mattress_0"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.4
+    }
+   ]
+  },
+  {
+   "id": 67,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "mattress_1"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.4
+    }
+   ]
+  },
+  {
+   "id": 68,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "mattress_2"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.4
+    }
+   ]
+  },
+  {
+   "id": 69,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "mattress_3"
+    },
+    {
+     "name": "bounce",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "bounce_multiplier",
+     "type": "float",
+     "value": 2.4
+    }
+   ]
+  },
+  {
+   "id": 70,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "underbed_interior"
+    },
+    {
+     "name": "hidden_room",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 71,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "underbed_facade"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 72,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "underbed_facade_end"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "cover_for",
+     "type": "string",
+     "value": "hidden_room"
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 73,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "curtain_top"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 74,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "curtain_mid"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 75,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "curtain_bottom"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 76,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "hanging_plant"
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 77,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_egg_garland"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 78,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_family_photos"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 79,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_certificate"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 80,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_clock"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 81,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_plant"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 82,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_rug_l"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 83,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_rug_r"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 84,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_cups"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 85,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_fruit_bowl"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 86,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_cat_bed"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 87,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_calendar"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 88,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_rattan_chair"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 89,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_kids_chair"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 90,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_air_conditioner"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 91,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_basket"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 92,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_record_player"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 93,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "deco_cork_jar"
+    },
+    {
+     "name": "decor",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  }
+ ]
+}
