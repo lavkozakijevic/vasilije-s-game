@@ -96,4 +96,21 @@ function Hud({ hp, coins, element = 'fire', name = 'Cinder' }) {
   );
 }
 
-Object.assign(window, { TitleScreen, PauseMenu, ResultPanel, Hud });
+// "new hero unlocked" card (ui_unlock_card.png: title in the red banner, hero art in the gold frame, caption in the bottom bar)
+function UnlockCard({ hero = 'ruby', name = 'Rubi', keyNum = 5, onDone }) {
+  const { Sprite } = EHK;
+  React.useEffect(() => { const k = e => { if (['Space', 'Enter', 'NumpadEnter', 'Escape'].includes(e.code)) { e.preventDefault(); e.stopImmediatePropagation(); onDone(); } };
+    window.addEventListener('keydown', k, true); return () => window.removeEventListener('keydown', k, true); }, []);
+  const S = 2.6, X = 640 - 160 * S, Y = 360 - 100 * S;
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,11,20,.75)', cursor: 'pointer' }} onClick={onDone}>
+      <img src={EHK_A + 'ui/ui_unlock_card.png'} style={{ position: 'absolute', left: X, top: Y, width: 320 * S, height: 200 * S, imageRendering: 'pixelated', animation: 'ehFadeIn .5s' }} />
+      <div style={{ position: 'absolute', left: X + 47 * S, width: 225 * S, top: Y + 21 * S, textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 26, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)' }}>{T('NEW HERO UNLOCKED')}</div>
+      <div style={{ position: 'absolute', left: X + 111 * S, width: 98 * S, top: Y + 61 * S, height: 78 * S, display: 'grid', placeItems: 'center' }}>
+        <Sprite src={EHK_A + `sprites/heroes/kids/${hero}/hero_${hero}_idle.png`} frames={4} fps={6} scale={6} /></div>
+      <div style={{ position: 'absolute', left: X + 60 * S, width: 200 * S, top: Y + 145 * S, textAlign: 'center', fontFamily: 'var(--font-display)', fontSize: 52, color: 'var(--eh-gold)', textShadow: '-3px 0 0 var(--eh-ink),3px 0 0 var(--eh-ink),0 -3px 0 var(--eh-ink),0 3px 0 var(--eh-ink)' }}>{name}</div>
+      <div style={{ position: 'absolute', left: X + 81 * S, width: 157 * S, top: Y + 168 * S, textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 15, color: 'var(--eh-bone)' }}>{T('PRESS')} {keyNum} {T('IN ANY LEVEL')}</div>
+    </div>
+  );
+}
+Object.assign(window, { UnlockCard, TitleScreen, PauseMenu, ResultPanel, Hud });

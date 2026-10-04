@@ -16,10 +16,10 @@ const CAST = {
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
-const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', umbra_sb: 'Umbra', boys: 'Kosta, Vasilije & Dimitrije', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
+const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', umbra_sb: 'Umbra', ruby: 'Rubi', marija: 'Grandma Marija', boys: 'Kosta, Vasilije & Dimitrije', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
 // sprite-based portraits for characters that already have art
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
-const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus', umbra_sb: 'umbra',
+const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus', umbra_sb: 'umbra', ruby: 'ruby', marija: 'marija',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
 // PORTRAIT_SKIP can stand a mood in for one that needs redrawing, e.g. { 'vasilije|ali': 'neutral' }
 const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = {}, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing', umbra_sb: 'spellbound' };
@@ -231,6 +231,15 @@ const EH_DIALOGUE = {
   l4_finish: [
     { who: 'vasilije', mood: 'happy', text: 'Kosta, finish it! Together!' },
   ],
+  // ---- Level 5 · The Big Tidy-Up (spring in Ivanovo)
+  l5_start: [
+    { who: 'ruby', text: 'Every toy you pick up gives you three more seconds. Look everywhere: on the TV, on the chandelier, under the bed, in the cupboard!' },
+  ],
+  l5_win: [
+    { who: 'marija', mood: 'proud', text: "Well, well… I can't believe it. You've grown so much, and you tidied up all the toys on your own!" },
+    { who: 'ruby', mood: 'happy', text: 'Wow, fantastic! Kids, I knew I could count on you.' },
+    { who: 'ruby', mood: 'happy', text: 'So now you can count on me!' },
+  ],
   l4_free: [
     { who: 'baba', mood: 'warm', text: 'My brave ones! You came all this way.' },
     { who: 'kosta', mood: 'happy', text: 'All four of us, Baba. Together.' },
@@ -395,7 +404,7 @@ function ehResolvePortrait(who, mood) {
   return ehPortraitCache[key];
 }
 function ehPreloadPortraits() {
-  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : [])];
+  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : []), ...(typeof SPRING !== 'undefined' ? SPRING.flatMap(sc => sc.lines) : [])];
   for (const l of lines) { if (!l.who) continue; const who = l.who === 'all' ? KIDS : l.who === 'kosta_vasilije' ? ['kosta', 'vasilije'] : l.who === 'boys' ? ['kosta', 'vasilije', 'dimitrije'] : [l.who];
     for (const w of who) ehResolvePortrait(w, l.mood || (l.who === 'all' ? 'ali' : 'neutral')); }
 }
@@ -461,13 +470,13 @@ function useCutsceneLine() {
   const done = !!line && shown >= T(line.text).length;
   return { line, shown, done, setLine, advance, hold };
 }
-function DialogueRunner({ lines, onDone }) {
+function DialogueRunner({ lines, onDone, pos = 'bottom' }) {
   const [i, setI] = React.useState(0), [shown, setShown] = React.useState(0);
   const line = lines[i], done = line && shown >= T(line.text).length;
   React.useEffect(() => { setShown(0); if (!line) return; const t = setInterval(() => setShown(s => Math.min(T(line.text).length, s + 1)), 28); return () => clearInterval(t); }, [i]);
   const next = () => { if (!line) return; if (!done) setShown(T(line.text).length); else if (i + 1 < lines.length) setI(i + 1); else onDone(); };
   useStoryKeys(code => (code === 'Escape' ? onDone() : next()));
-  return <div style={{ position: 'absolute', inset: 0 }} onClick={next}><DialogueBox line={line} shown={shown} done={done} interactive /></div>;
+  return <div style={{ position: 'absolute', inset: 0 }} onClick={next}><DialogueBox line={line} shown={shown} done={done} interactive pos={pos} /></div>;
 }
 // ui_note_paper.png is 320x200 (shown 2x): 36px red margin, ruled lines 16px apart from y 46 (measured; its README says 30)
 function BabaNote({ lines, style }) {
@@ -637,6 +646,16 @@ function IntroCutscene({ onDone }) {
 
 // ---------------------------------------------------------------- ending cutscene (after Mrak; watch-only, skippable)
 // Claude Design panels in cutscenes/ending (bg, chars, fx, + title on the credits), lines from the story bible section 6.
+const SPRING = [
+  { d: 9, lines: [{ at: 1.5, who: null, text: 'Spring has come to Ivanovo.' }] },
+  { d: 8, lines: [] },
+  { d: 10, lines: [{ at: 0.8, who: 'ruby', mood: 'worried', text: 'Kids! Wake up! Look at this mess!' },
+    { at: 2.4, who: 'ruby', mood: 'worried', text: 'Toys everywhere! Grandma Marija will be up any minute.' },
+    { at: 4.0, who: 'ruby', mood: 'worried', text: "If she finds them, she'll take a shovel and throw them all in the trash!" },
+    { at: 5.6, who: 'vasilije', mood: 'ali', text: 'ALL of them?!' },
+    { at: 7.0, who: 'ruby', mood: 'happy', text: 'Then pick them up. Quickly! You have one minute!' },
+    { at: 8.4, who: 'dimitrije', mood: 'okej', text: 'Okej.' }] },
+];
 const ENDING = [
   { d: 14, top: true, lines: [{ at: 1.0, who: 'mrak', mood: 'sad', text: 'I only wanted… somewhere warm.' },
     { at: 3.4, who: 'baba', mood: 'warm', text: "Then come home with us. It's New Year's Eve. Nobody should be alone tonight." },
@@ -719,4 +738,46 @@ function EndingCutscene({ onDone }) {
 (function () { if (document.getElementById('eh-story-css')) return; const s = document.createElement('style'); s.id = 'eh-story-css';
   s.textContent = '@keyframes ehBob{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}@keyframes ehBlink{0%{opacity:1}100%{opacity:0}}@keyframes ehFadeIn{from{opacity:0}to{opacity:1}}'; document.head.appendChild(s); })();
 ehPreloadPortraits();
-Object.assign(window, { IntroCutscene, EndingCutscene, ENDING, DialogueRunner, NoteScreen, EH_DIALOGUE, EH_NOTES });
+// spring morning (after the ending, before the toy level): sunrise pan, the cousins waking up, Rubi calling them
+function SpringCutscene({ onDone }) {
+  const cv = React.useRef(null), CL = useCutsceneLine(), { line, setLine } = CL;
+  const [skip, setSkip] = React.useState(false), [hover, setHover] = React.useState(false), doneRef = React.useRef(false);
+  const finish = () => { if (!doneRef.current) { doneRef.current = true; onDone && onDone(); } };
+  useStoryKeys(code => { if (code === 'Escape' || code === 'Enter' || code === 'NumpadEnter') finish(); else CL.advance(); });
+  React.useEffect(() => {
+    let alive = true, raf = 0; const img = {};
+    const ld = (k, p) => new Promise(r => { const i = new Image(); i.onload = () => { img[k] = i; r(true); }; i.onerror = () => r(false); i.src = EHS_A + p; });
+    let t0 = null, ready = false, lastLine = null, clock = 0, lastNow = 0; const began = performance.now();
+    const starts = []; let acc = 0; for (const sc of SPRING) { starts.push(acc); acc += sc.d; } const total = acc;
+    fetch(EHS_A + 'cutscenes/spring/spring.json').then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
+      Promise.all(!j ? [] : j.scenes.slice(0, SPRING.length).flatMap((sc, n) => sc.layers.map(l => ld(`L${n}_${l.name}`, 'cutscenes/spring/' + l.file)))).then(() => { ready = true; }); });
+    const setT = setTimeout(() => alive && setSkip(true), 1000);
+    const g = cv.current.getContext('2d'); g.imageSmoothingEnabled = false;
+    const d = (im, x = 0, y = 0) => im && g.drawImage(im, Math.round(x / 2) * 2, Math.round(y / 2) * 2);
+    const draw = (n, t) => { const L = k => img[`L${n}_${k}`];
+      if (n === 0) { const up = Math.min(1, t / 7); d(L('bg'), 0, 0); const fy = (t * 10) % 40; d(L('fx'), -((t * 20) % 40), -fy); }   // sunrise: petals and birds drift
+      else if (n === 1) { const z = 1 + Math.min(0.06, t * 0.008), w = 640 * z, h = 360 * z; for (const k of ['bg', 'chars']) if (L(k)) g.drawImage(L(k), Math.round((640 - w) / 2), Math.round(360 - h), Math.round(w), Math.round(h));
+        if (L('fx')) g.drawImage(L('fx'), Math.round((640 - w) / 2), Math.round(360 - h - (t * 8) % 16), Math.round(w), Math.round(h)); }
+      else { const sh = t > 0.8 && t < 1.3 ? (Math.floor(t * 30) % 2 ? 2 : -2) : 0; d(L('bg'), sh); d(L('chars'), sh); if (Math.floor(t * 3) % 2 === 0) d(L('fx'), sh); } };
+    const loop = () => { if (!alive) return; g.fillStyle = PAL.ink;
+      if (t0 == null) { g.fillRect(0, 0, 640, 360); if (ready || performance.now() - began > 6000) { t0 = performance.now(); lastNow = t0; } raf = requestAnimationFrame(loop); return; }
+      const now = performance.now(); if (!CL.hold.current) clock += (now - lastNow) / 1000; lastNow = now; const T2 = clock;
+      if (T2 >= total) { finish(); return; }
+      const n = starts.findIndex((st, i) => T2 >= st && (i === starts.length - 1 || T2 < starts[i + 1])), t = T2 - starts[n], S = SPRING[n];
+      g.globalAlpha = 1; g.fillRect(0, 0, 640, 360); draw(n, t);
+      const fade = Math.min(1, t / 0.5, (S.d - t) / 0.5); if (fade < 1) { g.globalAlpha = 1 - Math.max(0, fade); g.fillRect(0, 0, 640, 360); g.globalAlpha = 1; }
+      const ln = S.lines.filter(l => l.at <= t).pop() || null; if (ln !== lastLine) { lastLine = ln; setLine(ln); }
+      raf = requestAnimationFrame(loop); };
+    loop(); return () => { alive = false; cancelAnimationFrame(raf); clearTimeout(setT); };
+  }, []);
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: PAL.ink }} onClick={() => CL.advance()}>
+      <canvas ref={cv} width={640} height={360} style={{ width: 1280, height: 720, imageRendering: 'pixelated', display: 'block' }} />
+      <DialogueBox line={line} shown={CL.shown} done={CL.done} interactive pos="top" />
+      {skip && <button onClick={finish} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} aria-label="Skip"
+        style={{ position: 'absolute', right: 28, bottom: 24, width: 160, height: 40, padding: 0, border: 'none', cursor: 'pointer', imageRendering: 'pixelated', background: `url(${EHS_A}ui/ui_skip_button.png) ${hover ? '-160px' : '0'} 0 / 320px 40px no-repeat` }}>
+        {window.EH_LANG === 'sr' && <span style={{ position: 'absolute', inset: 2, display: 'grid', placeItems: 'center', background: hover ? PAL.slate : PAL.plum, color: PAL.bone, fontFamily: 'var(--font-ui)', fontSize: 16 }}>PRESKOČI ▶</span>}</button>}
+    </div>
+  );
+}
+Object.assign(window, { IntroCutscene, EndingCutscene, SpringCutscene, ENDING, DialogueRunner, NoteScreen, EH_DIALOGUE, EH_NOTES });

@@ -6,11 +6,13 @@ const EH_LEVELS = [
   { id: 'l2', node: 'peaks',  name: 'The Frostfang Peaks',   star: 'Katarina',  ready: true },
   { id: 'l3', node: 'caves',  name: 'Cinderdeep Caves',      star: 'Vasilije',  ready: true },
   { id: 'l4', node: 'keep',   name: 'The Hollow Keep',       star: 'Kosta',     ready: true },
+  { id: 'l5', node: 'village', name: 'The Big Tidy-Up',      star: 'Everyone',  ready: true },
 ];
 const EH_TRAVEL = {
   l2: ['Over the mountains…', 'Mrak’s shadow-birds carried Baba to The Frostfang Peaks.'],
   l3: ['Down into the fire…', 'Mrak’s wardens dragged Baba deep into Cinderdeep Caves.'],
   l4: ['To the Hollow Keep…', 'Mrak took Baba to his own grey castle.'],
+  l5: ['Spring in Ivanovo…', 'Baba Vera is home. Now the house needs tidying!'],
 };
 // progress lives in this browser: { levels: { l1: { done, coins, gems, gemTotal } } }
 function ehProgress() { try { return JSON.parse(localStorage.getItem('eh_progress')) || { levels: {} }; } catch (e) { return { levels: {} }; } }
@@ -52,8 +54,8 @@ function WorldMap({ mode, onPlay, onBack }) {
     const n = map && map.nodes[lv.node]; if (!n) return null;
     const r = prog.levels[lv.id] || {}, open = lv.ready && (i === 0 || (prog.levels[EH_LEVELS[i - 1].id] || {}).done);
     return (
-      <div key={lv.id} style={{ position: 'absolute', left: n.x * 2, top: n.y * 2 + (lv.node === 'caves' ? -110 : 18), transform: 'translateX(-50%)', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', whiteSpace: 'nowrap', background: 'rgba(20,16,28,.82)', padding: '6px 10px', border: '2px solid var(--eh-ink)' }}>
-        <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1} · {lv.star.toUpperCase()}</div>{window.EH_LANG === 'sr' && <div style={{ fontSize: 14, marginTop: 2 }}>{T(lv.name).toUpperCase()}</div>}
+      <div key={lv.id} style={{ position: 'absolute', left: n.x * 2 + (lv.node === 'village' ? 96 : 0), top: n.y * 2 + (lv.node === 'caves' ? -110 : lv.node === 'village' ? -150 : 18), transform: 'translateX(-50%)', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', whiteSpace: 'nowrap', background: 'rgba(20,16,28,.82)', padding: '6px 10px', border: '2px solid var(--eh-ink)' }}>
+        <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1} · {T(lv.star).toUpperCase()}</div>{window.EH_LANG === 'sr' && <div style={{ fontSize: 14, marginTop: 2 }}>{T(lv.name).toUpperCase()}</div>}
         {mode === 'select' && open ? <div style={{ marginTop: 6 }}><PixelButton size="sm" onClick={() => onPlay(lv.id)}>{T(r.done ? 'Play again' : 'Play')}</PixelButton></div>
           : <div style={{ marginTop: 4, color: 'var(--eh-stone)' }}>{!lv.ready ? T('COMING SOON') : mode === 'select' ? (window.EH_LANG === 'sr' ? `PRVO PREĐI NIVO ${i}` : `FINISH LEVEL ${i} FIRST`) : ''}</div>}
         {r.done && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')} · {T('COINS')} ×{String(r.coins).padStart(3, '0')} · {T('GEMS')} {r.gems}/{r.gemTotal}</div>}

@@ -45,7 +45,7 @@ const EH_COUSINS = [
 const EH_KNIGHTS = { fire: 'Cinder', water: 'Brine', earth: 'Basalt', air: 'Wisp', ice: 'Rime', lightning: 'Jolt', shadow: 'Umbra', light: 'Aurel' };
 const EH_ELEMENTS = ['fire', 'water', 'earth', 'air', 'ice', 'lightning', 'shadow', 'light'];   // the knights' elements
 // unlockable heroes (keys 5 and 6): Ruby after the toy level, Baba Vera for a cousin with perfect runs of levels 1-4
-const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Ruby', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }];
+const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Rubi', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }];
 // Per-level setup. Each level has a star cousin: the level starts with them and only they can land the final blow on its boss.
 // T = the tileset's rules (ids from its .tsj): solid, one-way, hazards, water, animated tiles, crumble planks, bounce tile, slippery ice.
 const EH_LV = {
@@ -66,7 +66,16 @@ EH_LV.l4 = { id: 'l4', map: 'maps/keep_l4.tmj', tiles: 'tilesets/keep/tileset_ke
   T: { solid: new Set([0,1,2,3,4,7,8,9,10,11,12,13,14,15,16,17,18,46,47,48,49,50,51,52,54,56]), plat: new Set([19,20,21,22,23,24,25,26,27,31,34]),
     feetHaz: [40], bodyHaz: [42], water: [35, 36], anim: { 36: [36, 4, 10], 42: [42, 4, 8] }, crumble: [25, 26, 27, 28], bounce: [46, 47, 48, 49, 50], ice: new Set(), noSafe: id => id === 31 || (id >= 46 && id <= 50),
     bridge: true, hidden: true } };
-const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4'];
+// Level 5, the Big Tidy-Up: the living room, no enemies; pick up every toy before the timer runs out (60s + 3s per toy).
+// Only the chosen cousin plays (no knights, no pets).
+EH_LV.l5 = { id: 'l5', map: 'maps/house_l5.tmj', tiles: 'tilesets/house/tileset_house.png', bg: 'backgrounds/house/bg_house_', fg: 'backgrounds/house/fg_house_sunbeams.png', fgAlways: true,
+  shrine: 'sprites/props/forest/prop_checkpoint_shrine_', arch: null, star: null, starKey: 0, knights: [], pet: null, toys: true, solo: true,
+  T: { solid: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,22,23,44,60,61,62,63,64,65,66,67,68,69]), plat: new Set([24,25,26,27,28,29,30,31,32,33,34,35,40,41,42,43,45,46,47,48,49,50,55,56,59]),
+    feetHaz: [], bodyHaz: [], water: [], anim: {}, crumble: [999, 999, 999, 999], bounce: [60, 61, 62, 63, 64], bounce2: [65, 66, 67, 68, 69], ice: new Set(), noSafe: id => id >= 60 && id <= 69 } };
+const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5'];
+const EH_TOY_NAMES = { football: ['the football', 'fudbalsku loptu'], lego: ['the Lego', 'lego kockice'], teddy: ['the teddy', 'medu'], car: ['the toy car', 'autić'], stick: ['the stick', 'štap'],
+  crayons: ['the crayons', 'bojice'], markers: ['the markers', 'flomastere'], pencils: ['the pencils', 'olovke'], chessboard: ['the chessboard', 'šahovsku tablu'], cards: ['the cards', 'karte'],
+  uno: ['the Uno cards', 'UNO karte'], plush_bunny: ['the plush bunny', 'plišanog zeku'], plush_dino: ['the plush dino', 'plišanog dinosaurusa'], plush_cat: ['the plush cat', 'plišanu mačku'], sword: ['the toy sword', 'drveni mač'] };
 // Companions: each belongs to one cousin, joins in that cousin's level and follows them from then on (bark: finds gems, pounce: jumps on enemies)
 const EH_PETS = {
   puppy:   { id: 'puppy',   owner: 'dimitrije', ownerName: 'DIMITRIJE', key: 4, sprite: 'companion_puppy',   skill: 'bark',   yarn: true },
@@ -77,8 +86,8 @@ const EH_PETS = {
 const GROUND_Y = 288;
 function ehImg(src){ return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; }); }
 
-function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes = [] }) {
-  const LV = EH_LV[level] || EH_LV.l1, T = LV.T, EH_STAR = LV.star, before = EH_LV_ORDER.slice(0, EH_LV_ORDER.indexOf(LV.id));
+function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes = [], player = null }) {
+  const LV = EH_LV[level] || EH_LV.l1, T = LV.T, EH_STAR = LV.star, before = LV.solo ? [] : EH_LV_ORDER.slice(0, EH_LV_ORDER.indexOf(LV.id));
   const cv = React.useRef(null);
   const pausedRef = React.useRef(paused);
   pausedRef.current = paused;
@@ -147,6 +156,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           load('scarf', 'sprites/items/item_baba_family_photo.png'),
           ...['open', 'closing', 'closed', 'opening'].map(k => load('cg_' + k, `sprites/props/caves/prop_cave_gate_${k}.png`)),
           load('rlava', 'backgrounds/caves/rising_lava.png'), load('rlava_body', 'backgrounds/caves/rising_lava_body.png')] : []),
+        ...(LV.toys ? [...Object.keys(EH_TOY_NAMES).map(k => load('toy_' + k, `sprites/items/toys/toy_${k}.png`)), load('fx_toy_pickup', 'sprites/items/toys/fx_toy_pickup.png'),
+          load('ui_timer', 'ui/ui_timer.png'), load('ui_toybox', 'ui/ui_toy_counter_icon.png'), ...['idle', 'walk', 'wag_finger', 'laugh'].map(k => load('mj_' + k, `sprites/npc/marija/npc_marija_${k}.png`))] : []),
         ...(LV.id === 'l4' ? [
           ...Object.keys(EH_SHADE).map(k => load('sh_' + k, `sprites/enemies/keep/shadow_shade/enemy_shadow_shade_${k}.png`)),
           ...Object.keys(EH_GARG).map(k => load('ga_' + k, `sprites/enemies/keep/stone_gargoyle/enemy_stone_gargoyle_${k}.png`)),
@@ -169,8 +180,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       const ents = map.layers.find(l => l.name === 'entities').objects, of = t => ents.filter(o => o.type === t);
       const sp = ents.find(o => o.name === 'player_spawn');
       const spawn = { x: sp ? sp.x : 64, y: sp ? sp.y : 257 }; let safe = { ...spawn };
-      const ROSTER = [...EH_COUSINS.map(c => ({ ...c })), ...EH_EXTRA.filter(x => heroes.includes(x.id)).map(x => ({ ...x })), ...before.flatMap(l => EH_LV[l].knights).map(el => ({ id: 'k_' + el, el, name: EH_KNIGHTS[el], kid: false }))];   // knights woken in earlier levels come along
-      const H = { ...spawn, vx: 0, vy: 0, face: 1, ground: true, attackT: 0, hurtT: 0, inv: 0, landT: 0, dead: 0, hp: 4, coins: 0, fired: false, hero: ROSTER.findIndex(r => r.id === EH_STAR), swapT: 0 };
+      const SOLO = LV.solo ? EH_COUSINS.find(c => c.id === ({ kosta: 'konstantin' }[player] || player)) || EH_COUSINS[0] : null;
+      const ROSTER = SOLO ? [{ ...SOLO }] : [...EH_COUSINS.map(c => ({ ...c })), ...EH_EXTRA.filter(x => heroes.includes(x.id)).map(x => ({ ...x })), ...before.flatMap(l => EH_LV[l].knights).map(el => ({ id: 'k_' + el, el, name: EH_KNIGHTS[el], kid: false }))];   // knights woken in earlier levels come along
+      const H = { ...spawn, vx: 0, vy: 0, face: 1, ground: true, attackT: 0, hurtT: 0, inv: 0, landT: 0, dead: 0, hp: 4, coins: 0, fired: false, hero: Math.max(0, ROSTER.findIndex(r => r.id === EH_STAR)), swapT: 0 };
       // Hearth Knight statues: touching one wakes the knight, who joins the roster
       const ST = ents.filter(o => o.type === 'knight_statue').map(o => ({ el: o.name, x: o.x, y: o.y, woke: false, wakeT: -1 }));
       // companions: pets from earlier levels start off screen and run in when their cousin is picked; this level's pet waits to be befriended
@@ -214,6 +226,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       const salBox = () => ({ x: SAL.x + 6, y: SAL.y + 34, w: 56, h: 29 }), salUp = () => SAL && !SAL.dead && (SAL.st === 'idle' || SAL.st === 'spit' || SAL.st === 'surface' || (SAL.st === 'dive' && SAL.t < 16));
       const bd = (b, boss) => b.el === 'gold' ? Math.ceil(boss.max / 3) : b.dmg;   // damage a shot does to a boss (Vera: three hits for any boss)
       const mrakDown = () => { MRAK.dead = 1; MRAK.st = 'defeat'; MRAK.waves = []; MRAK.orbs = []; MRAK.roots = []; MRAK.spikes = []; MRAK.spots = []; MRAK.beamT = 40; };
+      // toys (level 5): each picked up adds 3 seconds; the clock starts at 60
+      const TOYS = of('toy').map(o => ({ k: o.name, x: o.x, y: o.y, got: false }));
+      const TIMER = LV.toys ? { left: 60 * 60, st: 'run', t: 0 } : null;
+      const MARIJA = { on: false, x: 0, y: GROUND_Y - 32, t: 0 };
       const FIREB = [], TRIG = of('story_trigger'), SB = {};   // SB: shadow-bridge tiles lit by light shots
       // the eagle ride up the cliff plays before the keep level starts
       const RIDE = LV.ride ? { t: 0, on: true } : null;
@@ -267,7 +283,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       const drawStrip = (im, n, f, x, y, w, flip) => { if (!im) return; f = Math.max(0, Math.min(n - 1, Math.floor(f))); ctx.save(); ctx.translate(Math.round(x) + (flip ? w : 0), Math.round(y)); ctx.scale(flip ? -1 : 1, 1); ctx.drawImage(im, f * w, 0, w, im.height, 0, 0, w, im.height); ctx.restore(); };
       const drawLayer = lay => { if (!lay) return; const c0 = Math.max(0, Math.floor(cam / 32)), c1 = Math.min(MW, c0 + 22);
         for (let r = 0; r < MH; r++) for (let c = c0; c < c1; c++) { const i = r * MW + c; let id = lay.id[i]; if (id < 0) continue;
-          const an = T.anim[id]; if (an) id = an[0] + (Math.floor(tick / an[2]) % an[1]); if (id === T.bounce[0] && bounceT[i] != null) id = T.bounce[1 + Math.min(3, Math.floor(bounceT[i] / 5))];
+          const an = T.anim[id]; if (an) id = an[0] + (Math.floor(tick / an[2]) % an[1]); if (id === T.bounce[0] && bounceT[i] != null) id = T.bounce[1 + Math.min(3, Math.floor(bounceT[i] / 5))]; else if (T.bounce2 && id === T.bounce2[0] && bounceT[i] != null) id = T.bounce2[1 + Math.min(3, Math.floor(bounceT[i] / 5))];
           const sx = (id % 8) * 32, sy = Math.floor(id / 8) * 32;
           if (lay.flip[i]) { ctx.save(); ctx.translate(c * 32 + 32, r * 32); ctx.scale(-1, 1); ctx.drawImage(img.tiles, sx, sy, 32, 32, 0, 0, 32, 32); ctx.restore(); }
           else ctx.drawImage(img.tiles, sx, sy, 32, 32, c * 32, r * 32, 32, 32); } };
@@ -287,6 +303,22 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         tick++;
         if (RIDE && RIDE.on) { RIDE.t++; if (RIDE.t === 1) { const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); } if (RIDE.t === 50) story(LV.id + '_start'); if (RIDE.t >= 230) RIDE.on = false; return; }   // the eagle carries Kosta up the cliff
         if (tick === 1 && !RIDE) story(LV.id + '_start');
+        if (TIMER) {
+          if (TIMER.st === 'run') { if (--TIMER.left <= 0) { TIMER.left = 0; TIMER.st = 'lost'; TIMER.t = 0; MARIJA.on = true; MARIJA.x = Math.min(cam + 560, H.x + 220); } }
+          else if (TIMER.st === 'lost') {   // grandma Marija shuffles in, counts what was left, and the level starts again
+            TIMER.t++; if (MARIJA.x > H.x + 70) MARIJA.x -= 0.6;
+            if (TIMER.t === 150) { const left = TOYS.filter(t => !t.got), sr = window.EH_LANG === 'sr', names = left.slice(0, 4).map(t => (EH_TOY_NAMES[t.k] || [t.k, t.k])[sr ? 1 : 0]);
+              const list = names.length > 1 ? names.slice(0, -1).join(', ') + (sr ? ' i ' : ' and ') + names[names.length - 1] + (left.length > 4 ? (sr ? ' i još' : ' and more') : '') : names[0];
+              EH_DIALOGUE.l5_lost = [
+                { who: 'marija', mood: 'grumpy', text: sr ? 'Deco, opet ste ostavili igračke!' : 'Kids, you left toys out again!' },
+                { who: 'marija', mood: 'grumpy', text: sr ? `Našla sam ${left.length}: ${list}.` : `I found ${left.length}: ${list}.` },
+                { who: 'marija', mood: 'laughing', text: sr ? 'Samo da znate, njih više nema. Možete da im kažete zbogom!' : "Just so you know, they're gone. You can say goodbye to them!" },
+                { who: 'ruby', mood: 'worried', text: sr ? 'Brzo, hajde ponovo pre nego što nađe još!' : 'Quick, let’s try again before she finds more!' }];
+              story('l5_lost'); }
+            if (TIMER.t === 152) onEnd('retry');
+            return; }
+          else if (TIMER.st === 'won') { TIMER.t++; if (TIMER.t === 2) story('l5_win'); if (TIMER.t === 4) onEnd('complete', 0, { ...runStats(), toys: TOYS.length }); return; }
+        }
         const HR = ROSTER[H.hero], PW = EH_POWER[HR.el];
         // ---- hero input ----
         if (H.dead) {
@@ -338,7 +370,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             const row = Math.floor((H.y + 33) / 32) * MW;
             for (const px of [H.x + 12, H.x + 16, H.x + 20]) { const i = row + Math.floor(px / 32), id = ground[i];
               // bounce mushroom: the tileset says 2x jump velocity, which would fly off the top of the 360px view, so it's ~1.45x (about 6 tiles)
-              if (T.bounce.includes(id)) { H.vy = -12; H.ground = false; H.jumpT = tick; H.jumpV = -12; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
+              if (T.bounce.includes(id) || (T.bounce2 && T.bounce2.includes(id))) { H.vy = T.bounce2 && T.bounce2.includes(id) ? -13 : -12; H.ground = false; H.jumpT = tick; H.jumpV = H.vy; bounceT[i] = 0; fx('fx_dust_jump', 4, 16, H.x, H.y + 15, 32); break; }
               if (T.crumble.indexOf(id) >= 0 && T.crumble.indexOf(id) < 3 && crumble[i] == null) crumble[i] = 0; } }
           else { H.y = ny; H.ground = false; }
           if (H.vy < 0 && T.solid.has(tileAt(H.x + 16, H.y + 8))) { H.vy = 0; }
@@ -352,6 +384,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           if (H.y > 380) { H.hp = 0; H.dead = 1; }
           if (ex && (!BOSS || BOSS.dead > 70) && (!FW || FW.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins, runStats());
         }
+        if (TIMER && TIMER.st === 'run' && !H.dead) TOYS.forEach(t => { if (!t.got && Math.abs(H.x + 16 - (t.x + 8)) < 16 && Math.abs(H.y + 20 - (t.y + 8)) < 20) { t.got = true; TIMER.left += 3 * 60; fx('fx_toy_pickup', 6, 14, t.x - 8, t.y - 8, 32);
+            if (TOYS.every(x => x.got)) { TIMER.st = 'won'; TIMER.t = 0; } } });
         // ---- pickups / checkpoints ----
         const near = (o, w = 16) => Math.abs(H.x + 16 - (o.x + w / 2)) < 14 && Math.abs(H.y + 20 - (o.y + 8)) < 18;
         if (!H.dead) {
@@ -874,6 +908,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           drawStrip(img[`pet_${PUP.id}_${a}`], n, f, PUP.x, PUP.y, 32, PUP.face < 0); }
         C.forEach((c, i) => { if (!c.got) drawStrip(img.coin, 6, (tick / 6.7 + i * 2) % 6, c.x, c.y + Math.round(Math.sin(tick / 20 + i) * 1.5), 16); });
         GM.forEach((g, i) => { if (!g.got) drawStrip(img.gem, 6, (tick / 7.5 + i) % 6, g.x, g.y, 16); });
+        TOYS.forEach((t, i) => { if (!t.got) drawStrip(img['toy_' + t.k], 4, (tick / 10 + i) % 4, t.x, t.y, 16); });
+        if (MARIJA.on) { const walking = TIMER && TIMER.t < 150 && MARIJA.x > H.x + 70; drawStrip(img[walking ? 'mj_walk' : 'mj_wag_finger'], 4 + (walking ? 2 : 0), (tick / (walking ? 12 : 8)) % (walking ? 6 : 4), MARIJA.x, MARIJA.y, 32, true); }
         HP.forEach((h, i) => { if (!h.got) drawStrip(img.heart, 6, (tick / 7.5 + i) % 6, h.x, h.y, 16); });
         E.forEach(e => {
           if (e.dead > 40) return;
@@ -1017,6 +1053,12 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           ctx.fillStyle = '#0d0b14'; ctx.fillText(nm, sx + 1, sy + 1); ctx.fillStyle = '#ffc23d'; ctx.fillText(nm, sx, sy); }
         // boss bar (ui_bossbar_frame: fill area x 20, y 4, w 184, h 8)
         const bb = eldFight || (ELD && ELD.dead && ELD.dead < 40) ? ELD : salFight || (SAL && SAL.dead && SAL.dead < 40) ? SAL : yetiFight || (YETI && YETI.dead && YETI.dead < 40) ? YETI : BOSS && BOSS.awake && BOSS.dead < 40 ? BOSS : FW && FW.awake && FW.dead < 40 ? FW : MRAK && MRAK.awake && MRAK.dead < 40 ? MRAK : null;
+        if (TIMER) {   // the clock (ui_timer: digits inside x 31-89, y 9-23) and the toys still to find
+          const sec = Math.ceil(TIMER.left / 60), tx = 320 - 48; if (img.ui_timer) ctx.drawImage(img.ui_timer, tx, 4);
+          ctx.font = '16px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'center'; ctx.fillStyle = sec <= 10 && Math.floor(tick / 15) % 2 ? '#e0521f' : '#e8e0d0';
+          ctx.fillText(`${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`, tx + 60, 4 + 22);
+          const got = TOYS.filter(t => t.got).length; if (img.ui_toybox) ctx.drawImage(img.ui_toybox, 640 - 120, 46);
+          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#0d0b14'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 99, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 100, 58); }
         if (MRAK && MRAK.awake && !MRAK.dead && MRAK.ph === 3) {   // the four stones: each cousin must hit him (gold Kosta, orange Katarina, frost Vasilije, green Dimitrije)
           [['konstantin', '#ffc23d'], ['katarina', '#e0521f'], ['vasilije', '#7fd4e8'], ['dimitrije', '#6fae3e']].forEach(([id, c], i) => { const x = 320 - 38 + i * 20, on = MRAK.lit.has(id);
             ctx.fillStyle = '#0d0b14'; ctx.fillRect(x - 1, 51, 14, 14); ctx.fillStyle = c; ctx.globalAlpha = on ? 1 : 0.3; ctx.fillRect(x, 52, 12, 12); ctx.globalAlpha = 1; if (on) { ctx.fillStyle = '#e8e0d0'; ctx.fillRect(x + 2, 54, 3, 3); } }); }
