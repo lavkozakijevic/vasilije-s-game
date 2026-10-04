@@ -3,5 +3,5 @@
 // Only projectId is needed (apiKey is optional). Leave projectId empty to keep scores only in this browser.
 window.EH_FIREBASE = {
   apiKey: '',
-  projectId: '',
+  projectId: 'elemental-heroes-75db7',
 };
