@@ -1,0 +1,63 @@
+{
+ "id": "hero_dimitrije",
+ "mode": "carry",
+ "note": "extra animation set for Level 6; same rig, origin, hitbox and feet as hero_dimitrije.json. Use while Mita carries Mishika: no attack, Mishika is drawn in his arms.",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "animations": {
+  "carry_idle": {
+   "file": "hero_dimitrije_carry_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "carry_run": {
+   "file": "hero_dimitrije_carry_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "carry_jump": {
+   "file": "hero_dimitrije_carry_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "carry_fall": {
+   "file": "hero_dimitrije_carry_fall.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "carry_land": {
+   "file": "hero_dimitrije_carry_land.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "carry_hurt": {
+   "file": "hero_dimitrije_carry_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  }
+ },
+ "palette": "elemental16.hex"
+}

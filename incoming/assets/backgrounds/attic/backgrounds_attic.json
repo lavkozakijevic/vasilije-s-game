@@ -1,0 +1,34 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "tilesHorizontally": true,
+ "layers": [
+  {
+   "file": "bg_attic_sky.png",
+   "parallax": 0,
+   "opaque": true
+  },
+  {
+   "file": "bg_attic_far.png",
+   "parallax": 0.2,
+   "opaque": false
+  },
+  {
+   "file": "bg_attic_mid.png",
+   "parallax": 0.45,
+   "opaque": false
+  },
+  {
+   "file": "bg_attic_near.png",
+   "parallax": 0.7,
+   "opaque": false
+  },
+  {
+   "file": "fg_attic_dust.png",
+   "parallax": 1.2,
+   "foreground": true
+  }
+ ]
+}

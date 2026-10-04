@@ -1,0 +1,29 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "note": "additions for level 6; merge into portraits.json",
+ "portraits": [
+  {
+   "file": "portrait_mishika_neutral.png",
+   "speaker": "Mishika",
+   "expression": "neutral (shy)"
+  },
+  {
+   "file": "portrait_mishika_happy.png",
+   "speaker": "Mishika",
+   "expression": "happy (meow)"
+  },
+  {
+   "file": "portrait_ruby_sad.png",
+   "speaker": "Ruby",
+   "expression": "sad (\"Too bad, try again!\")"
+  },
+  {
+   "file": "portrait_marija_happy.png",
+   "speaker": "Marija",
+   "expression": "happy, hugging Mishika"
+  }
+ ]
+}

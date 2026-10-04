@@ -1,0 +1,92 @@
+{
+ "id": "enemy_rat",
+ "type": "enemy",
+ "name": "Attic Rat",
+ "biome": "attic",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 4,
+  "y": 22,
+  "w": 22,
+  "h": 9
+ },
+ "hp": 1,
+ "speedPxPerSec": 70,
+ "chaseSpeedPxPerSec": 120,
+ "behavior": "scurries along floors and beams; when Mita is within ~128px on the same level, switch to chase until he is 200px away. Touching Mita hurts him (1 heart).",
+ "animations": {
+  "idle": {
+   "file": "enemy_rat_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "enemy_rat_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": true
+  },
+  "chase": {
+   "file": "enemy_rat_chase.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 16,
+   "loop": true,
+   "notes": "eyes fixed on Mita, whiskers back"
+  },
+  "hurt": {
+   "file": "enemy_rat_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 = white flash"
+  },
+  "death": {
+   "file": "enemy_rat_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "tumbles, gets up dizzy, scampers off to the left; despawn after the last frame"
+  }
+ },
+ "variants": {
+  "enemy_rat_small": {
+   "file": "enemy_rat_small_run.png",
+   "frameWidth": 24,
+   "frameHeight": 16,
+   "frames": 6,
+   "fps": 16,
+   "loop": true,
+   "origin": {
+    "x": 12,
+    "y": 15
+   },
+   "hitbox": {
+    "x": 3,
+    "y": 9,
+    "w": 18,
+    "h": 6
+   },
+   "hp": 1,
+   "speedPxPerSec": 110,
+   "behavior": "packs of 3-4 run in a line across the floor and turn at walls; no chase"
+  }
+ },
+ "palette": "elemental16.hex"
+}

@@ -1,0 +1,71 @@
+{
+ "id": "npc_mishika",
+ "type": "npc",
+ "name": "Mishika (Mišika)",
+ "owner": "Marija",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31
+ },
+ "hitbox": {
+  "x": 6,
+  "y": 16,
+  "w": 20,
+  "h": 15
+ },
+ "runSpeedPxPerSec": 140,
+ "behavior": "sits or idles at a hiding spot. The first time Mita comes within ~64px, play hide and teleport her to the next spot (2 spots before she stays). The third time, play found and attach her to Mita (carry animations).",
+ "animations": {
+  "idle": {
+   "file": "npc_mishika_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "sit": {
+   "file": "npc_mishika_sit.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "tail swish"
+  },
+  "run": {
+   "file": "npc_mishika_run.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  "hide": {
+   "file": "npc_mishika_hide.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false,
+   "notes": "frames 2-3 are clipped on the right: line frame x=22 (frame 2) and x=16 (frame 3) up with the left edge of the box she hides behind; then move her to the next hiding spot"
+  },
+  "found": {
+   "file": "npc_mishika_found.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "meows on frames 0-1, crouches, leaps toward Mita on frame 3; then switch Mita to carry"
+  }
+ },
+ "portraits": [
+  "../../../ui/portraits/portrait_mishika_neutral.png",
+  "../../../ui/portraits/portrait_mishika_happy.png"
+ ],
+ "palette": "elemental16.hex"
+}

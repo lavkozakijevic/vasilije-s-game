@@ -1,0 +1,335 @@
+{
+ "game": "Elemental Heroes",
+ "level": "6 Mishika in the Attic",
+ "note": "phase 8 entries; merge into asset_index.json",
+ "assets": [
+  {
+   "file": "backgrounds/attic/bg_attic_far.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.2; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/attic/bg_attic_mid.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.45; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/attic/bg_attic_near.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.7; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/attic/bg_attic_sky.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/attic/fg_attic_dust.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "transparent foreground, parallax 1.2; dust in sunbeams"
+  },
+  {
+   "file": "sprites/enemies/attic/rat/enemy_rat_chase.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 16,
+   "loop": true,
+   "notes": "eyes fixed on Mita, whiskers back"
+  },
+  {
+   "file": "sprites/enemies/attic/rat/enemy_rat_death.png",
+   "width": 160,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "tumbles, gets up dizzy, scampers off to the left; despawn after the last frame"
+  },
+  {
+   "file": "sprites/enemies/attic/rat/enemy_rat_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 = white flash"
+  },
+  {
+   "file": "sprites/enemies/attic/rat/enemy_rat_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/enemies/attic/rat/enemy_rat_run.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": true
+  },
+  {
+   "file": "sprites/enemies/attic/rat/enemy_rat_small_run.png",
+   "width": 144,
+   "height": 16,
+   "frameWidth": 24,
+   "frameHeight": 16,
+   "frames": 6,
+   "fps": 16,
+   "loop": true,
+   "notes": "baby rat; packs of 3-4"
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_carry_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_carry_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 = white flash"
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_carry_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_carry_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_carry_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/dimitrije/hero_dimitrije_carry_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/mishika/npc_mishika_found.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "meows on frames 0-1, crouches, leaps toward Mita on frame 3; then switch Mita to carry"
+  },
+  {
+   "file": "sprites/npc/mishika/npc_mishika_hide.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false,
+   "notes": "frames 2-3 are clipped on the right: line frame x=22 (frame 2) and x=16 (frame 3) up with the left edge of the box she hides behind; then move her to the next hiding spot"
+  },
+  {
+   "file": "sprites/npc/mishika/npc_mishika_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/mishika/npc_mishika_run.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/mishika/npc_mishika_sit.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "tail swish"
+  },
+  {
+   "file": "sprites/props/attic/prop_hatch_glow.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 64,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "draw over the 2 hatch tiles while Mita carries Mishika"
+  },
+  {
+   "file": "sprites/props/attic/prop_rope.png",
+   "width": 128,
+   "height": 96,
+   "frameWidth": 16,
+   "frameHeight": 96,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "notes": "pivot (8,0); grab zone = bottom 32px"
+  },
+  {
+   "file": "tilesets/attic/tileset_attic.png",
+   "width": 256,
+   "height": 352,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 0,
+   "loop": false,
+   "notes": "ids 0-84, 8 columns, no margin/spacing"
+  },
+  {
+   "file": "ui/portraits/portrait_marija_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mishika_happy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_mishika_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_ruby_sad.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_cat_icon.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "goal: find Mishika"
+  },
+  {
+   "file": "ui/ui_hatch_icon.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "goal: bring her back to the hatch"
+  }
+ ]
+}
