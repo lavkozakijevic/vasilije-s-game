@@ -1,0 +1,64 @@
+{
+ "id": "enemy_wasp",
+ "type": "enemy",
+ "name": "Attic Wasp",
+ "biome": "attic",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 16,
+  "note": "body centre"
+ },
+ "hitbox": {
+  "x": 4,
+  "y": 10,
+  "w": 24,
+  "h": 12
+ },
+ "hp": 1,
+ "flySpeedPxPerSec": 60,
+ "dartSpeedPxPerSec": 200,
+ "activeFrom": "Mita picks up Mishika",
+ "behavior": "leaves prop_wasp_nest in a slow wobbly path toward Mita. Within ~80px, play attack: hold frame 0, dart in a straight line on frames 1-2, recover, 1s cooldown. Touching Mita hurts him.",
+ "animations": {
+  "fly": {
+   "file": "enemy_wasp_fly.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 16,
+   "loop": true,
+   "notes": "wings buzzing fast; frames bob 1px"
+  },
+  "attack": {
+   "file": "enemy_wasp_attack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "notes": "frame 0 lean back (telegraph, hold ~0.25s), 1-2 dart stinger first, 3 recover"
+  },
+  "hurt": {
+   "file": "enemy_wasp_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 = white flash"
+  },
+  "death": {
+   "file": "enemy_wasp_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 12,
+   "loop": false,
+   "notes": "spins and drops; despawn after"
+  }
+ },
+ "palette": "elemental16.hex"
+}

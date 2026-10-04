@@ -1,0 +1,117 @@
+{
+ "game": "Elemental Heroes",
+ "level": "6 Mishika in the Attic (spiders and wasps)",
+ "note": "phase 8b entries; merge into asset_index.json",
+ "assets": [
+  {
+   "file": "sprites/enemies/attic/spider/enemy_spider_climb.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "notes": "pulls itself back up"
+  },
+  {
+   "file": "sprites/enemies/attic/spider/enemy_spider_death.png",
+   "width": 160,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "curls up and falls; no thread from frame 1; despawn after"
+  },
+  {
+   "file": "sprites/enemies/attic/spider/enemy_spider_drop.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 10,
+   "loop": true,
+   "notes": "legs pulled in; fall fast"
+  },
+  {
+   "file": "sprites/enemies/attic/spider/enemy_spider_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 = white flash"
+  },
+  {
+   "file": "sprites/enemies/attic/spider/enemy_spider_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "hanging, legs twitching"
+  },
+  {
+   "file": "sprites/enemies/attic/wasp/enemy_wasp_attack.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "notes": "frame 0 lean back (telegraph, hold ~0.25s), 1-2 dart stinger first, 3 recover"
+  },
+  {
+   "file": "sprites/enemies/attic/wasp/enemy_wasp_death.png",
+   "width": 160,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 12,
+   "loop": false,
+   "notes": "spins and drops; despawn after"
+  },
+  {
+   "file": "sprites/enemies/attic/wasp/enemy_wasp_fly.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 16,
+   "loop": true,
+   "notes": "wings buzzing fast; frames bob 1px"
+  },
+  {
+   "file": "sprites/enemies/attic/wasp/enemy_wasp_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 = white flash"
+  },
+  {
+   "file": "sprites/props/attic/prop_wasp_nest.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "decor; hang under a rafter/beam tile"
+  }
+ ]
+}

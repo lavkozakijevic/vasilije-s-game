@@ -1,0 +1,21 @@
+{
+ "id": "prop_wasp_nest",
+ "file": "prop_wasp_nest.png",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "frames": 4,
+ "fps": 6,
+ "loop": true,
+ "decor": true,
+ "anchor": {
+  "x": 16,
+  "y": 0,
+  "note": "top of the frame is a short rafter strip: place it directly under a ceiling or beam tile"
+ },
+ "spawnPoint": {
+  "x": 16,
+  "y": 27,
+  "note": "nest hole; wasps spawn here"
+ },
+ "notes": "papery grey nest with little wasps crawling in and out. Decor only; spawn enemy_wasp from the hole after Mita picks up Mishika."
+}

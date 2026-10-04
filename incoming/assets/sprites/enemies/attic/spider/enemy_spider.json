@@ -1,0 +1,78 @@
+{
+ "id": "enemy_spider",
+ "type": "enemy",
+ "name": "Attic Spider",
+ "biome": "attic",
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 16,
+  "note": "body centre"
+ },
+ "threadAnchor": {
+  "x": 16,
+  "y": 0,
+  "note": "engine draws the silk thread from the ceiling down to this point; the frames already include a short stub"
+ },
+ "hitbox": {
+  "x": 8,
+  "y": 8,
+  "w": 16,
+  "h": 16
+ },
+ "hp": 1,
+ "dropSpeedPxPerSec": 260,
+ "climbSpeedPxPerSec": 50,
+ "activeFrom": "Mita picks up Mishika",
+ "behavior": "hangs from a ceiling tile (idle). When Mita passes underneath (within ~24px horizontally), play drop and fall to ~16px above the floor, wait 0.6s in idle, then climb back up. Touching Mita hurts him.",
+ "animations": {
+  "idle": {
+   "file": "enemy_spider_idle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "hanging, legs twitching"
+  },
+  "drop": {
+   "file": "enemy_spider_drop.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 10,
+   "loop": true,
+   "notes": "legs pulled in; fall fast"
+  },
+  "climb": {
+   "file": "enemy_spider_climb.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "notes": "pulls itself back up"
+  },
+  "hurt": {
+   "file": "enemy_spider_hurt.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false,
+   "notes": "frame 0 = white flash"
+  },
+  "death": {
+   "file": "enemy_spider_death.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "fps": 10,
+   "loop": false,
+   "notes": "curls up and falls; no thread from frame 1; despawn after"
+  }
+ },
+ "palette": "elemental16.hex"
+}
