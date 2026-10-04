@@ -32,7 +32,7 @@ function ehRecordRun(player, level, r) {
 }
 // ---- online copy (Cloud Firestore over its REST API: one document per cousin in the "scores" collection)
 // The browser copy is used instantly; ehSync merges it with the online one (best of both) in the background.
-const EH_CLOUD = (() => { const c = window.EH_FIREBASE || {}; return c.projectId && c.apiKey ? { base: `https://firestore.googleapis.com/v1/projects/${c.projectId}/databases/(default)/documents/scores`, key: c.apiKey } : null; })();
+const EH_CLOUD = (() => { const c = window.EH_FIREBASE || {}; return c.projectId ? { base: `https://firestore.googleapis.com/v1/projects/${c.projectId}/databases/(default)/documents/scores`, q: c.apiKey ? `key=${c.apiKey}&` : '' } : null; })();   // the API key is optional; the security rules decide access
 function ehMergePlayer(a = {}, b = {}) {
   const out = {};
   for (const l of new Set([...Object.keys(a), ...Object.keys(b)])) { if (l === 'vera') continue; const x = a[l] || {}, y = b[l] || {};
@@ -46,7 +46,7 @@ let ehCloudState = EH_CLOUD ? 'syncing' : 'local';
 async function ehSync() {
   if (!EH_CLOUD) return 'local';
   try {
-    const r = await fetch(`${EH_CLOUD.base}?key=${EH_CLOUD.key}&pageSize=20`); if (!r.ok) throw new Error(r.status);
+    const r = await fetch(`${EH_CLOUD.base}?${EH_CLOUD.q}pageSize=20`); if (!r.ok) throw new Error(r.status);
     const remote = {}; ((await r.json()).documents || []).forEach(d => { try { remote[d.name.split('/').pop()] = JSON.parse(d.fields.data.stringValue); } catch (e) {} });
     const s = EH_STORE.load();
     for (const p of EH_PLAYERS) { const m = ehMergePlayer(s.players[p.id], remote[p.id]); s.players[p.id] = m;
@@ -55,10 +55,10 @@ async function ehSync() {
   } catch (e) { ehCloudState = 'offline'; return 'offline'; }
 }
 function ehCloudPut(player, data) {
-  return fetch(`${EH_CLOUD.base}/${player}?key=${EH_CLOUD.key}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+  return fetch(`${EH_CLOUD.base}/${player}?${EH_CLOUD.q}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ fields: { data: { stringValue: JSON.stringify(data) }, updated: { timestampValue: new Date().toISOString() } } }) }).then(r => { if (!r.ok) throw new Error(r.status); });
 }
-async function ehCloudReset() { if (!EH_CLOUD) return; for (const p of EH_PLAYERS) try { await fetch(`${EH_CLOUD.base}/${p.id}?key=${EH_CLOUD.key}`, { method: 'DELETE' }); } catch (e) {} }
+async function ehCloudReset() { if (!EH_CLOUD) return; for (const p of EH_PLAYERS) try { await fetch(`${EH_CLOUD.base}/${p.id}?${EH_CLOUD.q}`, { method: 'DELETE' }); } catch (e) {} }
 ehSync();   // pull everyone's scores when the game opens (Vera unlocks follow you to any device)
 const ehVeraUnlocked = player => { const P = EH_STORE.load().players[player]; return !!(P && P.vera); };
 const ehFmtTime = t => t == null ? '—' : `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
