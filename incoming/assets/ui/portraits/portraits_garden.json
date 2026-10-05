@@ -1,0 +1,29 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "note": "additions for level 7; merge into portraits.json",
+ "portraits": [
+  {
+   "file": "portrait_misha_neutral.png",
+   "speaker": "Misha",
+   "expression": "neutral"
+  },
+  {
+   "file": "portrait_misha_laughing.png",
+   "speaker": "Misha",
+   "expression": "laughing"
+  },
+  {
+   "file": "portrait_misha_surprised.png",
+   "speaker": "Misha",
+   "expression": "surprised"
+  },
+  {
+   "file": "portrait_misha_proud.png",
+   "speaker": "Misha",
+   "expression": "proud"
+  }
+ ]
+}

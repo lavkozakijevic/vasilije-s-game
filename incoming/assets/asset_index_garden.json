@@ -1,0 +1,435 @@
+{
+ "game": "Elemental Heroes",
+ "level": "7 The Lawn",
+ "note": "phase 9 entries; merge into asset_index.json",
+ "assets": [
+  {
+   "file": "backgrounds/garden/bg_garden_far.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.2; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/garden/bg_garden_mid.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.45; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/garden/bg_garden_near.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.7; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/garden/bg_garden_sky.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/garden/fg_garden_petals.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "transparent foreground, parallax 1.2; falling blossom petals"
+  },
+  {
+   "file": "cutscenes/garden/garden_01_outside_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_01_outside_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_01_outside_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_02_toys_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_02_toys_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_02_toys_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_03_done_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_03_done_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/garden/garden_03_done_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "sprites/fx/garden/fx_grass_clippings.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "notes": "puff of cut grass behind the mower; spawn every ~0.3s at the mower's left (rear) wheel"
+  },
+  {
+   "file": "sprites/fx/garden/fx_toy_fall_shadow.png",
+   "width": 64,
+   "height": 8,
+   "frameWidth": 16,
+   "frameHeight": 8,
+   "frames": 4,
+   "fps": 4,
+   "loop": false,
+   "notes": "shadow on the grass where a toy will land; spread the 4 frames over the 1s before landing, hold the last"
+  },
+  {
+   "file": "sprites/fx/garden/fx_toy_land.png",
+   "width": 128,
+   "height": 16,
+   "frameWidth": 32,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "notes": "little bounce of dust; bottom row on the ground, centred on the toy"
+  },
+  {
+   "file": "sprites/fx/garden/fx_toy_shredded.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "notes": "a toy gets mowed: soft poof of confetti and bits; centre on the toy"
+  },
+  {
+   "file": "sprites/heroes/grass/fx_grass_impact.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "notes": "bursts into clippings; hurts on frames 0-1"
+  },
+  {
+   "file": "sprites/heroes/grass/fx_grass_projectile.png",
+   "width": 64,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "notes": "green clump tumbling"
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/misha/hero_misha_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/npc/misha/npc_misha_bonk.png",
+   "width": 256,
+   "height": 48,
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "a kid landed on his head: squash, wobble, stars; hold the last frame ~0.4s, then mow"
+  },
+  {
+   "file": "sprites/npc/misha/npc_misha_idle.png",
+   "width": 256,
+   "height": 48,
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 5,
+   "loop": true,
+   "notes": "wipes his forehead; mower off"
+  },
+  {
+   "file": "sprites/npc/misha/npc_misha_mow.png",
+   "width": 384,
+   "height": 48,
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "notes": "walks behind the mower at about 45px/s; mower shakes, grass flies"
+  },
+  {
+   "file": "sprites/npc/misha/npc_misha_turn.png",
+   "width": 256,
+   "height": 48,
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "pulls the mower around; ends facing LEFT (frame 3 = mirrored mow frame 0): flip the sprite and carry on with mow"
+  },
+  {
+   "file": "sprites/npc/misha/npc_misha_wave.png",
+   "width": 256,
+   "height": 48,
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "notes": "ending: stops and waves"
+  },
+  {
+   "file": "tilesets/garden/tileset_garden.png",
+   "width": 256,
+   "height": 352,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 0,
+   "loop": false,
+   "notes": "ids 0-81, 8 columns, no margin/spacing"
+  },
+  {
+   "file": "ui/icon_element_grass.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_misha_laughing.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_misha_neutral.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_misha_proud.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_misha_surprised.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_mower_icon.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "HUD: toys mowed"
+  }
+ ]
+}

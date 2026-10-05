@@ -1,0 +1,126 @@
+{
+ "id": "hero_misha",
+ "type": "hero",
+ "name": "Misha (Miša)",
+ "element": "grass",
+ "power": "Grass ball",
+ "unlock": "finish Level 7 (The Lawn)",
+ "heightPx": 26,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 6,
+  "w": 12,
+  "h": 25
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_misha_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_misha_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_misha_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_misha_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_misha_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_misha_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_misha_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_misha_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "respawn": {
+   "file": "hero_misha_respawn.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "../../grass/fx_grass_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "fps": 12,
+   "loop": true,
+   "motion": "arc",
+   "velocity": {
+    "x": 200,
+    "y": -220
+   },
+   "gravityPxPerSec2": 700,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 30,
+    "y": 14,
+    "note": "centre of the clump, relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "../../grass/fx_grass_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center",
+   "hurtFrames": [
+    0,
+    1
+   ],
+   "radiusPx": 14
+  }
+ },
+ "icon": {
+  "file": "../../../../ui/icon_element_grass.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "colors": {
+  "hair": "#2a2233",
+  "clothes": "#e8e0d0",
+  "stripes": "#2e5fa8"
+ },
+ "palette": "elemental16.hex"
+}

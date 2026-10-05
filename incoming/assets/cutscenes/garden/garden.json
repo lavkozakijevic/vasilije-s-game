@@ -1,0 +1,75 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "artScale": 2,
+ "layerOrder": [
+  "bg",
+  "chars",
+  "fx"
+ ],
+ "scenes": [
+  {
+   "id": "garden_01_outside",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "garden_01_outside_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "garden_01_outside_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "garden_01_outside_fx.png"
+    }
+   ],
+   "motion": "hold on the back door; the cousins step out one by one (slide chars in from the door, 1-2px bob); the mower puffs smoke and shakes 1px as Misha pulls the cord"
+  },
+  {
+   "id": "garden_02_toys",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "garden_02_toys_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "garden_02_toys_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "garden_02_toys_fx.png"
+    }
+   ],
+   "motion": "a gust: wind lines slide right, the toy box tips in the window, the toys float up and drift right (move the chars layer up ~20px and sway it); slow tilt up to the sky"
+  },
+  {
+   "id": "garden_03_done",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "garden_03_done_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "garden_03_done_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "garden_03_done_fx.png"
+    }
+   ],
+   "motion": "hold; Misha's \"ha\" puffs bob, sparkles twinkle over the toy pile, petals drift",
+   "dialogue": [
+    {
+     "speaker": "Misha",
+     "portrait": "portrait_misha_laughing.png",
+     "text": "Good job! Don't leave those toys out again!"
+    }
+   ]
+  }
+ ]
+}

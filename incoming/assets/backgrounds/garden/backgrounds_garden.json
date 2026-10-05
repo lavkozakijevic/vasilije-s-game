@@ -1,0 +1,35 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "tilesHorizontally": true,
+ "layers": [
+  {
+   "file": "bg_garden_sky.png",
+   "parallax": 0,
+   "opaque": true
+  },
+  {
+   "file": "bg_garden_far.png",
+   "parallax": 0.2,
+   "opaque": false
+  },
+  {
+   "file": "bg_garden_mid.png",
+   "parallax": 0.45,
+   "opaque": false
+  },
+  {
+   "file": "bg_garden_near.png",
+   "parallax": 0.7,
+   "opaque": false
+  },
+  {
+   "file": "fg_garden_petals.png",
+   "parallax": 1.2,
+   "foreground": true,
+   "note": "scroll it down slowly (about 12px/s) as well, wrapping vertically"
+  }
+ ]
+}

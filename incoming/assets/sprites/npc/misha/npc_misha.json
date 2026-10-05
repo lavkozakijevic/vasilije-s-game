@@ -1,0 +1,120 @@
+{
+ "id": "npc_misha",
+ "type": "npc",
+ "name": "Misha (Miša)",
+ "relation": "the cousins' uncle, Rubi's husband",
+ "frameWidth": 64,
+ "frameHeight": 48,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 47,
+  "note": "Misha's feet; the mower is the right half of the frame"
+ },
+ "hurtboxes": [
+  {
+   "name": "misha",
+   "x": 10,
+   "y": 10,
+   "w": 13,
+   "h": 37
+  },
+  {
+   "name": "mower",
+   "x": 36,
+   "y": 27,
+   "w": 27,
+   "h": 21
+  }
+ ],
+ "platforms": [
+  {
+   "name": "head",
+   "x": 11,
+   "y": 8,
+   "w": 12,
+   "oneway": true,
+   "onLand": "play bonk, bounce the kid up (vy -380px/s)"
+  },
+  {
+   "name": "mower",
+   "x": 38,
+   "y": 34,
+   "w": 24,
+   "oneway": true
+  }
+ ],
+ "blades": {
+  "x": 37,
+  "y": 40,
+  "w": 25,
+  "h": 8,
+  "note": "a toy on the ground inside this box is mowed: remove it, play fx_toy_shredded centred on it, +1 mowed"
+ },
+ "walkSpeedPxPerSec": 45,
+ "behavior": "mows back and forth across the lawn. At the end of the lawn (or a solid tile) play turn, flip, continue. Touching a hurtbox from the side or below costs the kid a life. Landing on a platform from above is safe; landing on the head plays bonk and Misha pauses 0.8s.",
+ "level": {
+  "toySpawnIntervalSec": 5,
+  "totalToys": 26,
+  "winPickups": 16,
+  "loseMowed": 11,
+  "shadowLeadSec": 1,
+  "toyPool": "../../items/toys/ (Level 5 toy sprites, reused)",
+  "onWin": "Misha joins as a playable hero (sprites/heroes/kids/misha)",
+  "endLine": "Good job! Don't leave those toys out again!"
+ },
+ "animations": {
+  "mow": {
+   "file": "npc_misha_mow.png",
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "notes": "walks behind the mower at about 45px/s; mower shakes, grass flies"
+  },
+  "turn": {
+   "file": "npc_misha_turn.png",
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "pulls the mower around; ends facing LEFT (frame 3 = mirrored mow frame 0): flip the sprite and carry on with mow"
+  },
+  "bonk": {
+   "file": "npc_misha_bonk.png",
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "a kid landed on his head: squash, wobble, stars; hold the last frame ~0.4s, then mow"
+  },
+  "idle": {
+   "file": "npc_misha_idle.png",
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 5,
+   "loop": true,
+   "notes": "wipes his forehead; mower off"
+  },
+  "wave": {
+   "file": "npc_misha_wave.png",
+   "frameWidth": 64,
+   "frameHeight": 48,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "notes": "ending: stops and waves"
+  }
+ },
+ "portraits": [
+  "../../../ui/portraits/portrait_misha_neutral.png",
+  "../../../ui/portraits/portrait_misha_laughing.png",
+  "../../../ui/portraits/portrait_misha_surprised.png",
+  "../../../ui/portraits/portrait_misha_proud.png"
+ ],
+ "palette": "elemental16.hex"
+}
