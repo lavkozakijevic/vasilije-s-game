@@ -16,10 +16,10 @@ const CAST = {
   dimitrije: { name: 'Dimitrije', hair: PAL.bone,  hairLo: PAL.gold,  shirt: PAL.leaf,  shirtLo: PAL.moss,  legs: PAL.slate, gem: PAL.leaf,  h: 16, style: 'short', sleeves: 'short', pants: 'shorts' },
 };
 const KIDS = ['kosta', 'katarina', 'vasilije', 'dimitrije'];
-const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', umbra_sb: 'Umbra', ruby: 'Rubi', marija: 'Grandma Marija', mishika: 'Mishika', boys: 'Kosta, Vasilije & Dimitrije', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
+const SPEAKER = { ...Object.fromEntries(KIDS.map(k => [k, CAST[k].name])), baba: 'Baba Vera', mrak: 'Mrak', elder: 'Elder Rotroot', blightwarden: 'Blightwarden', yeti: 'Yeti Cub', warden: 'Frost Warden', salamander: 'Lava Salamander', colossus: 'Magma Colossus', umbra_sb: 'Umbra', ruby: 'Rubi', marija: 'Grandma Marija', mishika: 'Mishika', misha: 'Uncle Misha', boys: 'Kosta, Vasilije & Dimitrije', ...{ cinder: 'Cinder', brine: 'Brine', basalt: 'Basalt', wisp: 'Wisp', rime: 'Rime', jolt: 'Jolt', umbra: 'Umbra', aurel: 'Aurel' }, all: 'Everyone', kosta_vasilije: 'Kosta & Vasilije' };
 // sprite-based portraits for characters that already have art
 // Claude Design portrait files: portrait_<file>_<mood>.png (64x64); moods fall back to neutral (or the speaker's default)
-const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus', umbra_sb: 'umbra', ruby: 'ruby', marija: 'marija', mishika: 'mishika',
+const PORTRAIT_FILE = { kosta: 'konstantin', katarina: 'katarina', vasilije: 'vasilije', dimitrije: 'dimitrije', baba: 'baba_vera', mrak: 'mrak', yeti: 'yeti_cub', warden: 'frost_warden', salamander: 'salamander', colossus: 'magma_colossus', umbra_sb: 'umbra', ruby: 'ruby', marija: 'marija', mishika: 'mishika', misha: 'misha',
   cinder: 'knight_fire', brine: 'knight_water', basalt: 'knight_earth', wisp: 'knight_air', rime: 'knight_ice', jolt: 'knight_lightning', umbra: 'knight_shadow', aurel: 'knight_light' };
 // PORTRAIT_SKIP can stand a mood in for one that needs redrawing, e.g. { 'vasilije|ali': 'neutral' }
 const PORTRAIT_MOOD = { ali: 'ali_vera' }, PORTRAIT_SKIP = {}, PORTRAIT_DEFAULT = { baba: 'warm', mrak: 'menacing', umbra_sb: 'spellbound' };
@@ -248,6 +248,14 @@ const EH_DIALOGUE = {
     { who: 'ruby', mood: 'worried', text: 'And watch out for the rats!' },
     { who: 'dimitrije', mood: 'okej', text: 'Okej.' },
   ],
+  // ---- Level 7 · The Lawn (Uncle Misha mows; the toys fall from the sky)
+  l7_start: [
+    { who: 'misha', mood: 'laughing', text: 'Catch them before my mower gets them! I can’t stop, the grass is too long!' },
+    { who: 'ruby', text: 'Save sixteen toys! If Misha mows eleven, they’re gone. You can jump on his head!' },
+  ],
+  l7_win: [
+    { who: 'misha', mood: 'proud', text: 'Good job! Don’t leave those toys out again!' },
+  ],
   l6_found: [
     { who: 'mishika', mood: 'happy', text: 'Mrrreow!' },
     { who: 'dimitrije', mood: 'happy', text: 'Got you! Now hold on tight. Back to the hatch!' },
@@ -426,7 +434,7 @@ function ehResolvePortrait(who, mood) {
   return ehPortraitCache[key];
 }
 function ehPreloadPortraits() {
-  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : []), ...(typeof SPRING !== 'undefined' ? SPRING.flatMap(sc => sc.lines) : [])];
+  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : []), ...(typeof SPRING !== 'undefined' ? [...SPRING, ...GARDEN, ...GARDEN_END].flatMap(sc => sc.lines) : [])];
   for (const l of lines) { if (!l.who) continue; const who = l.who === 'all' ? KIDS : l.who === 'kosta_vasilije' ? ['kosta', 'vasilije'] : l.who === 'boys' ? ['kosta', 'vasilije', 'dimitrije'] : [l.who];
     for (const w of who) ehResolvePortrait(w, l.mood || (l.who === 'all' ? 'ali' : 'neutral')); }
 }
@@ -683,6 +691,23 @@ const SPRING = [
     { at: 10.0, who: 'ruby', mood: 'happy', text: 'Then hurry. You have one minute!' },
     { at: 11.6, who: 'dimitrije', mood: 'okej', text: 'Okej.' }] },
 ];
+const GARDEN = [
+  { d: 12, lines: [{ at: 1.0, who: null, text: 'After the attic, everyone went out into the garden.' },
+    { at: 2.8, who: 'dimitrije', mood: 'happy', text: 'Mishika wants to see the garden too.' },
+    { at: 4.6, who: 'misha', mood: 'laughing', text: 'Hello, kids! Today I’m mowing the lawn!' },
+    { at: 6.6, who: 'all', mood: 'happy', text: 'Hi, Uncle Misha!' }] },
+  { d: 12, lines: [{ at: 0.8, who: null, text: 'Then a big gust of wind blew through the open window…' },
+    { at: 2.6, who: 'katarina', mood: 'ali', text: 'Our toys!' },
+    { at: 4.2, who: 'misha', mood: 'surprised', text: 'Whoa! Toys are falling from the sky!' },
+    { at: 6.2, who: 'vasilije', text: 'We have to catch them before the mower does!' },
+    { at: 8.2, who: 'dimitrije', mood: 'okej', text: 'Okej.' }] },
+];
+const GARDEN_END = [
+  { d: 12, lines: [{ at: 0.8, who: 'misha', mood: 'proud', text: 'Good job! Don’t leave those toys out again!' },
+    { at: 3.2, who: 'ruby', mood: 'happy', text: 'Misha, now you have to play with the kids too!' },
+    { at: 5.4, who: 'misha', mood: 'laughing', text: 'Okay, okay! But first I finish the lawn.' },
+    { at: 7.6, who: 'all', mood: 'happy', text: 'Uncle Misha joins the team!' }] },
+];
 const ENDING = [
   { d: 14, top: true, lines: [{ at: 1.0, who: 'mrak', mood: 'sad', text: 'I only wanted… somewhere warm.' },
     { at: 3.4, who: 'baba', mood: 'warm', text: "Then come home with us. It's New Year's Eve. Nobody should be alone tonight." },
@@ -766,7 +791,9 @@ function EndingCutscene({ onDone }) {
   s.textContent = '@keyframes ehBob{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}@keyframes ehBlink{0%{opacity:1}100%{opacity:0}}@keyframes ehFadeIn{from{opacity:0}to{opacity:1}}'; document.head.appendChild(s); })();
 ehPreloadPortraits();
 // spring morning (after the ending, before the toy level): sunrise pan, the cousins waking up, Rubi calling them
-function SpringCutscene({ onDone }) {
+const EH_CUTS = { spring: { dir: 'spring', scenes: SPRING, files: [0, 1, 2] }, garden: { dir: 'garden', scenes: GARDEN, files: [0, 1] }, garden_end: { dir: 'garden', scenes: GARDEN_END, files: [2] } };
+function SpringCutscene({ onDone, set = 'spring' }) {
+  const CUT = EH_CUTS[set], SCN = CUT.scenes;
   const cv = React.useRef(null), CL = useCutsceneLine(), { line, setLine } = CL;
   const [skip, setSkip] = React.useState(false), [hover, setHover] = React.useState(false), doneRef = React.useRef(false);
   const finish = () => { if (!doneRef.current) { doneRef.current = true; onDone && onDone(); } };
@@ -775,13 +802,14 @@ function SpringCutscene({ onDone }) {
     let alive = true, raf = 0; const img = {};
     const ld = (k, p) => new Promise(r => { const i = new Image(); i.onload = () => { img[k] = i; r(true); }; i.onerror = () => r(false); i.src = EHS_A + p; });
     let t0 = null, ready = false, lastLine = null, clock = 0, lastNow = 0; const began = performance.now();
-    const starts = []; let acc = 0; for (const sc of SPRING) { starts.push(acc); acc += sc.d; } const total = acc;
-    fetch(EHS_A + 'cutscenes/spring/spring.json').then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
-      Promise.all(!j ? [] : j.scenes.slice(0, SPRING.length).flatMap((sc, n) => sc.layers.map(l => ld(`L${n}_${l.name}`, 'cutscenes/spring/' + l.file)))).then(() => { ready = true; }); });
+    const starts = []; let acc = 0; for (const sc of SCN) { starts.push(acc); acc += sc.d; } const total = acc;
+    fetch(EHS_A + `cutscenes/${CUT.dir}/${CUT.dir}.json`).then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
+      Promise.all(!j ? [] : CUT.files.map(i => j.scenes[i]).flatMap((sc, n) => sc.layers.map(l => ld(`L${n}_${l.name}`, `cutscenes/${CUT.dir}/` + l.file)))).then(() => { ready = true; }); });
     const setT = setTimeout(() => alive && setSkip(true), 1000);
     const g = cv.current.getContext('2d'); g.imageSmoothingEnabled = false;
     const d = (im, x = 0, y = 0) => im && g.drawImage(im, Math.round(x / 2) * 2, Math.round(y / 2) * 2);
     const draw = (n, t) => { const L = k => img[`L${n}_${k}`];
+      if (CUT.dir === 'garden') { const bob = Math.floor(t * 2) % 2 ? 2 : 0, up = set === 'garden' && n === 1 ? -Math.min(20, t * 4) : 0; d(L('bg')); d(L('chars'), set === 'garden' && n === 0 ? Math.max(0, 40 - t * 20) : 0, bob + up); if (Math.floor(t * 3) % 2 === 0) d(L('fx')); else d(L('fx'), 2, 0); return; }
       if (n === 0) { const up = Math.min(1, t / 7); d(L('bg'), 0, 0); const fy = (t * 10) % 40; d(L('fx'), -((t * 20) % 40), -fy); }   // sunrise: petals and birds drift
       else if (n === 1) { const z = 1 + Math.min(0.06, t * 0.008), w = 640 * z, h = 360 * z; for (const k of ['bg', 'chars']) if (L(k)) g.drawImage(L(k), Math.round((640 - w) / 2), Math.round(360 - h), Math.round(w), Math.round(h));
         if (L('fx')) g.drawImage(L('fx'), Math.round((640 - w) / 2), Math.round(360 - h - (t * 8) % 16), Math.round(w), Math.round(h)); }
@@ -790,7 +818,7 @@ function SpringCutscene({ onDone }) {
       if (t0 == null) { g.fillRect(0, 0, 640, 360); if (ready || performance.now() - began > 6000) { t0 = performance.now(); lastNow = t0; } raf = requestAnimationFrame(loop); return; }
       const now = performance.now(); if (!CL.hold.current) clock += (now - lastNow) / 1000; lastNow = now; const T2 = clock;
       if (T2 >= total) { finish(); return; }
-      const n = starts.findIndex((st, i) => T2 >= st && (i === starts.length - 1 || T2 < starts[i + 1])), t = T2 - starts[n], S = SPRING[n];
+      const n = starts.findIndex((st, i) => T2 >= st && (i === starts.length - 1 || T2 < starts[i + 1])), t = T2 - starts[n], S = SCN[n];
       g.globalAlpha = 1; g.fillRect(0, 0, 640, 360); draw(n, t);
       const fade = Math.min(1, t / 0.5, (S.d - t) / 0.5); if (fade < 1) { g.globalAlpha = 1 - Math.max(0, fade); g.fillRect(0, 0, 640, 360); g.globalAlpha = 1; }
       const ln = S.lines.filter(l => l.at <= t).pop() || null; if (ln !== lastLine) { lastLine = ln; setLine(ln); }

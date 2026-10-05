@@ -34,7 +34,7 @@ const EH_POWER = {
   fire: { v: 4.2, dmg: 1 }, water: { v: 3.6, dmg: 1 }, earth: { v: 3.4, dmg: 2, arc: true }, air: { v: 5.2, dmg: 1, pierce: true },
   ice: { v: 4.8, dmg: 1 }, lightning: { v: 6.5, dmg: 1 }, shadow: { v: 3.2, dmg: 2 }, light: { v: 5.6, dmg: 1, pierce: true },
   // Ruby: a present lobbed in an arc that bursts where it lands (hurts everything near); Vera: a golden ray (one hit for any enemy, three for any boss)
-  present: { v: 2.83, dmg: 2, arc: true, vy: -4.33, g: 0.194, bomb: true }, gold: { v: 5.33, dmg: 1, pierce: true },
+  present: { v: 2.83, dmg: 2, arc: true, vy: -4.33, g: 0.194, bomb: true }, gold: { v: 5.33, dmg: 1, pierce: true }, grass: { v: 4.5, dmg: 1 },
 };
 const EH_COUSINS = [
   { id: 'konstantin', el: 'light', name: 'Kosta', kid: true },
@@ -44,8 +44,8 @@ const EH_COUSINS = [
 ];
 const EH_KNIGHTS = { fire: 'Cinder', water: 'Brine', earth: 'Basalt', air: 'Wisp', ice: 'Rime', lightning: 'Jolt', shadow: 'Umbra', light: 'Aurel' };
 const EH_ELEMENTS = ['fire', 'water', 'earth', 'air', 'ice', 'lightning', 'shadow', 'light'];   // the knights' elements
-// unlockable heroes (keys 5 and 6): Ruby after the toy level, Baba Vera for a cousin with perfect runs of levels 1-4
-const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Rubi', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }];
+// unlockable heroes (keys 5-7): Ruby after the toy level, Baba Vera for a cousin with perfect runs of levels 1-4, Uncle Misha after the lawn
+const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Rubi', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }, { id: 'misha', el: 'grass', name: 'Misha', kid: true, key: 7 }];
 // Per-level setup. Each level has a star cousin: the level starts with them and only they can land the final blow on its boss.
 // T = the tileset's rules (ids from its .tsj): solid, one-way, hazards, water, animated tiles, crumble planks, bounce tile, slippery ice.
 const EH_LV = {
@@ -80,7 +80,15 @@ EH_LV.l6 = { id: 'l6', map: 'maps/attic_l6.tmj', tiles: 'tilesets/attic/tileset_
   T: { solid: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,24,30,31,32,33,34,35,36,37,38,39,40,43,44,45,46,58,59,60,61,62]),
     plat: new Set([20,21,22,23,25,26,27,28,41,42,54,56,57,83,84]), feetHaz: [], bodyHaz: [], water: [], anim: {}, crumble: [26, 27, 28, 29], bounce: [58, 59, 60, 61, 62],
     ice: new Set(), noSafe: id => id >= 58 && id <= 62 } };
-const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6'];
+// Level 7, The Lawn: Uncle Misha mows the garden while the toys fall from the sky (one every 5 s, 26 in all).
+// Pick up 16 to win; if his mower gets 11, try again. Only the chosen cousin plays.
+EH_LV.l7 = { id: 'l7', map: 'maps/garden_l7.tmj', tiles: 'tilesets/garden/tileset_garden.png', bg: 'backgrounds/garden/bg_garden_', fg: 'backgrounds/garden/fg_garden_petals.png', fgAlways: true,
+  shrine: 'sprites/props/forest/prop_checkpoint_shrine_', arch: null, star: null, starKey: 0, knights: [], pet: null, solo: true, lawn: true,
+  T: { solid: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,46,47,48,49,50,57,58,59,60,61]), plat: new Set([24,25,26,35,36,37,40,41,42,43,44,45,51,52,53]),
+    feetHaz: [], bodyHaz: [], water: [], anim: {}, crumble: [999, 999, 999, 999], bounce: [57, 58, 59, 60, 61], ice: new Set(), noSafe: id => id >= 57 && id <= 61 } };
+const EH_LAWN = { every: 300, total: 26, win: 16, lose: 11 };
+const EH_MISHA = { mow: 6, turn: 4, bonk: 4, idle: 4, wave: 4 };
+const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7'];
 const EH_RAT = { idle:4, run:6, chase:6, hurt:2, death:5 };
 const EH_SPIDER = { idle:4, drop:2, climb:4, hurt:2, death:5 }, EH_WASP = { fly:4, attack:4, hurt:2, death:5 };
 const EH_CAT = { idle:4, sit:4, run:6, hide:4, found:4 };
@@ -105,7 +113,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
   React.useEffect(() => {
     let alive = true, raf = 0;
     const keys = {}; let wantHero = -1, cycle = 0, jumpBuf = 0, spaceBuf = 0;   // jumpBuf remembers a jump press for a few ticks so quick taps aren't lost
-    const kd = e => { keys[e.code] = true; const d = /^Digit([1-6])$/.exec(e.code); if (d) wantHero = 'k' + d[1]; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'Space' && !e.repeat) spaceBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
+    const kd = e => { keys[e.code] = true; const d = /^Digit([1-7])$/.exec(e.code); if (d) wantHero = 'k' + d[1]; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'Space' && !e.repeat) spaceBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
@@ -130,6 +138,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         load('yarn', 'sprites/items/item_yarn_ball.png'),
         load('p_present', 'sprites/heroes/present/fx_present_projectile.png'), load('boom', 'sprites/heroes/present/fx_present_explosion.png'), load('i_present', 'sprites/heroes/present/fx_present_projectile.png'),
         load('p_gold', 'sprites/heroes/gold/fx_gold_projectile.png'), load('i_gold', 'sprites/heroes/gold/fx_gold_impact.png'),
+        load('p_grass', 'sprites/heroes/grass/fx_grass_projectile.png'), load('i_grass', 'sprites/heroes/grass/fx_grass_impact.png'),
         ...[...EH_COUSINS, ...EH_EXTRA].flatMap(c => [...Object.keys(EH_HERO), 'respawn'].map(k => load(`h_${c.id}_${k}`, `sprites/heroes/kids/${c.id}/hero_${c.id}_${k}.png`))),
         ...EH_ELEMENTS.flatMap(el => [
           ...Object.keys(EH_HERO).map(k => load(`h_k_${el}_${k}`, `sprites/heroes/${el}/hero_${el}_${k}.png`)),
@@ -172,7 +181,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           ...Object.keys(EH_SPIDER).map(k => load('sp_' + k, `sprites/enemies/attic/spider/enemy_spider_${k}.png`)), ...Object.keys(EH_WASP).map(k => load('wa_' + k, `sprites/enemies/attic/wasp/enemy_wasp_${k}.png`)), load('hatch_glow', 'sprites/props/attic/prop_hatch_glow.png'),
           ...['idle', 'run', 'jump', 'fall', 'land', 'hurt'].map(k => load('carry_' + k, `sprites/heroes/kids/dimitrije/hero_dimitrije_carry_${k}.png`)),
           load('ui_timer', 'ui/ui_timer.png'), load('ui_cat', 'ui/ui_cat_icon.png'), load('ui_hatch', 'ui/ui_hatch_icon.png')] : []),
-        ...(LV.toys ? [...Object.keys(EH_TOY_NAMES).map(k => load('toy_' + k, `sprites/items/toys/toy_${k}.png`)), load('fx_toy_pickup', 'sprites/items/toys/fx_toy_pickup.png'),
+        ...(LV.lawn ? [...Object.keys(EH_MISHA).map(k => load('mi_' + k, `sprites/npc/misha/npc_misha_${k}.png`)), load('ui_mower', 'ui/ui_mower_icon.png'),
+          ...['grass_clippings', 'toy_shredded', 'toy_fall_shadow', 'toy_land'].map(k => load('fx_' + k, `sprites/fx/garden/fx_${k}.png`))] : []),
+        ...(LV.toys || LV.lawn ? [...Object.keys(EH_TOY_NAMES).map(k => load('toy_' + k, `sprites/items/toys/toy_${k}.png`)), load('fx_toy_pickup', 'sprites/items/toys/fx_toy_pickup.png'),
           load('ui_timer', 'ui/ui_timer.png'), load('ui_toybox', 'ui/ui_toy_counter_icon.png'), ...['idle', 'walk', 'wag_finger', 'laugh'].map(k => load('mj_' + k, `sprites/npc/marija/npc_marija_${k}.png`))] : []),
         ...(LV.id === 'l4' ? [
           ...Object.keys(EH_SHADE).map(k => load('sh_' + k, `sprites/enemies/keep/shadow_shade/enemy_shadow_shade_${k}.png`)),
@@ -246,6 +257,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       const mrakDown = () => { MRAK.dead = 1; MRAK.st = 'defeat'; MRAK.waves = []; MRAK.orbs = []; MRAK.roots = []; MRAK.spikes = []; MRAK.spots = []; MRAK.beamT = 40; };
       // toys (level 5): find them all in 60 seconds
       const TOYS = of('toy').map(o => ({ k: o.name, x: o.x, y: o.y, got: false }));
+      // the lawn: falling toys (FT), Misha and his mower (MI)
+      const LAWN = LV.lawn ? { got: 0, mowed: 0, n: 0, next: 120, st: 'run', t: 0 } : null, FT = [], lawnE = ents.find(o => o.type === 'lawn'), mE = ents.find(o => o.type === 'misha');
+      const MI = LV.lawn && mE ? { x: mE.x, y: mE.y, dir: 1, st: 'mow', t: 0, x0: lawnE.x - 16, x1: lawnE.x + lawnE.width - 48 } : null;
       const TIMER = LV.toys || LV.cat ? { left: 60 * 60, st: 'run', t: 0 } : null;
       const MARIJA = { on: false, x: 0, y: GROUND_Y - 32, t: 0 };
       if (TIMER && LV.timer) TIMER.left = LV.timer * 60;
@@ -326,6 +340,13 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         tick++;
         if (RIDE && RIDE.on) { RIDE.t++; if (RIDE.t === 1) { const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); } if (RIDE.t === 50) story(LV.id + '_start'); if (RIDE.t >= 230) RIDE.on = false; return; }   // the eagle carries Kosta up the cliff
         if (tick === 1 && !RIDE) story(LV.id + '_start');
+        if (LAWN && LAWN.st === 'won') { LAWN.t++; if (MI) MI.st = 'wave'; if (LAWN.t === 2) story('l7_win'); if (LAWN.t === 4) onEnd('complete', 0, { ...runStats(), toys: LAWN.got }); return; }
+        if (LAWN && LAWN.st === 'lost') { LAWN.t++; if (MI) MI.st = 'idle';
+          if (LAWN.t === 2) { const sr = window.EH_LANG === 'sr';
+            EH_DIALOGUE.l7_lost = [{ who: 'misha', mood: 'laughing', text: sr ? `Ha! Moja kosačica je pokupila ${LAWN.mowed} igračaka. Sad su konfete!` : `Ha! My mower got ${LAWN.mowed} toys. They're confetti now!` },
+              { who: 'ruby', mood: 'worried', text: sr ? 'Brzo, hajde ponovo!' : 'Quick, let’s try again!' }];
+            story('l7_lost'); }
+          if (LAWN.t === 4) onEnd('retry'); return; }
         if (TIMER) {
           if (TIMER.st === 'run') { if (--TIMER.left <= 0) { TIMER.left = 0; TIMER.st = LV.cat ? 'timeup' : 'lost'; TIMER.t = 0; if (!LV.cat) { MARIJA.on = true; MARIJA.x = Math.min(cam + 560, H.x + 220); } } }
           else if (TIMER.st === 'timeup') { TIMER.t++; if (TIMER.t === 2) story('l6_lost'); if (TIMER.t === 4) onEnd('timeup', 0, { carrying: !!H.carry }); return; }
@@ -422,6 +443,31 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             say(window.EH_LANG === 'sr' ? 'PAZI! PAUCI I OSE!' : 'WATCH OUT! SPIDERS AND WASPS!'); } }
         if (H.carry && HATCH && TIMER && TIMER.st === 'run' && !H.dead && overlap(heroBox(), { x: HATCH.x, y: HATCH.y - 40, w: 64, h: 48 })) { TIMER.st = 'won'; TIMER.t = 0; }
         ROPES.forEach(r => { r.w += -0.0016 * Math.sin(r.a); r.w *= H.rope === r ? 0.997 : 0.99; r.a = Math.max(-0.75, Math.min(0.75, r.a + r.w)); if (H.rope !== r && Math.abs(r.a) < 0.02 && Math.abs(r.w) < 0.002) r.w += 0.004; });
+        if (LAWN && LAWN.st === 'run') {
+          if (LAWN.n < EH_LAWN.total && --LAWN.next <= 0) { LAWN.next = EH_LAWN.every; LAWN.n++;   // the next toy: drop it somewhere over the lawn, land it on the first thing below
+            const ks = Object.keys(EH_TOY_NAMES), x = lawnE.x + 8 + Math.floor(Math.random() * (lawnE.width - 32)); let gy = GROUND_Y - 16;
+            for (let r = 0; r < MH; r++) { const id = tileAt(x + 8, r * 32); if (T.solid.has(id) || T.plat.has(id)) { gy = r * 32 - 16; break; } }
+            FT.push({ k: ks[Math.floor(Math.random() * ks.length)], x, y: -20, gy, st: 'fall', t: 0 }); }
+          for (const t of FT) { t.t++;
+            if (t.st === 'fall') { t.y += 1.6; if (t.y >= t.gy) { t.y = t.gy; t.st = 'down'; fx('fx_toy_land', 4, 12, t.x - 8, t.gy, 32); } }
+            if (t.st !== 'gone' && !H.dead && Math.abs(H.x + 16 - (t.x + 8)) < 16 && Math.abs(H.y + 20 - (t.y + 8)) < 20) { t.st = 'gone'; LAWN.got++; fx('fx_toy_pickup', 6, 14, t.x - 8, t.y - 8, 32); }
+            if (t.st === 'down' && MI && t.gy === GROUND_Y - 16) { const bx = MI.dir > 0 ? MI.x + 37 : MI.x + 64 - 37 - 25;
+              if (t.x + 12 > bx && t.x + 4 < bx + 25) { t.st = 'gone'; LAWN.mowed++; fx('fx_toy_shredded', 6, 12, t.x - 8, t.y - 12, 32); } } }
+          if (LAWN.got >= EH_LAWN.win) { LAWN.st = 'won'; LAWN.t = 0; }
+          else if (LAWN.mowed >= EH_LAWN.lose || (LAWN.n >= EH_LAWN.total && FT.every(t => t.st === 'gone'))) { LAWN.st = 'lost'; LAWN.t = 0; } }
+        if (MI) { MI.t++; const sp = 0.75;   // Misha mows back and forth; you can stand on his head (bonk, bounce) and on the mower deck
+          if (MI.st === 'mow') { const nx = MI.x + sp * MI.dir; if (nx < MI.x0 || nx > MI.x1) { MI.st = 'turn'; MI.t = 0; } else { MI.x = nx; if (MI.t % 18 === 0) fx('fx_grass_clippings', 6, 14, MI.dir > 0 ? MI.x + 26 : MI.x + 6, MI.y - 30, 32); } }
+          else if (MI.st === 'turn') { if (MI.t >= 30) { MI.dir *= -1; MI.st = 'mow'; MI.t = 0; } }
+          else if (MI.st === 'bonk') { if (MI.t >= 48) { MI.st = 'mow'; MI.t = 0; } }
+          const lx = (x, w) => MI.dir > 0 ? MI.x + x : MI.x + 64 - x - w, top = MI.y - 47, feet = H.y + 31, hx = H.x + 16;
+          const head = { x: lx(11, 12), y: top + 8 }, deck = { x: lx(38, 24), y: top + 34 };
+          let on = false;
+          if (!H.dead && H.vy >= 0) for (const pl of [head, deck]) if (hx > pl.x - 4 && hx < pl.x + (pl === head ? 12 : 24) + 4 && feet >= pl.y - 2 && feet <= pl.y + Math.max(6, H.vy + 2)) {
+            if (pl === head) { H.vy = -6.3; H.ground = false; H.jumpT = tick; H.jumpV = H.vy; if (MI.st !== 'bonk') { MI.st = 'bonk'; MI.t = 0; } }
+            else { H.y = pl.y - 31; H.vy = 0; H.ground = true; if (MI.st === 'mow') H.x += sp * MI.dir; }
+            on = true; break; }
+          const hb = heroBox();
+          if (!on && !H.dead && MI.st !== 'bonk' && (overlap(hb, { x: lx(10, 13), y: top + 12, w: 13, h: 35 }) || overlap(hb, { x: lx(36, 27), y: top + 36, w: 27, h: 12 }))) hurt(Math.sign(H.x + 16 - (MI.x + 32)) || 1); }
         if (ROPES.length && !H.dead) { if (H.ropeCd > 0) H.ropeCd--;
           if (!H.rope && !H.ground && !(H.ropeCd > 0)) for (const r of ROPES) { const kn = ropeKnot(r); if (overlap(heroBox(), { x: kn.x - 10, y: kn.y - 30, w: 20, h: 40 })) { H.rope = r; r.w += (H.vx || 0) / ROPE_L * 0.6; jumpBuf = spaceBuf = 0; break; } }
           if (H.rope) { const r = H.rope, kn = ropeKnot(r); H.x = kn.x - 16; H.y = kn.y - 20; H.vy = 0; H.ground = false;   // hanging on: left/right pumps the swing, Space jumps off with the swing's speed, down drops
@@ -971,6 +1017,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         if (CAT && CAT.st !== 'carried') { const a = CAT.st === 'hide' ? 'hide' : CAT.st === 'found' ? 'found' : 'sit', f = a === 'hide' ? CAT.t / 6 : a === 'found' ? CAT.t / 7.5 : (tick / 10) % 4;
           drawStrip(img['cat_' + a], 4, f, CAT.x, CAT.y, 32, H.x < CAT.x); }
         TOYS.forEach((t, i) => { if (!t.got) drawStrip(img['toy_' + t.k], 4, (tick / 10 + i) % 4, t.x, t.y, 16); });
+        FT.forEach((t, i) => { if (t.st === 'gone') return; if (t.st === 'fall') drawStrip(img.fx_toy_fall_shadow, 4, Math.max(0, 3 - (t.gy - t.y) / 1.6 / 15), t.x, t.gy + 12, 16);
+          drawStrip(img['toy_' + t.k], 4, (tick / 10 + i) % 4, t.x, t.y, 16); });
+        if (MI) { const a = MI.st, f = a === 'turn' ? MI.t / 7.5 : a === 'bonk' ? Math.min(3, MI.t / 7.5) : (tick / (a === 'idle' ? 12 : a === 'wave' ? 7.5 : 6)) % EH_MISHA[a];
+          drawStrip(img['mi_' + a], EH_MISHA[a], f, MI.x, MI.y - 47, 64, MI.dir < 0); }
         if (MARIJA.on) { const walking = TIMER && TIMER.t < 150 && MARIJA.x > H.x + 70; drawStrip(img[walking ? 'mj_walk' : 'mj_wag_finger'], 4 + (walking ? 2 : 0), (tick / (walking ? 12 : 8)) % (walking ? 6 : 4), MARIJA.x, MARIJA.y, 32, true); }
         HP.forEach((h, i) => { if (!h.got) drawStrip(img.heart, 6, (tick / 7.5 + i) % 6, h.x, h.y, 16); });
         E.forEach(e => {
@@ -1132,6 +1182,10 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             if (ic) ctx.drawImage(ic, 640 - 150, 46); ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#0d0b14'; ctx.fillText(txt, 640 - 129, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(txt, 640 - 130, 58); }
           const got = TOYS.filter(t => t.got).length; if (TOYS.length && img.ui_toybox) ctx.drawImage(img.ui_toybox, 640 - 120, 46);
           ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; if (TOYS.length) { ctx.fillStyle = '#0d0b14'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 99, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 100, 58); } }
+        if (LAWN) { const sr = window.EH_LANG === 'sr', row = (ic, txt, y, col) => { if (ic) ctx.drawImage(ic, 640 - 140, y); ctx.fillStyle = '#0d0b14'; ctx.fillText(txt, 640 - 119, y + 13); ctx.fillStyle = col; ctx.fillText(txt, 640 - 120, y + 12); };
+          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left';
+          row(img.ui_toybox, `${LAWN.got}/${EH_LAWN.win} ${sr ? 'SPASENO' : 'SAVED'}`, 46, '#ffc23d'); row(img.ui_mower, `${LAWN.mowed}/${EH_LAWN.lose} ${sr ? 'POKOŠENO' : 'MOWED'}`, 64, LAWN.mowed >= EH_LAWN.lose - 3 ? '#e0521f' : '#e8e0d0');
+          ctx.textAlign = 'center'; const left = EH_LAWN.total - LAWN.n; ctx.fillStyle = '#0d0b14'; ctx.fillText(`${sr ? 'JOŠ PADA' : 'STILL FALLING'}: ${left}`, 321, 23); ctx.fillStyle = '#e8e0d0'; ctx.fillText(`${sr ? 'JOŠ PADA' : 'STILL FALLING'}: ${left}`, 320, 22); }
         if (MRAK && MRAK.awake && !MRAK.dead && MRAK.ph === 3) {   // the four stones: each cousin must hit him (gold Kosta, orange Katarina, frost Vasilije, green Dimitrije)
           [['konstantin', '#ffc23d'], ['katarina', '#e0521f'], ['vasilije', '#7fd4e8'], ['dimitrije', '#6fae3e']].forEach(([id, c], i) => { const x = 320 - 38 + i * 20, on = MRAK.lit.has(id);
             ctx.fillStyle = '#0d0b14'; ctx.fillRect(x - 1, 51, 14, 14); ctx.fillStyle = c; ctx.globalAlpha = on ? 1 : 0.3; ctx.fillRect(x, 52, 12, 12); ctx.globalAlpha = 1; if (on) { ctx.fillStyle = '#e8e0d0'; ctx.fillRect(x + 2, 54, 3, 3); } }); }

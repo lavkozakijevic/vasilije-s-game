@@ -1,17 +1,17 @@
 <!-- @dsCard group="Game" viewport="1280x720" name="Forest level (playable)" subtitle="Title → play → pause → results" -->
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Elemental Heroes · The Rescue of Baba Vera</title><link rel="stylesheet" href="../../styles.css?v=20261004k">
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Elemental Heroes · The Rescue of Baba Vera</title><link rel="stylesheet" href="../../styles.css?v=20261005a">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script src="../../_ds_bundle.js?v=20261004k"></script>
-<style>html,body{margin:0;height:100%;background:var(--eh-ink);overflow:hidden}#fit{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:0 0}</style></head><body><div id="fit"><div id="root" style="position:relative;width:1280px;height:720px;overflow:hidden"></div></div>
-<script type="text/babel" src="I18n.jsx?v=20261004k"></script>
-<script type="text/babel" src="GameView.jsx?v=20261004k"></script>
-<script type="text/babel" src="Screens.jsx?v=20261004k"></script>
-<script type="text/babel" src="Story.jsx?v=20261004k"></script>
-<script src="firebase-config.js?v=20261004k"></script>
-<script type="text/babel" src="Stats.jsx?v=20261004k"></script>
-<script type="text/babel" src="Map.jsx?v=20261004k"></script>
+<script src="../../_ds_bundle.js?v=20261005a"></script>
+<style>html,body{margin:0;font-variant-ligatures:none;height:100%;background:var(--eh-ink);overflow:hidden}#fit{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:0 0}</style></head><body><div id="fit"><div id="root" style="position:relative;width:1280px;height:720px;overflow:hidden"></div></div>
+<script type="text/babel" src="I18n.jsx?v=20261005a"></script>
+<script type="text/babel" src="GameView.jsx?v=20261005a"></script>
+<script type="text/babel" src="Screens.jsx?v=20261005a"></script>
+<script type="text/babel" src="Story.jsx?v=20261005a"></script>
+<script src="firebase-config.js?v=20261005a"></script>
+<script type="text/babel" src="Stats.jsx?v=20261005a"></script>
+<script type="text/babel" src="Map.jsx?v=20261005a"></script>
 <script type="text/babel">
 function fit(){let s=Math.min(innerWidth/1280,innerHeight/720);if(!isFinite(s)||s<=0)s=1;document.getElementById('fit').style.transform=`scale(${s}) translate(-50%,-50%)`;}
 addEventListener('resize',fit);addEventListener('load',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
@@ -34,24 +34,27 @@ function App(){
   // story: START plays the intro (skippable), level moments open a dialogue, finishing shows Baba's note
   const levelRef=React.useRef(level);levelRef.current=level;
   const end=React.useCallback((kind,coins,x={})=>{if(kind==='retry'){setRun(r=>r+1);setHud({hp:4,coins:0});setDialog(null);setScreen('play');return;}   // the toy level starts again straight after Marija
-    let rec={};if(kind==='complete'){ehSaveLevel(levelRef.current,{coins,...x});rec=ehRecordRun(playerRef.current,levelRef.current,x);}setRes({kind,coins,...x,...rec,player:playerRef.current});if(kind==='complete'&&levelRef.current==='l5'){const first=localStorage.getItem('eh_ruby')!=='1';localStorage.setItem('eh_ruby','1');setScreen(first?'unlock':'result');return;}
+    let rec={};if(kind==='complete'){ehSaveLevel(levelRef.current,{coins,...x});rec=ehRecordRun(playerRef.current,levelRef.current,x);}setRes({kind,coins,...x,...rec,player:playerRef.current});if(kind==='complete'&&levelRef.current==='l5'){const first=localStorage.getItem('eh_ruby')!=='1';localStorage.setItem('eh_ruby','1');setScreen(first?'unlock':'result');return;}if(kind==='complete'&&levelRef.current==='l7'){const first=localStorage.getItem('eh_misha')!=='1';localStorage.setItem('eh_misha','1');window.__ehMishaNew=first;setScreen('garden_end');return;}
     setScreen(s=>s==='play'?(kind==='complete'?(levelRef.current==='l4'?'ending':'note'):'result'):s);},[]);
   const story=React.useCallback(id=>{if(!EH_DIALOGUE[id])return;setDialog(id);setScreen(s=>s==='play'?'dialog':s);},[]);
   if(screen==='title')return <TitleScreen onStart={()=>{setLevel('l1');setScreen('intro');}} onSelect={()=>setScreen('select')} onBoard={()=>setScreen('board')} lang={lang} onLang={pickLang}/>;
   if(screen==='who')return <WhoScreen onPick={pick} onBack={()=>setScreen('title')}/>;
   if(screen==='board')return <Leaderboard onBack={()=>setScreen('title')}/>;
-  if(screen==='select'||screen==='travel')return <WorldMap key={screen} mode={screen} onPlay={id=>{setLevel(id);setScreen(id==='l5'?'spring':'who');}} onBack={setScreen}/>;
+  if(screen==='select'||screen==='travel')return <WorldMap key={screen} mode={screen} onPlay={id=>{setLevel(id);setScreen(id==='l5'?'spring':id==='l7'?'garden':'who');}} onBack={setScreen}/>;
   if(screen==='intro')return <IntroCutscene onDone={()=>setScreen('who')}/>;
   if(screen==='ending')return <EndingCutscene onDone={()=>{history.replaceState(null,'',location.pathname+location.search);if(res&&res.kind==='complete'){setLevel('l5');setScreen('spring');}else setScreen('title');}}/>;
   if(screen==='spring')return <SpringCutscene onDone={()=>{history.replaceState(null,'',location.pathname+location.search);setLevel('l5');setScreen('who');}}/>;
+  if(screen==='garden')return <SpringCutscene key="garden" set="garden" onDone={()=>{setLevel('l7');setScreen('who');}}/>;
+  if(screen==='garden_end')return <SpringCutscene key="garden_end" set="garden_end" onDone={()=>setScreen(window.__ehMishaNew?'unlock_misha':'result')}/>;
+  if(screen==='unlock_misha')return <UnlockCard hero="misha" name="Misha" keyNum={7} onDone={()=>setScreen('result')}/>;
   if(screen==='unlock')return <UnlockCard hero="ruby" name="Rubi" keyNum={5} onDone={()=>setScreen('result')}/>;
   return(<div style={{position:'absolute',inset:0}}>
-    <GameView key={level+run} level={level} runId={run} player={player} heroes={[...(localStorage.getItem('eh_ruby')==='1'?['ruby']:[]),...(ehVeraUnlocked(player)?['vera']:[])]} paused={screen!=='play'} onHud={setHud} onEnd={end} onStory={story}/>
+    <GameView key={level+run} level={level} runId={run} player={player} heroes={[...(localStorage.getItem('eh_ruby')==='1'?['ruby']:[]),...(ehVeraUnlocked(player)?['vera']:[]),...(localStorage.getItem('eh_misha')==='1'?['misha']:[])]} paused={screen!=='play'} onHud={setHud} onEnd={end} onStory={story}/>
     <Hud hp={hud.hp} coins={hud.coins} element={hud.element} name={hud.name}/>
-    {screen==='dialog'&&dialog&&<DialogueRunner key={dialog} pos={level==='l5'?'top':'bottom'} lines={EH_DIALOGUE[dialog]} onDone={()=>{setDialog(null);setScreen('play');}}/>}
+    {screen==='dialog'&&dialog&&<DialogueRunner key={dialog} pos={level==='l5'||level==='l7'?'top':'bottom'} lines={EH_DIALOGUE[dialog]} onDone={()=>{setDialog(null);setScreen('play');}}/>}
     {screen==='note'&&<NoteScreen level={level} onDone={()=>setScreen('result')}/>}
     {screen==='paused'&&<PauseMenu onResume={()=>setScreen('play')} onRestart={restart} onQuit={()=>setScreen('title')}/>}
-    {screen==='result'&&res&&<ResultPanel kind={res.kind} coins={res.coins} gems={res.gems} gemTotal={res.gemTotal} coinsGot={res.coinsGot} coinTotal={res.coinTotal} time={res.time} newBest={res.newBest} full={res.full} veraNew={res.veraNew} onRetry={restart} onQuit={()=>setScreen('title')} onContinue={level==='l6'?null:level==='l5'?()=>{setLevel('l6');setScreen('who');}:()=>setScreen('travel')}/>}
+    {screen==='result'&&res&&<ResultPanel kind={res.kind} coins={res.coins} gems={res.gems} gemTotal={res.gemTotal} coinsGot={res.coinsGot} coinTotal={res.coinTotal} time={res.time} newBest={res.newBest} full={res.full} veraNew={res.veraNew} onRetry={restart} onQuit={()=>setScreen('title')} onContinue={level==='l7'?null:level==='l6'?()=>setScreen('garden'):level==='l5'?()=>{setLevel('l6');setScreen('who');}:()=>setScreen('travel')}/>}
   </div>);
 }
 (function mount(){if(!window.ElementalHeroesDesignSystem_0f20c7)return setTimeout(mount,50);ReactDOM.createRoot(document.getElementById('root')).render(<App/>);})();
