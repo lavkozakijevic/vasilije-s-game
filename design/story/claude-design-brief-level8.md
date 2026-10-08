@@ -6,8 +6,12 @@ up, grumbles that the four cousins didn't pick up their toys, and goes around th
 a flashlight to find every toy and throw it out. One cousin (the player picks any of the four)
 has 50 seconds to pick up 30 toys before Marija gets them. It is dark everywhere; Marija's
 flashlight makes a cone of light. The kids can hide in shadows (under the table, behind the
-curtains, under the bed, inside the cupboard) so she can't find them. When the level is won,
-Marija joins as a playable hero: she throws toys at enemies.
+curtains, under the bed, inside the cupboard) so she can't find them. Rules: if her flashlight
+finds a kid who is not hiding, she says "Aha!" and the kid loses 5 seconds. A kid who jumps on
+her head stuns her for a moment and wins 5 extra seconds. Toys she picks up go in her sack (a
+counter like Misha's mowed counter). When the time runs out or no toys are left, the kid must
+have more toys than Marija's sack, or the level starts again. When the level is won, Marija joins
+as a playable hero: she throws toys at enemies.
 
 Follow the existing pack rules: 16-color elemental16 palette, 1-art-pixel ink outline, light
 from top-left (for this level: moonlight from the windows), Bayer dither only, no alpha fades,
@@ -29,6 +33,8 @@ forward in her right hand (the beam itself is drawn by the engine; draw only the
 - npc_marija_night_search 4 (stops, sweeps the flashlight up and down, squints)
 - npc_marija_night_pickup 4 (bends down slowly, picks up a toy, drops it in a sack on her back)
 - npc_marija_night_spot 4 ("Aha!": she straightens up, eyebrows up, points the flashlight)
+- npc_marija_night_stunned 4 (a kid landed on her head: she wobbles, stars around her head, the
+  flashlight flickers; nothing hurtful, she's just dizzy)
 - npc_marija_night_yawn 4 (yawns, for the ending)
 - Portraits (ui/portraits/, 64x64): portrait_marija_night_grumpy, _suspicious, _sleepy, _proud
   (nightgown, hair net, flashlight under her chin for _suspicious).
