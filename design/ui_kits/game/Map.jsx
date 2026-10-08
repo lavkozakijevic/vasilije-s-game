@@ -9,6 +9,7 @@ const EH_LEVELS = [
   { id: 'l5', node: 'village', name: 'The Big Tidy-Up',      star: 'Everyone',  ready: true, at: [130, 40] },   // at: card position (640x360 map) in the empty top-left corner
   { id: 'l6', node: 'village', name: 'Mishika in the Attic', star: 'Dimitrije', ready: true, at: [130, 112] },
   { id: 'l7', node: 'village', name: 'The Lawn', star: 'Everyone', ready: true, at: [130, 184] },
+  { id: 'l8', node: 'village', name: 'Night Patrol', star: 'Everyone', ready: true, at: [450, 110] },
 ];
 const EH_TRAVEL = {
   l2: ['Over the mountains…', 'Mrak’s shadow-birds carried Baba to The Frostfang Peaks.'],

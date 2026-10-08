@@ -34,7 +34,7 @@ const EH_POWER = {
   fire: { v: 4.2, dmg: 1 }, water: { v: 3.6, dmg: 1 }, earth: { v: 3.4, dmg: 2, arc: true }, air: { v: 5.2, dmg: 1, pierce: true },
   ice: { v: 4.8, dmg: 1 }, lightning: { v: 6.5, dmg: 1 }, shadow: { v: 3.2, dmg: 2 }, light: { v: 5.6, dmg: 1, pierce: true },
   // Ruby: a present lobbed in an arc that bursts where it lands (hurts everything near); Vera: a golden ray (one hit for any enemy, three for any boss)
-  present: { v: 2.83, dmg: 2, arc: true, vy: -4.33, g: 0.194, bomb: true }, gold: { v: 5.33, dmg: 1, pierce: true }, grass: { v: 4.5, dmg: 1 },
+  present: { v: 2.83, dmg: 2, arc: true, vy: -4.33, g: 0.194, bomb: true }, gold: { v: 5.33, dmg: 1, pierce: true }, grass: { v: 4.5, dmg: 1 }, toy: { v: 3.6, dmg: 2, arc: true, vy: -3.4, g: 0.16 },
 };
 const EH_COUSINS = [
   { id: 'konstantin', el: 'light', name: 'Kosta', kid: true },
@@ -45,7 +45,7 @@ const EH_COUSINS = [
 const EH_KNIGHTS = { fire: 'Cinder', water: 'Brine', earth: 'Basalt', air: 'Wisp', ice: 'Rime', lightning: 'Jolt', shadow: 'Umbra', light: 'Aurel' };
 const EH_ELEMENTS = ['fire', 'water', 'earth', 'air', 'ice', 'lightning', 'shadow', 'light'];   // the knights' elements
 // unlockable heroes (keys 5-7): Ruby after the toy level, Baba Vera for a cousin with perfect runs of levels 1-4, Uncle Misha after the lawn
-const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Rubi', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }, { id: 'misha', el: 'grass', name: 'Misha', kid: true, key: 7 }];
+const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Rubi', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }, { id: 'misha', el: 'grass', name: 'Misha', kid: true, key: 7 }, { id: 'marija', el: 'toy', name: 'Marija', kid: true, key: 8 }];
 // Per-level setup. Each level has a star cousin: the level starts with them and only they can land the final blow on its boss.
 // T = the tileset's rules (ids from its .tsj): solid, one-way, hazards, water, animated tiles, crumble planks, bounce tile, slippery ice.
 const EH_LV = {
@@ -86,9 +86,15 @@ EH_LV.l7 = { id: 'l7', map: 'maps/garden_l7.tmj', tiles: 'tilesets/garden/tilese
   shrine: 'sprites/props/forest/prop_checkpoint_shrine_', arch: null, star: null, starKey: 0, knights: [], pet: null, solo: true, lawn: true,
   T: { solid: new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,46,47,48,49,50,57,58,59,60,61]), plat: new Set([24,25,26,35,36,37,40,41,42,43,44,45,51,52,53]),
     feetHaz: [], bodyHaz: [], water: [], anim: {}, crumble: [999, 999, 999, 999], bounce: [57, 58, 59, 60, 61], ice: new Set(), noSafe: id => id >= 57 && id <= 61 } };
+// Level 8, Night Patrol: the Level 5 room in the dark. Marija patrols with a flashlight and takes the toys she finds.
+// 50 seconds; hide in the shadows; "Aha!" = -5 s, a jump on her head = +5 s. More toys than her sack wins.
+EH_LV.l8 = { ...EH_LV.l5, id: 'l8', map: 'maps/house_l8.tmj', tiles: 'tilesets/house_night/tileset_house_l8.png', bg: 'backgrounds/house_night/bg_house_night_', fg: 'backgrounds/house_night/fg_house_night_moonbeams.png',
+  timer: 50, night: true };
+const EH_HIDE = new Set([36, 37, 38, 71, 72, ...Array.from({ length: 17 }, (_, i) => 96 + i)]);   // cupboard doors, the throw under the daybed, and every night hiding tile
+const EH_MN = {"walk": 6, "search": 4, "pickup": 4, "spot": 4, "yawn": 4, "stunned": 4}, EH_MN_LIGHT = {"walk": [[31, 20, 17, "on"], [31, 20, 11, "on"], [31, 21, 7, "on"], [31, 20, 10, "on"], [31, 20, 16, "on"], [31, 23, 21, "on"]], "search": [[30, 12, -34, "on"], [31, 16, -9, "on"], [30, 23, 29, "on"], [31, 19, 6, "on"]], "pickup": [[30, 28, 52, "on"], [31, 30, 63, "on"], [30, 28, 52, "on"], [31, 20, 17, "on"]], "spot": [[32, 17, -3, "on"], [33, 14, -11, "on"], [33, 14, -11, "on"], [33, 14, -11, "on"]], "yawn": [[25, 28, 69, "dim"], [25, 28, 69, "dim"], [25, 28, 72, "dim"], [25, 28, 69, "dim"]], "stunned": [[28, 24, 34, "on"], [31, 16, -17, "off"], [30, 27, 52, "dim"], [31, 20, 11, "off"]]};
 const EH_LAWN = { every: 300, total: 26, win: 16, lose: 11 };
 const EH_MISHA = { mow: 6, turn: 4, bonk: 4, idle: 4, wave: 4 };
-const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7'];
+const EH_LV_ORDER = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8'];
 const EH_RAT = { idle:4, run:6, chase:6, hurt:2, death:5 };
 const EH_SPIDER = { idle:4, drop:2, climb:4, hurt:2, death:5 }, EH_WASP = { fly:4, attack:4, hurt:2, death:5 };
 const EH_CAT = { idle:4, sit:4, run:6, hide:4, found:4 };
@@ -113,14 +119,14 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
   React.useEffect(() => {
     let alive = true, raf = 0;
     const keys = {}; let wantHero = -1, cycle = 0, jumpBuf = 0, spaceBuf = 0;   // jumpBuf remembers a jump press for a few ticks so quick taps aren't lost
-    const kd = e => { keys[e.code] = true; const d = /^Digit([1-7])$/.exec(e.code); if (d) wantHero = 'k' + d[1]; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'Space' && !e.repeat) spaceBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
+    const kd = e => { keys[e.code] = true; const d = /^Digit([1-8])$/.exec(e.code); if (d) wantHero = 'k' + d[1]; if (['Space','ArrowUp','KeyW'].includes(e.code) && !e.repeat) jumpBuf = 8; if (e.code === 'Space' && !e.repeat) spaceBuf = 8; if (e.code === 'KeyQ') cycle = -1; if (e.code === 'KeyE') cycle = 1; if (['Space','ArrowUp','ArrowDown'].includes(e.code)) e.preventDefault(); };
     const ku = e => { keys[e.code] = false; };
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku);
     (async () => {
       const map = await (await fetch(EHA + LV.map, { cache: 'no-cache' })).json();
       // tile layers: ids (-1 = empty) plus horizontal-flip flags (Tiled keeps flips in the gid's top bits)
       const L = n => { const l = map.layers.find(l => l.name === n); if (!l) return null; return { id: l.data.map(g => (g % 0x20000000) - 1), flip: l.data.map(g => g >= 0x80000000) }; };
-      const GL = L('ground'), DBL = L('decor_back'), DL = L('decor'), FGL = L('foreground'), ground = GL.id;
+      const GL = L('ground'), DBL = L('decor_back'), DL = L('decor'), FGL = L('foreground'), ground = GL.id, TL = [GL, DBL, DL, FGL].filter(Boolean);
       const crumble = {}, bounceT = {}; let fgA = 1;   // per-tile crumble timers, bounce animations, foreground fade
       const S = EHA + 'sprites/', img = {};
       const load = async (k, p) => { img[k] = await ehImg(EHA + p); };
@@ -139,6 +145,9 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         load('p_present', 'sprites/heroes/present/fx_present_projectile.png'), load('boom', 'sprites/heroes/present/fx_present_explosion.png'), load('i_present', 'sprites/heroes/present/fx_present_projectile.png'),
         load('p_gold', 'sprites/heroes/gold/fx_gold_projectile.png'), load('i_gold', 'sprites/heroes/gold/fx_gold_impact.png'),
         load('p_grass', 'sprites/heroes/grass/fx_grass_projectile.png'), load('i_grass', 'sprites/heroes/grass/fx_grass_impact.png'),
+        load('p_toy', 'sprites/heroes/toy/fx_toy_projectile.png'), load('i_toy', 'sprites/heroes/toy/fx_toy_impact.png'),
+        ...(LV.night ? [...Object.keys(EH_MN).map(k => load('mn_' + k, `sprites/npc/marija_night/npc_marija_night_${k}.png`)), load('ui_flash', 'ui/ui_flashlight_icon.png'), load('ui_hidden', 'ui/ui_hidden_icon.png'),
+          ...['toy_sack', 'hide_sparkle', 'spotted'].map(k => load('fx_' + k, `sprites/fx/night/fx_${k}.png`))] : []),
         ...[...EH_COUSINS, ...EH_EXTRA].flatMap(c => [...Object.keys(EH_HERO), 'respawn'].map(k => load(`h_${c.id}_${k}`, `sprites/heroes/kids/${c.id}/hero_${c.id}_${k}.png`))),
         ...EH_ELEMENTS.flatMap(el => [
           ...Object.keys(EH_HERO).map(k => load(`h_k_${el}_${k}`, `sprites/heroes/${el}/hero_${el}_${k}.png`)),
@@ -260,6 +269,8 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
       // the lawn: falling toys (FT), Misha and his mower (MI)
       const LAWN = LV.lawn ? { got: 0, mowed: 0, n: 0, next: 120, st: 'run', t: 0 } : null, FT = [], lawnE = ents.find(o => o.type === 'lawn'), mE = ents.find(o => o.type === 'misha');
       const MI = LV.lawn && mE ? { x: mE.x, y: mE.y, dir: 1, st: 'mow', t: 0, x0: lawnE.x - 16, x1: lawnE.x + lawnE.width - 48 } : null;
+      const mnE = ents.find(o => o.type === 'marija_night');
+      const MN = LV.night && mnE ? { x: mnE.x, y: mnE.y, dir: -1, st: 'walk', t: 0, f: 0, sack: 0, cd: 0, stunCd: 0, next: 200, hid: false } : null;
       const TIMER = LV.toys || LV.cat ? { left: 60 * 60, st: 'run', t: 0 } : null;
       const MARIJA = { on: false, x: 0, y: GROUND_Y - 32, t: 0 };
       if (TIMER && LV.timer) TIMER.left = LV.timer * 60;
@@ -348,7 +359,14 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             story('l7_lost'); }
           if (LAWN.t === 4) onEnd('retry'); return; }
         if (TIMER) {
-          if (TIMER.st === 'run') { if (--TIMER.left <= 0) { TIMER.left = 0; TIMER.st = LV.cat ? 'timeup' : 'lost'; TIMER.t = 0; if (!LV.cat) { MARIJA.on = true; MARIJA.x = Math.min(cam + 560, H.x + 220); } } }
+          if (TIMER.st === 'run') { if (MN && (TIMER.left <= 1 || TOYS.every(x => x.got))) { const mine = TOYS.filter(x => x.got === true).length; TIMER.st = mine > MN.sack ? 'won' : 'nlost'; TIMER.t = 0; }
+            else if (--TIMER.left <= 0) { TIMER.left = 0; TIMER.st = LV.cat ? 'timeup' : 'lost'; TIMER.t = 0; if (!LV.cat) { MARIJA.on = true; MARIJA.x = Math.min(cam + 560, H.x + 220); } } }
+          else if (TIMER.st === 'nlost') { TIMER.t++; if (MN) MN.st = 'search';
+            if (TIMER.t === 2) { const sr = window.EH_LANG === 'sr', mine = TOYS.filter(x => x.got === true).length;
+              EH_DIALOGUE.l8_lost = [{ who: 'marija', mood: 'night_suspicious', text: sr ? `Aha! Ja imam ${MN.sack} igračaka u džaku, a vi samo ${mine}!` : `Aha! I have ${MN.sack} toys in my sack, and you only have ${mine}!` },
+                { who: 'marija', mood: 'night_grumpy', text: sr ? 'Sve idu napolje. Pa, laku noć!' : 'Out they go. Well, good night!' }];
+              story('l8_lost'); }
+            if (TIMER.t === 4) onEnd('retry'); return; }
           else if (TIMER.st === 'timeup') { TIMER.t++; if (TIMER.t === 2) story('l6_lost'); if (TIMER.t === 4) onEnd('timeup', 0, { carrying: !!H.carry }); return; }
           else if (TIMER.st === 'lost') {   // grandma Marija shuffles in, counts what was left, and the level starts again
             TIMER.t++; if (MARIJA.x > H.x + 70) MARIJA.x -= 0.6;
@@ -362,7 +380,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
               story('l5_lost'); }
             if (TIMER.t === 152) onEnd('retry');
             return; }
-          else if (TIMER.st === 'won') { TIMER.t++; if (TIMER.t === 2) story(LV.cat ? 'l6_win' : 'l5_win'); if (TIMER.t === 4) onEnd('complete', 0, { ...runStats(), toys: TOYS.length }); return; }
+          else if (TIMER.st === 'won') { TIMER.t++; if (MN) MN.st = 'yawn'; if (TIMER.t === 2) story(LV.cat ? 'l6_win' : MN ? 'l8_win' : 'l5_win'); if (TIMER.t === 4) onEnd('complete', 0, { ...runStats(), toys: TOYS.filter(x => x.got === true).length }); return; }
         }
         const HR = ROSTER[H.hero], PW = EH_POWER[HR.el];
         // ---- hero input ----
@@ -431,7 +449,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           if (ex && (!BOSS || BOSS.dead > 70) && (!FW || FW.dead > 70) && overlap(heroBox(), { x: ex.x + 15, y: ex.y + 20, w: 34, h: 75 })) onEnd('complete', H.coins, runStats());
         }
         if (TIMER && TIMER.st === 'run' && !H.dead) TOYS.forEach(t => { if (!t.got && Math.abs(H.x + 16 - (t.x + 8)) < 16 && Math.abs(H.y + 20 - (t.y + 8)) < 20) { t.got = true; fx('fx_toy_pickup', 6, 14, t.x - 8, t.y - 8, 32);
-            if (TOYS.every(x => x.got)) { TIMER.st = 'won'; TIMER.t = 0; } } });
+            if (!MN && TOYS.every(x => x.got)) { TIMER.st = 'won'; TIMER.t = 0; } } });
         if (CAT && TIMER && TIMER.st === 'run') { CAT.t++;
           if ((CAT.st === 'sit' || CAT.st === 'idle') && !H.dead && Math.abs(H.x - CAT.x) < 64 && Math.abs(H.y - CAT.y) < 48) { CAT.st = CAT.i < SPOTS.length - 1 ? 'hide' : 'found'; CAT.t = 0; }
           else if (CAT.st === 'hide' && CAT.t >= 24) { CAT.i++; CAT.x = SPOTS[CAT.i].x; CAT.y = SPOTS[CAT.i].y; CAT.st = 'sit'; CAT.t = 0; say(window.EH_LANG === 'sr' ? 'MIŠIKA JE POBEGLA! TRAŽI DALJE!' : 'MISHIKA RAN OFF! KEEP LOOKING!'); }
@@ -443,6 +461,31 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             say(window.EH_LANG === 'sr' ? 'PAZI! PAUCI I OSE!' : 'WATCH OUT! SPIDERS AND WASPS!'); } }
         if (H.carry && HATCH && TIMER && TIMER.st === 'run' && !H.dead && overlap(heroBox(), { x: HATCH.x, y: HATCH.y - 40, w: 64, h: 48 })) { TIMER.st = 'won'; TIMER.t = 0; }
         ROPES.forEach(r => { r.w += -0.0016 * Math.sin(r.a); r.w *= H.rope === r ? 0.997 : 0.99; r.a = Math.max(-0.75, Math.min(0.75, r.a + r.w)); if (H.rope !== r && Math.abs(r.a) < 0.02 && Math.abs(r.w) < 0.002) r.w += 0.004; });
+        if (MN && TIMER && TIMER.st === 'run') { MN.t++; if (MN.cd > 0) MN.cd--; if (MN.stunCd > 0) MN.stunCd--;
+          const hb = heroBox(), hc = { x: hb.x + hb.w / 2, y: hb.y + hb.h / 2 };
+          const wasHid = MN.hid; MN.hid = false;
+          for (const [px, py] of [[hc.x, hc.y], [hc.x, hb.y + 4], [hc.x, hb.y + hb.h - 3]]) { const i = Math.floor(py / 32) * MW + Math.floor(px / 32); for (const L of TL) if (L.id[i] >= 0 && EH_HIDE.has(L.id[i])) MN.hid = true; }
+          if (MN.hid && !wasHid) fx('fx_hide_sparkle', 4, 10, H.x, H.y - 4, 32);
+          if (MN.st === 'walk') { const nx = MN.x + 0.6 * MN.dir; if (nx < 24 || nx > MW * 32 - 56) MN.dir *= -1; else MN.x = nx;
+            const toy = TOYS.find(t => !t.got && t.y > GROUND_Y - 40 && Math.abs(t.x + 8 - (MN.x + 16 + MN.dir * 10)) < 6);
+            if (toy) { MN.st = 'pickup'; MN.t = 0; MN.toy = toy; } else if (--MN.next <= 0) { MN.st = 'search'; MN.t = 0; MN.next = 180 + Math.floor(Math.random() * 180); } }
+          else if (MN.st === 'search') { if (MN.t >= 80) { MN.st = 'walk'; MN.t = 0; if (Math.random() < 0.4) MN.dir *= -1; } }
+          else if (MN.st === 'pickup') { if (MN.t === 10 && MN.toy && !MN.toy.got) { MN.toy.got = 'm'; MN.sack++; fx('fx_toy_sack', 6, 12, MN.x, MN.y - 8, 32); } if (MN.t >= 40) { MN.st = 'walk'; MN.t = 0; MN.toy = null; } }
+          else if (MN.st === 'spot') { if (MN.t >= 45) { MN.st = 'walk'; MN.t = 0; } }
+          else if (MN.st === 'stunned') { if (MN.t >= 100) { MN.st = 'walk'; MN.t = 0; } }
+          const an = MN.st, n = EH_MN[an] || 4, fps = { walk: 5, search: 6, pickup: 6, spot: 8, stunned: 8, yawn: 5 }[an] || 6;
+          MN.f = an === 'pickup' || an === 'spot' ? Math.min(n - 1, Math.floor(MN.t / (60 / fps))) : Math.floor(MN.t / (60 / fps)) % n;
+          // her head: land on it from above = stunned, +5 seconds
+          const feet = H.y + 31, top = MN.y + 6;
+          if (!H.dead && H.vy > 0 && MN.st !== 'stunned' && Math.abs(H.x + 16 - (MN.x + 17)) < 9 && feet >= top - 2 && feet <= top + H.vy + 3) {
+            H.vy = -6.3; H.ground = false; H.jumpT = tick; H.jumpV = H.vy;
+            if (MN.stunCd <= 0) { MN.st = 'stunned'; MN.t = 0; MN.stunCd = 360; TIMER.left += 300; say(window.EH_LANG === 'sr' ? 'OŠAMUĆENA! +5 SEKUNDI' : 'STUNNED! +5 SECONDS'); } }
+          // the flashlight: a cone from the lens; it finds you unless you are hiding
+          const L = EH_MN_LIGHT[an][MN.f] || EH_MN_LIGHT.walk[0];
+          MN.lx = MN.dir > 0 ? MN.x + L[0] : MN.x + 32 - L[0]; MN.ly = MN.y + L[1]; MN.la = (MN.dir > 0 ? L[2] : 180 - L[2]) * Math.PI / 180; MN.light = L[3];
+          if (MN.light === 'on' && !MN.hid && !H.dead && MN.cd <= 0 && (MN.st === 'walk' || MN.st === 'search')) {
+            const dx = hc.x - MN.lx, dy = hc.y - MN.ly, d = Math.hypot(dx, dy); let da = Math.atan2(dy, dx) - MN.la; da = Math.atan2(Math.sin(da), Math.cos(da));
+            if (d < 150 && Math.abs(da) < 20 * Math.PI / 180) { MN.st = 'spot'; MN.t = 0; MN.cd = 200; TIMER.left = Math.max(1, TIMER.left - 300); fx('fx_spotted', 4, 8, H.x, H.y - 26, 32); say(window.EH_LANG === 'sr' ? 'AHA! −5 SEKUNDI' : 'AHA! −5 SECONDS'); } } }
         if (LAWN && LAWN.st === 'run') {
           if (LAWN.n < EH_LAWN.total && --LAWN.next <= 0) { LAWN.next = EH_LAWN.every; LAWN.n++;   // the next toy: drop it somewhere over the lawn, land it on the first thing below
             const ks = Object.keys(EH_TOY_NAMES), x = lawnE.x + 8 + Math.floor(Math.random() * (lawnE.width - 32)); let gy = GROUND_Y - 16;
@@ -1019,6 +1062,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         TOYS.forEach((t, i) => { if (!t.got) drawStrip(img['toy_' + t.k], 4, (tick / 10 + i) % 4, t.x, t.y, 16); });
         FT.forEach((t, i) => { if (t.st === 'gone') return; if (t.st === 'fall') drawStrip(img.fx_toy_fall_shadow, 4, Math.max(0, 3 - (t.gy - t.y) / 1.6 / 15), t.x, t.gy + 12, 16);
           drawStrip(img['toy_' + t.k], 4, (tick / 10 + i) % 4, t.x, t.y, 16); });
+        if (MN) drawStrip(img['mn_' + MN.st], EH_MN[MN.st] || 4, MN.st === 'yawn' ? (tick / 12) % 4 : MN.f, MN.x, MN.y, 32, MN.dir < 0);
         if (MI) { const a = MI.st, f = a === 'turn' ? MI.t / 7.5 : a === 'bonk' ? Math.min(3, MI.t / 7.5) : (tick / (a === 'idle' ? 12 : a === 'wave' ? 7.5 : 6)) % EH_MISHA[a];
           drawStrip(img['mi_' + a], EH_MISHA[a], f, MI.x, MI.y - 47, 64, MI.dir < 0); }
         if (MARIJA.on) { const walking = TIMER && TIMER.t < 150 && MARIJA.x > H.x + 70; drawStrip(img[walking ? 'mj_walk' : 'mj_wag_finger'], 4 + (walking ? 2 : 0), (tick / (walking ? 12 : 8)) % (walking ? 6 : 4), MARIJA.x, MARIJA.y, 32, true); }
@@ -1165,6 +1209,17 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
             if (r >= 0 && r < MH && c >= 0 && c < MW && FGL.id[r * MW + c] >= 0) { over = true; break; }
           fgA += ((over ? 0.35 : 1) - fgA) * 0.15; ctx.globalAlpha = fgA; drawLayer(FGL); ctx.globalAlpha = 1; }
         ctx.restore();
+        if (MN) {   // night: everything dark except a little glow around the kid, the moonlit windows' glow and Marija's flashlight
+          if (!window.__ehDark) { window.__ehDark = document.createElement('canvas'); window.__ehDark.width = 640; window.__ehDark.height = 360; }
+          const dk = window.__ehDark, g = dk.getContext('2d'); g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, 640, 360); g.fillStyle = 'rgba(8,6,24,0.78)'; g.fillRect(0, 0, 640, 360);
+          g.globalCompositeOperation = 'destination-out';
+          const glow = (x, y, r, a) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(0,0,0,${a})`); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); };
+          glow(H.x - cam + 16, H.y + 16, 46, MN.hid ? 0.35 : 0.7);
+          if (MN.light !== 'off' && MN.lx != null) { const lx = MN.lx - cam, ly = MN.ly, a = MN.la, h = 18 * Math.PI / 180, R = 150;
+            g.fillStyle = MN.light === 'dim' ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.92)'; g.beginPath(); g.moveTo(lx, ly); g.arc(lx, ly, R, a - h, a + h); g.closePath(); g.fill(); glow(lx, ly, 20, 0.8); }
+          glow(MN.x - cam + 16, MN.y + 16, 22, 0.5);
+          ctx.drawImage(dk, 0, 0);
+          if (MN.light !== 'off' && MN.lx != null) { ctx.globalAlpha = MN.light === 'dim' ? 0.06 : 0.13; ctx.fillStyle = '#ffe9a8'; ctx.beginPath(); ctx.moveTo(MN.lx - cam, MN.ly); ctx.arc(MN.lx - cam, MN.ly, 150, MN.la - 0.314, MN.la + 0.314); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; } }
         if (LV.fgAlways && img.fg) { const o = Math.round(((cam * 1.2) % 640 + 640) % 640), oy = Math.round((tick * 0.5) % 360);   // snowfall drifts down over everything
           for (const yy of [oy - 360, oy]) { ctx.drawImage(img.fg, -o, yy); ctx.drawImage(img.fg, 640 - o, yy); } }
         else if (arenaW > 0 && img.fg) { ctx.globalAlpha = arenaW; const o = Math.round(((cam * 1.2) % 640 + 640) % 640); ctx.drawImage(img.fg, -o, 0); ctx.drawImage(img.fg, 640 - o, 0); ctx.globalAlpha = 1; }
@@ -1180,8 +1235,13 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
           ctx.fillText(`${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`, tx + 60, 4 + 22);
           if (LV.cat) { const ic = H.carry ? img.ui_hatch : img.ui_cat, txt = H.carry ? (window.EH_LANG === 'sr' ? 'NAZAD DO OTVORA' : 'BACK TO THE HATCH') : (window.EH_LANG === 'sr' ? 'NAĐI MIŠIKU' : 'FIND MISHIKA');
             if (ic) ctx.drawImage(ic, 640 - 150, 46); ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#0d0b14'; ctx.fillText(txt, 640 - 129, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(txt, 640 - 130, 58); }
-          const got = TOYS.filter(t => t.got).length; if (TOYS.length && img.ui_toybox) ctx.drawImage(img.ui_toybox, 640 - 120, 46);
-          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; if (TOYS.length) { ctx.fillStyle = '#0d0b14'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 99, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 100, 58); } }
+          if (MN) { const sr = window.EH_LANG === 'sr', mine = TOYS.filter(t => t.got === true).length, row = (ic, txt, y, col) => { if (ic) ctx.drawImage(ic, 640 - 140, y); ctx.fillStyle = '#0d0b14'; ctx.fillText(txt, 640 - 119, y + 13); ctx.fillStyle = col; ctx.fillText(txt, 640 - 120, y + 12); };
+            ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left';
+            row(img.ui_toybox, `${sr ? 'TI' : 'YOU'}: ${mine}`, 46, '#ffc23d'); row(img.ui_flash, `${sr ? 'BAKA' : 'GRANDMA'}: ${MN.sack}`, 64, MN.sack >= mine ? '#e0521f' : '#e8e0d0');
+            ctx.fillStyle = '#e8e0d0'; ctx.fillText(`${sr ? 'OSTALO' : 'LEFT'}: ${TOYS.filter(t => !t.got).length}`, 640 - 120, 92);
+            if (MN.hid && img.ui_hidden) { ctx.drawImage(img.ui_hidden, 640 - 140, 100); ctx.fillStyle = '#0d0b14'; ctx.fillText(sr ? 'SAKRIVEN' : 'HIDDEN', 640 - 119, 113); ctx.fillStyle = '#7fd4e8'; ctx.fillText(sr ? 'SAKRIVEN' : 'HIDDEN', 640 - 120, 112); } }
+          const got = TOYS.filter(t => t.got).length; if (!MN && TOYS.length && img.ui_toybox) ctx.drawImage(img.ui_toybox, 640 - 120, 46);
+          ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left'; if (TOYS.length && !MN) { ctx.fillStyle = '#0d0b14'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 99, 59); ctx.fillStyle = '#ffc23d'; ctx.fillText(`${got}/${TOYS.length}`, 640 - 100, 58); } }
         if (LAWN) { const sr = window.EH_LANG === 'sr', row = (ic, txt, y, col) => { if (ic) ctx.drawImage(ic, 640 - 140, y); ctx.fillStyle = '#0d0b14'; ctx.fillText(txt, 640 - 119, y + 13); ctx.fillStyle = col; ctx.fillText(txt, 640 - 120, y + 12); };
           ctx.font = '8px Silkscreen, "Pixelify Sans", monospace'; ctx.textAlign = 'left';
           row(img.ui_toybox, `${LAWN.got}/${EH_LAWN.win} ${sr ? 'SPASENO' : 'SAVED'}`, 46, '#ffc23d'); row(img.ui_mower, `${LAWN.mowed}/${EH_LAWN.lose} ${sr ? 'POKOŠENO' : 'MOWED'}`, 64, LAWN.mowed >= EH_LAWN.lose - 3 ? '#e0521f' : '#e8e0d0');

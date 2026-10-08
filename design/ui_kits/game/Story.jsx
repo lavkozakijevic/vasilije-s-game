@@ -256,6 +256,15 @@ const EH_DIALOGUE = {
   l7_win: [
     { who: 'misha', mood: 'proud', text: 'Good job! Don’t leave those toys out again!' },
   ],
+  // ---- Level 8 · Night Patrol (Marija with her flashlight)
+  l8_start: [
+    { who: 'marija', mood: 'night_grumpy', text: 'Toys, toys, toys everywhere! I will find every one of them and throw them out!' },
+    { who: 'marija', mood: 'night_suspicious', text: 'And if I find one of those kids out of bed… aha!' },
+  ],
+  l8_win: [
+    { who: 'marija', mood: 'night_sleepy', text: '(yawning) Hm… my sack is so light. Where did all the toys go?' },
+    { who: 'marija', mood: 'night_proud', text: 'Clever little mice. All right, all right. Tomorrow I play with you.' },
+  ],
   l6_found: [
     { who: 'mishika', mood: 'happy', text: 'Mrrreow!' },
     { who: 'dimitrije', mood: 'happy', text: 'Got you! Now hold on tight. Back to the hatch!' },
@@ -434,7 +443,7 @@ function ehResolvePortrait(who, mood) {
   return ehPortraitCache[key];
 }
 function ehPreloadPortraits() {
-  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : []), ...(typeof SPRING !== 'undefined' ? [...SPRING, ...GARDEN, ...GARDEN_END].flatMap(sc => sc.lines) : [])];
+  const lines = [...Object.values(EH_DIALOGUE).flat(), ...Object.values(EH_NOTES).flatMap(n => n.replies), ...INTRO.flatMap(sc => sc.lines), ...(typeof ENDING !== 'undefined' ? ENDING.flatMap(sc => sc.lines) : []), ...(typeof SPRING !== 'undefined' ? [...SPRING, ...GARDEN, ...GARDEN_END, ...NIGHT, ...NIGHT_END].flatMap(sc => sc.lines) : [])];
   for (const l of lines) { if (!l.who) continue; const who = l.who === 'all' ? KIDS : l.who === 'kosta_vasilije' ? ['kosta', 'vasilije'] : l.who === 'boys' ? ['kosta', 'vasilije', 'dimitrije'] : [l.who];
     for (const w of who) ehResolvePortrait(w, l.mood || (l.who === 'all' ? 'ali' : 'neutral')); }
 }
@@ -702,6 +711,20 @@ const GARDEN = [
     { at: 6.2, who: 'vasilije', text: 'We have to catch them before the mower does!' },
     { at: 8.2, who: 'dimitrije', mood: 'okej', text: 'Okej.' }] },
 ];
+const NIGHT = [
+  { d: 10, lines: [{ at: 1.0, who: null, text: 'In the evening, the cousins carried the toys back inside…' },
+    { at: 3.2, who: 'katarina', mood: 'happy', text: 'We can put them away tomorrow.' },
+    { at: 5.4, who: 'vasilije', text: 'Yes, tomorrow!' }] },
+  { d: 9, lines: [{ at: 1.2, who: null, text: 'Night fell over Ivanovo.' }] },
+  { d: 12, lines: [{ at: 0.8, who: 'marija', mood: 'night_grumpy', text: 'They didn’t pick up their toys AGAIN!' },
+    { at: 3.2, who: 'marija', mood: 'night_grumpy', text: 'Those four cousins! I will find every toy and throw them all out!' },
+    { at: 6.4, who: 'dimitrije', mood: 'ali', text: '(whispering) Quick! Fifty seconds before she gets them all. Hide in the shadows!' }] },
+];
+const NIGHT_END = [
+  { d: 10, lines: [{ at: 1.0, who: null, text: 'In the morning, every toy was back in the toy box.' },
+    { at: 3.4, who: 'marija', mood: 'night_sleepy', text: 'Zzz… Aha… zzz…' },
+    { at: 5.6, who: 'all', mood: 'happy', text: '(whispering) Grandma Marija joins the team!' }] },
+];
 const GARDEN_END = [
   { d: 12, lines: [{ at: 0.8, who: 'misha', mood: 'proud', text: 'Good job! Don’t leave those toys out again!' },
     { at: 3.2, who: 'ruby', mood: 'happy', text: 'Misha, now you have to play with the kids too!' },
@@ -791,7 +814,7 @@ function EndingCutscene({ onDone }) {
   s.textContent = '@keyframes ehBob{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}@keyframes ehBlink{0%{opacity:1}100%{opacity:0}}@keyframes ehFadeIn{from{opacity:0}to{opacity:1}}'; document.head.appendChild(s); })();
 ehPreloadPortraits();
 // spring morning (after the ending, before the toy level): sunrise pan, the cousins waking up, Rubi calling them
-const EH_CUTS = { spring: { dir: 'spring', scenes: SPRING, files: [0, 1, 2] }, garden: { dir: 'garden', scenes: GARDEN, files: [0, 1] }, garden_end: { dir: 'garden', scenes: GARDEN_END, files: [2] } };
+const EH_CUTS = { spring: { dir: 'spring', scenes: SPRING, files: [0, 1, 2] }, garden: { dir: 'garden', scenes: GARDEN, files: [0, 1] }, garden_end: { dir: 'garden', scenes: GARDEN_END, files: [2] }, night: { dir: 'night', scenes: NIGHT, files: [0, 1, 2] }, night_end: { dir: 'night', scenes: NIGHT_END, files: [3] } };
 function SpringCutscene({ onDone, set = 'spring' }) {
   const CUT = EH_CUTS[set], SCN = CUT.scenes;
   const cv = React.useRef(null), CL = useCutsceneLine(), { line, setLine } = CL;
@@ -809,6 +832,9 @@ function SpringCutscene({ onDone, set = 'spring' }) {
     const g = cv.current.getContext('2d'); g.imageSmoothingEnabled = false;
     const d = (im, x = 0, y = 0) => im && g.drawImage(im, Math.round(x / 2) * 2, Math.round(y / 2) * 2);
     const draw = (n, t) => { const L = k => img[`L${n}_${k}`];
+      if (CUT.dir === 'night') { if (set === 'night' && n === 1) {   // the moon rises behind the house, then the windows go dark one by one
+          d(L('bg')); d(L('moon'), 0, Math.max(0, 60 - t * 15)); d(L('house')); for (let i = 1; i <= 4; i++) if (t < 4.5 + i * 0.7) d(L('light_' + i)); if (Math.floor(t * 2) % 2 === 0) d(L('fx')); return; }
+        const bob = Math.floor(t * 2) % 2 ? 2 : 0; d(L('bg')); d(L('chars'), set === 'night' && n === 0 ? Math.max(0, 40 - t * 20) : 0, bob); if (Math.floor(t * 3) % 2 === 0) d(L('fx')); else d(L('fx'), 2, 0); return; }
       if (CUT.dir === 'garden') { const bob = Math.floor(t * 2) % 2 ? 2 : 0, up = set === 'garden' && n === 1 ? -Math.min(20, t * 4) : 0; d(L('bg')); d(L('chars'), set === 'garden' && n === 0 ? Math.max(0, 40 - t * 20) : 0, bob + up); if (Math.floor(t * 3) % 2 === 0) d(L('fx')); else d(L('fx'), 2, 0); return; }
       if (n === 0) { const up = Math.min(1, t / 7); d(L('bg'), 0, 0); const fy = (t * 10) % 40; d(L('fx'), -((t * 20) % 40), -fy); }   // sunrise: petals and birds drift
       else if (n === 1) { const z = 1 + Math.min(0.06, t * 0.008), w = 640 * z, h = 360 * z; for (const k of ['bg', 'chars']) if (L(k)) g.drawImage(L(k), Math.round((640 - w) / 2), Math.round(360 - h), Math.round(w), Math.round(h));

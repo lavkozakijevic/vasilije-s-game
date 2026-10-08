@@ -8,7 +8,7 @@ const EH_PLAYERS = [
   { id: 'dimitrije', name: 'Dimitrije', sprite: 'dimitrije', key: 4 },
 ];
 const EH_STAT_LEVELS = ['l1', 'l2', 'l3', 'l4'];   // the levels that count for Vera (all coins + all gems in one play each)
-const EH_BOARD_LEVELS = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7'];   // shown on the leaderboard (5-7 have no coins or gems: best time only)
+const EH_BOARD_LEVELS = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8'];   // shown on the leaderboard (5-8 have no coins or gems: best time only)
 
 // ---- storage (this browser for now): { players: { kosta: { l1: { coins, coinTotal, gems, gemTotal, time, full } } } }
 const EH_STORE = {
