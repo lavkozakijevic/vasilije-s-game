@@ -1,0 +1,35 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "tilesHorizontally": true,
+ "layers": [
+  {
+   "file": "bg_house_night_sky.png",
+   "parallax": 0,
+   "opaque": true
+  },
+  {
+   "file": "bg_house_night_far.png",
+   "parallax": 0.2,
+   "opaque": false
+  },
+  {
+   "file": "bg_house_night_mid.png",
+   "parallax": 0.45,
+   "opaque": false
+  },
+  {
+   "file": "bg_house_night_near.png",
+   "parallax": 0.7,
+   "opaque": false
+  },
+  {
+   "file": "fg_house_night_moonbeams.png",
+   "parallax": 1.2,
+   "foreground": true,
+   "note": "drift it slowly (about 4px/s to the right) so the dust moves"
+  }
+ ]
+}

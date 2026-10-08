@@ -1,0 +1,133 @@
+{
+ "id": "hero_marija",
+ "type": "hero",
+ "name": "Marija",
+ "element": "toy",
+ "power": "Toy throw",
+ "unlock": "win Level 8 (Night Patrol)",
+ "heightPx": 24,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "feet; bottom-center of frame"
+ },
+ "hitbox": {
+  "x": 10,
+  "y": 8,
+  "w": 12,
+  "h": 23
+ },
+ "animations": {
+  "idle": {
+   "file": "hero_marija_idle.png",
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "file": "hero_marija_run.png",
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "file": "hero_marija_jump.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "fall": {
+   "file": "hero_marija_fall.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "land": {
+   "file": "hero_marija_land.png",
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "attack": {
+   "file": "hero_marija_attack.png",
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  "hurt": {
+   "file": "hero_marija_hurt.png",
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  "death": {
+   "file": "hero_marija_death.png",
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "respawn": {
+   "file": "hero_marija_respawn.png",
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  }
+ },
+ "fx": {
+  "projectile": {
+   "file": "../../toy/fx_toy_projectile.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "toys": [
+    "teddy",
+    "car",
+    "lego",
+    "football"
+   ],
+   "frameNote": "pick a random toy k (0-3) per throw and loop frames 2k and 2k+1",
+   "motion": "arc",
+   "velocity": {
+    "x": 190,
+    "y": -240
+   },
+   "gravityPxPerSec2": 700,
+   "spawnOnAttackFrame": 3,
+   "spawnOffset": {
+    "x": 30,
+    "y": 15,
+    "note": "centre of the toy, relative to frame top-left when facing right; mirror x when facing left"
+   }
+  },
+  "impact": {
+   "file": "../../toy/fx_toy_impact.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "anchor": "center",
+   "hurtFrames": [
+    0,
+    1
+   ],
+   "radiusPx": 12
+  }
+ },
+ "icon": {
+  "file": "../../../../ui/icon_element_toy.png",
+  "frameWidth": 16,
+  "frameHeight": 16
+ },
+ "colors": {
+  "hair": "#8a7f8e",
+  "top": "#7fd4e8",
+  "skirt": "#4a3f55"
+ },
+ "palette": "elemental16.hex"
+}

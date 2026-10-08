@@ -1,0 +1,10 @@
+# Night cutscene (Level 8)
+
+640×360 layers, drawn at 320×180 and doubled, same rules as the garden cutscene. Most scenes use bg, chars, fx. `night_02_moon` has extra layers so the moon can rise behind the house and the windows can go dark one by one: bg (sky, stars), moon, house, light_1..light_4 (one lit window each), fx.
+
+- **night_01_inside**: `night_01_inside_bg.png`, `night_01_inside_chars.png`, `night_01_inside_fx.png`. Motion: the cousins walk in from the garden door (slide the chars layer in from the left, 1-2px bob); the toys they carry drop to the floor one by one (small 2px bounces); the orange sunset light on the floor pulses gently
+- **night_02_moon**: `night_02_moon_bg.png`, `night_02_moon_moon.png`, `night_02_moon_house.png`, `night_02_moon_light_1.png`, `night_02_moon_light_2.png`, `night_02_moon_light_3.png`, `night_02_moon_light_4.png`, `night_02_moon_fx.png`. Motion: start with all four windows lit. The moon layer rises from y +60px to 0 over 4s, behind the house. Then hide light_1 .. light_4 one by one, about 0.7s apart; the stars twinkle (fx)
+- **night_03_marija**: `night_03_marija_bg.png`, `night_03_marija_chars.png`, `night_03_marija_fx.png`. Motion: hold on Marija at the top of the stairs; the beam layer (fx) sways slowly over the toys (rotate around her lens, ±4°); her grumble lines bob. Line: "They didn't pick up their toys AGAIN!"
+- **night_04_done**: `night_04_done_bg.png`, `night_04_done_chars.png`, `night_04_done_fx.png`. Motion: morning light; keep the layers still: bob the tiptoeing cousins 1px on alternate beats, blink the "zzz" above Marija on and off, twinkle the dust in the sunbeam
+
+01: the cousins come in from the garden with the toys in their arms and drop them on the living-room floor; orange evening light through the window. 02: the house from outside at night: the moon rises, the lights go out. 03: Marija in her nightgown at the top of the stairs, her flashlight on the toys on the floor, grumbling. 04: morning: Marija asleep in her armchair under the blanket with her full sack, smiling; the cousins tiptoe past with the toys in the toy box.

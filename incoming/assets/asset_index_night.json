@@ -1,0 +1,526 @@
+{
+ "game": "Elemental Heroes",
+ "level": "8 Night Patrol",
+ "note": "phase 10 entries; merge into asset_index.json",
+ "assets": [
+  {
+   "file": "backgrounds/house_night/bg_house_night_far.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.2; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house_night/bg_house_night_mid.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.45; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house_night/bg_house_night_near.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0.7; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house_night/bg_house_night_sky.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "parallax 0; tiles horizontally"
+  },
+  {
+   "file": "backgrounds/house_night/fg_house_night_moonbeams.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "transparent foreground, parallax 1.2; moonbeams and dust"
+  },
+  {
+   "file": "cutscenes/night/night_01_inside_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_01_inside_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_01_inside_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_house.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_light_1.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_light_2.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_light_3.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_light_4.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_02_moon_moon.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_03_marija_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_03_marija_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_03_marija_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_04_done_bg.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_04_done_chars.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "cutscenes/night/night_04_done_fx.png",
+   "width": 640,
+   "height": 360,
+   "frameWidth": 640,
+   "frameHeight": 360,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "sprites/fx/night/fx_hide_sparkle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false,
+   "notes": "tiny \"shh\" sparkle when a kid ducks into a hiding place; centre on the kid"
+  },
+  {
+   "file": "sprites/fx/night/fx_spotted.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false,
+   "notes": "\"!\" pops above a kid's head when the beam finds them; bottom-centre 2px above the head, hold the last frame ~0.5s"
+  },
+  {
+   "file": "sprites/fx/night/fx_toy_sack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "notes": "a toy drops into Marija's sack with a little puff; anchor bottom-centre on the sack (or on the toy when she grabs it from a distance)"
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_attack.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 14,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_death.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_fall.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_hurt.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_idle.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_jump.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 8,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_land.png",
+   "width": 64,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "fps": 12,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_respawn.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 10,
+   "loop": false
+  },
+  {
+   "file": "sprites/heroes/kids/marija/hero_marija_run.png",
+   "width": 256,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true
+  },
+  {
+   "file": "sprites/heroes/toy/fx_toy_impact.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 12,
+   "loop": false,
+   "notes": "soft bonk with little stars; hurts on frames 0-1"
+  },
+  {
+   "file": "sprites/heroes/toy/fx_toy_projectile.png",
+   "width": 128,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "notes": "frames 0-1 teddy, 2-3 car, 4-5 lego brick, 6-7 ball; loop one pair per throw"
+  },
+  {
+   "file": "sprites/npc/marija_night/npc_marija_night_pickup.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": false,
+   "notes": "bends down, picks up a toy, drops it in the sack on her back: remove the toy on frame 1, +1 sack on frame 3"
+  },
+  {
+   "file": "sprites/npc/marija_night/npc_marija_night_search.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "stops and sweeps the flashlight up and down, squinting; play 1-2 loops, then walk"
+  },
+  {
+   "file": "sprites/npc/marija_night/npc_marija_night_spot.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "\"Aha!\": straightens up, eyebrows up; hold the last frame ~0.6s"
+  },
+  {
+   "file": "sprites/npc/marija_night/npc_marija_night_stunned.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "notes": "a kid landed on her head: wobbles, stars, the flashlight flickers off/on. Loop for stunSec, then walk"
+  },
+  {
+   "file": "sprites/npc/marija_night/npc_marija_night_walk.png",
+   "width": 192,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "notes": "slow shuffle (about 16px/s); the flashlight sways a little"
+  },
+  {
+   "file": "sprites/npc/marija_night/npc_marija_night_yawn.png",
+   "width": 128,
+   "height": 32,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": false,
+   "notes": "ending: yawns behind her hand, flashlight dimmed"
+  },
+  {
+   "file": "tilesets/house_night/tileset_house_night.png",
+   "width": 256,
+   "height": 96,
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "fps": 0,
+   "loop": false,
+   "notes": "ids 0-16, 8 columns, no margin/spacing; use on top of tileset_house"
+  },
+  {
+   "file": "ui/icon_element_toy.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_night_grumpy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_night_proud.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_night_sleepy.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/portraits/portrait_marija_night_suspicious.png",
+   "width": 64,
+   "height": 64,
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "fps": 0,
+   "loop": false
+  },
+  {
+   "file": "ui/ui_flashlight_icon.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "HUD: toys in Marija's sack"
+  },
+  {
+   "file": "ui/ui_hidden_icon.png",
+   "width": 16,
+   "height": 16,
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 1,
+   "fps": 0,
+   "loop": false,
+   "notes": "HUD: shown while the kid is hidden"
+  }
+ ]
+}

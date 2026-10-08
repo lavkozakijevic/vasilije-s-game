@@ -1,0 +1,428 @@
+{
+ "id": "npc_marija_night",
+ "type": "npc",
+ "name": "Marija (night)",
+ "age": 84,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "facing": "right",
+ "origin": {
+  "x": 16,
+  "y": 31,
+  "note": "same feet as npc_marija"
+ },
+ "hitbox": {
+  "x": 9,
+  "y": 9,
+  "w": 14,
+  "h": 22
+ },
+ "walkSpeedPxPerSec": 16,
+ "flashlight": {
+  "note": "the engine draws the beam; it starts at the lens pixel of the current frame (relative to frame top-left, facing right; mirror x and angle when facing left). angleDeg: 0 = straight ahead, positive = down",
+  "suggestedBeam": {
+   "lengthPx": 150,
+   "halfAngleDeg": 18
+  },
+  "perFrame": {
+   "walk": [
+    {
+     "x": 31,
+     "y": 20,
+     "angleDeg": 17,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 20,
+     "angleDeg": 11,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 21,
+     "angleDeg": 7,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 20,
+     "angleDeg": 10,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 20,
+     "angleDeg": 16,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 23,
+     "angleDeg": 21,
+     "light": "on"
+    }
+   ],
+   "search": [
+    {
+     "x": 30,
+     "y": 12,
+     "angleDeg": -34,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 16,
+     "angleDeg": -9,
+     "light": "on"
+    },
+    {
+     "x": 30,
+     "y": 23,
+     "angleDeg": 29,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 19,
+     "angleDeg": 6,
+     "light": "on"
+    }
+   ],
+   "pickup": [
+    {
+     "x": 30,
+     "y": 28,
+     "angleDeg": 52,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 30,
+     "angleDeg": 63,
+     "light": "on"
+    },
+    {
+     "x": 30,
+     "y": 28,
+     "angleDeg": 52,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 20,
+     "angleDeg": 17,
+     "light": "on"
+    }
+   ],
+   "spot": [
+    {
+     "x": 32,
+     "y": 17,
+     "angleDeg": -3,
+     "light": "on"
+    },
+    {
+     "x": 33,
+     "y": 14,
+     "angleDeg": -11,
+     "light": "on"
+    },
+    {
+     "x": 33,
+     "y": 14,
+     "angleDeg": -11,
+     "light": "on"
+    },
+    {
+     "x": 33,
+     "y": 14,
+     "angleDeg": -11,
+     "light": "on"
+    }
+   ],
+   "yawn": [
+    {
+     "x": 25,
+     "y": 28,
+     "angleDeg": 69,
+     "light": "dim"
+    },
+    {
+     "x": 25,
+     "y": 28,
+     "angleDeg": 69,
+     "light": "dim"
+    },
+    {
+     "x": 25,
+     "y": 28,
+     "angleDeg": 72,
+     "light": "dim"
+    },
+    {
+     "x": 25,
+     "y": 28,
+     "angleDeg": 69,
+     "light": "dim"
+    }
+   ],
+   "stunned": [
+    {
+     "x": 28,
+     "y": 24,
+     "angleDeg": 34,
+     "light": "on"
+    },
+    {
+     "x": 31,
+     "y": 16,
+     "angleDeg": -17,
+     "light": "off"
+    },
+    {
+     "x": 30,
+     "y": 27,
+     "angleDeg": 52,
+     "light": "dim"
+    },
+    {
+     "x": 31,
+     "y": 20,
+     "angleDeg": 11,
+     "light": "off"
+    }
+   ]
+  }
+ },
+ "headPlatform": {
+  "note": "one-way platform on her head per frame (x, y = top, w); landing on it plays stunned",
+  "perFrame": {
+   "walk": [
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 8,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 8,
+     "w": 10
+    }
+   ],
+   "search": [
+    {
+     "x": 13,
+     "y": 5,
+     "w": 10
+    },
+    {
+     "x": 13,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 13,
+     "y": 7,
+     "w": 10
+    },
+    {
+     "x": 13,
+     "y": 6,
+     "w": 10
+    }
+   ],
+   "pickup": [
+    {
+     "x": 14,
+     "y": 8,
+     "w": 10
+    },
+    {
+     "x": 17,
+     "y": 11,
+     "w": 10
+    },
+    {
+     "x": 14,
+     "y": 8,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    }
+   ],
+   "spot": [
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 4,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 4,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 5,
+     "w": 10
+    }
+   ],
+   "yawn": [
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 5,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 5,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    }
+   ],
+   "stunned": [
+    {
+     "x": 9,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 15,
+     "y": 6,
+     "w": 10
+    },
+    {
+     "x": 12,
+     "y": 6,
+     "w": 10
+    }
+   ]
+  }
+ },
+ "behavior": "patrols the room with walk; at the end of a room (or every ~4s) plays search. Walks to the nearest toy in her beam and plays pickup. If the beam touches a kid who is NOT on a hide = true tile: play spot, show fx_spotted over the kid, -5s. A kid landing on her head: play stunned for 2s (beam off), +5s, bounce the kid up (vy -380px/s).",
+ "level": {
+  "timeSec": 50,
+  "totalToys": 30,
+  "kidPlayers": 1,
+  "kidChoice": [
+   "konstantin",
+   "katarina",
+   "vasilije",
+   "dimitrije"
+  ],
+  "spottedPenaltySec": 5,
+  "spottedLine": "Aha!",
+  "headStompBonusSec": 5,
+  "stunSec": 2,
+  "win": "when the timer reaches 0 or no toys are left, the kid wins if kidToys > sackToys; otherwise the level restarts",
+  "onWin": "Marija joins as a playable hero (sprites/heroes/kids/marija)",
+  "toyPool": "../../items/toys/ (Level 5 toy sprites, reused)",
+  "hidingTiles": "../../../tilesets/house_night/ (tiles with hide = true)"
+ },
+ "animations": {
+  "walk": {
+   "file": "npc_marija_night_walk.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "notes": "slow shuffle (about 16px/s); the flashlight sways a little"
+  },
+  "search": {
+   "file": "npc_marija_night_search.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "notes": "stops and sweeps the flashlight up and down, squinting; play 1-2 loops, then walk"
+  },
+  "pickup": {
+   "file": "npc_marija_night_pickup.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 6,
+   "loop": false,
+   "notes": "bends down, picks up a toy, drops it in the sack on her back: remove the toy on frame 1, +1 sack on frame 3"
+  },
+  "spot": {
+   "file": "npc_marija_night_spot.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "notes": "\"Aha!\": straightens up, eyebrows up; hold the last frame ~0.6s"
+  },
+  "yawn": {
+   "file": "npc_marija_night_yawn.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 5,
+   "loop": false,
+   "notes": "ending: yawns behind her hand, flashlight dimmed"
+  },
+  "stunned": {
+   "file": "npc_marija_night_stunned.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "notes": "a kid landed on her head: wobbles, stars, the flashlight flickers off/on. Loop for stunSec, then walk"
+  }
+ },
+ "portraits": [
+  "../../../ui/portraits/portrait_marija_night_grumpy.png",
+  "../../../ui/portraits/portrait_marija_night_suspicious.png",
+  "../../../ui/portraits/portrait_marija_night_sleepy.png",
+  "../../../ui/portraits/portrait_marija_night_proud.png"
+ ],
+ "palette": "elemental16.hex"
+}

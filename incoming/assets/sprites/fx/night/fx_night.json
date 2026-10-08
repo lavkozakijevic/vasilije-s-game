@@ -1,0 +1,32 @@
+{
+ "biome": "house_night",
+ "effects": {
+  "fx_toy_sack": {
+   "file": "fx_toy_sack.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "notes": "a toy drops into Marija's sack with a little puff; anchor bottom-centre on the sack (or on the toy when she grabs it from a distance)"
+  },
+  "fx_hide_sparkle": {
+   "file": "fx_hide_sparkle.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false,
+   "notes": "tiny \"shh\" sparkle when a kid ducks into a hiding place; centre on the kid"
+  },
+  "fx_spotted": {
+   "file": "fx_spotted.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "fps": 10,
+   "loop": false,
+   "notes": "\"!\" pops above a kid's head when the beam finds them; bottom-centre 2px above the head, hold the last frame ~0.5s"
+  }
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "size": [
+  64,
+  64
+ ],
+ "note": "additions for level 8; merge into portraits.json. Day portraits of Marija (portrait_marija_*) are unchanged.",
+ "portraits": [
+  {
+   "file": "portrait_marija_night_grumpy.png",
+   "speaker": "Marija",
+   "expression": "grumpy",
+   "notes": "\"They didn't pick up their toys AGAIN!\""
+  },
+  {
+   "file": "portrait_marija_night_suspicious.png",
+   "speaker": "Marija",
+   "expression": "suspicious",
+   "notes": "flashlight under her chin"
+  },
+  {
+   "file": "portrait_marija_night_sleepy.png",
+   "speaker": "Marija",
+   "expression": "sleepy",
+   "notes": "yawning, ending"
+  },
+  {
+   "file": "portrait_marija_night_proud.png",
+   "speaker": "Marija",
+   "expression": "proud",
+   "notes": "holding the sack, when Marija joins"
+  }
+ ]
+}

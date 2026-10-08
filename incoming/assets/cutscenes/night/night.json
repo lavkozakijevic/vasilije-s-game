@@ -1,0 +1,114 @@
+{
+ "size": [
+  640,
+  360
+ ],
+ "artScale": 2,
+ "layerOrder": "as listed per scene, bottom to top",
+ "scenes": [
+  {
+   "id": "night_01_inside",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "night_01_inside_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "night_01_inside_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "night_01_inside_fx.png"
+    }
+   ],
+   "motion": "the cousins walk in from the garden door (slide the chars layer in from the left, 1-2px bob); the toys they carry drop to the floor one by one (small 2px bounces); the orange sunset light on the floor pulses gently"
+  },
+  {
+   "id": "night_02_moon",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "night_02_moon_bg.png"
+    },
+    {
+     "name": "moon",
+     "file": "night_02_moon_moon.png"
+    },
+    {
+     "name": "house",
+     "file": "night_02_moon_house.png"
+    },
+    {
+     "name": "light_1",
+     "file": "night_02_moon_light_1.png"
+    },
+    {
+     "name": "light_2",
+     "file": "night_02_moon_light_2.png"
+    },
+    {
+     "name": "light_3",
+     "file": "night_02_moon_light_3.png"
+    },
+    {
+     "name": "light_4",
+     "file": "night_02_moon_light_4.png"
+    },
+    {
+     "name": "fx",
+     "file": "night_02_moon_fx.png"
+    }
+   ],
+   "motion": "start with all four windows lit. The moon layer rises from y +60px to 0 over 4s, behind the house. Then hide light_1 .. light_4 one by one, about 0.7s apart; the stars twinkle (fx)"
+  },
+  {
+   "id": "night_03_marija",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "night_03_marija_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "night_03_marija_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "night_03_marija_fx.png"
+    }
+   ],
+   "motion": "hold on Marija at the top of the stairs; the beam layer (fx) sways slowly over the toys (rotate around her lens, ±4°); her grumble lines bob",
+   "dialogue": [
+    {
+     "speaker": "Marija",
+     "portrait": "portrait_marija_night_grumpy.png",
+     "text": "They didn't pick up their toys AGAIN!"
+    }
+   ],
+   "lens": {
+    "x": 540,
+    "y": 62,
+    "note": "pivot for the beam sway, in 640×360 pixels"
+   }
+  },
+  {
+   "id": "night_04_done",
+   "layers": [
+    {
+     "name": "bg",
+     "file": "night_04_done_bg.png"
+    },
+    {
+     "name": "chars",
+     "file": "night_04_done_chars.png"
+    },
+    {
+     "name": "fx",
+     "file": "night_04_done_fx.png"
+    }
+   ],
+   "motion": "morning light; keep the layers still: bob the tiptoeing cousins 1px on alternate beats, blink the \"zzz\" above Marija on and off, twinkle the dust in the sunbeam"
+  }
+ ]
+}

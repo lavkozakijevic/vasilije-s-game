@@ -1,0 +1,402 @@
+{
+ "type": "tileset",
+ "version": "1.10",
+ "tiledversion": "1.10.2",
+ "name": "house_night",
+ "tilewidth": 32,
+ "tileheight": 32,
+ "tilecount": 24,
+ "columns": 8,
+ "margin": 0,
+ "spacing": 0,
+ "image": "tileset_house_night.png",
+ "imagewidth": 256,
+ "imageheight": 96,
+ "tiles": [
+  {
+   "id": 0,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tablecloth_tl"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 1,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tablecloth_tr"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tablecloth_bl"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "tablecloth_br"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "heavy_curtain_top"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "heavy_curtain_mid"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "heavy_curtain_bottom"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_when_behind",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "fade_alpha_note",
+     "type": "string",
+     "value": "engine fades the whole layer to ~35% while the hero overlaps"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_blanket_tl"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_blanket_tr"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "oneway",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_blanket_bl"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "armchair_blanket_br"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "laundry_basket"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cushion_pile_l"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "cushion_pile_r"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "coat_rack_top"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "coat_rack_mid"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "properties": [
+    {
+     "name": "name",
+     "type": "string",
+     "value": "coat_rack_bottom"
+    },
+    {
+     "name": "hide",
+     "type": "bool",
+     "value": true
+    },
+    {
+     "name": "foreground",
+     "type": "bool",
+     "value": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,44 @@
+{
+ "element": "toy",
+ "owner": "hero_marija",
+ "projectile": {
+  "file": "fx_toy_projectile.png",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "frames": 8,
+  "fps": 12,
+  "loop": true,
+  "toys": {
+   "teddy": [
+    0,
+    1
+   ],
+   "car": [
+    2,
+    3
+   ],
+   "lego": [
+    4,
+    5
+   ],
+   "football": [
+    6,
+    7
+   ]
+  }
+ },
+ "impact": {
+  "file": "fx_toy_impact.png",
+  "frameWidth": 32,
+  "frameHeight": 32,
+  "frames": 4,
+  "fps": 12,
+  "loop": false,
+  "anchor": "center",
+  "hurtFrames": [
+   0,
+   1
+  ]
+ },
+ "icon": "../../../ui/icon_element_toy.png"
+}
