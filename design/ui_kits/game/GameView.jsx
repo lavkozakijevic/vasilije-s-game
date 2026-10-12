@@ -44,7 +44,7 @@ const EH_COUSINS = [
 ];
 const EH_KNIGHTS = { fire: 'Cinder', water: 'Brine', earth: 'Basalt', air: 'Wisp', ice: 'Rime', lightning: 'Jolt', shadow: 'Umbra', light: 'Aurel' };
 const EH_ELEMENTS = ['fire', 'water', 'earth', 'air', 'ice', 'lightning', 'shadow', 'light'];   // the knights' elements
-// unlockable heroes (keys 5-7): Ruby after the toy level, Baba Vera for a cousin with perfect runs of levels 1-4, Uncle Misha after the lawn
+// unlockable heroes (keys 5-7): Ruby after the toy level, Baba Vera for a cousin with perfect runs of levels 1-8, Uncle Misha after the lawn
 const EH_EXTRA = [{ id: 'ruby', el: 'present', name: 'Rubi', kid: true, key: 5 }, { id: 'vera', el: 'gold', name: 'Baba Vera', kid: true, key: 6 }, { id: 'misha', el: 'grass', name: 'Misha', kid: true, key: 7 }, { id: 'marija', el: 'toy', name: 'Marija', kid: true, key: 8 }];
 // Per-level setup. Each level has a star cousin: the level starts with them and only they can land the final blow on its boss.
 // T = the tileset's rules (ids from its .tsj): solid, one-way, hazards, water, animated tiles, crumble planks, bounce tile, slippery ice.
@@ -351,7 +351,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
         tick++;
         if (RIDE && RIDE.on) { RIDE.t++; if (RIDE.t === 1) { const CH = ROSTER[H.hero]; onHud({ hp: H.hp, coins: H.coins, element: CH.el, name: CH.name }); } if (RIDE.t === 50) story(LV.id + '_start'); if (RIDE.t >= 230) RIDE.on = false; return; }   // the eagle carries Kosta up the cliff
         if (tick === 1 && !RIDE) story(LV.id + '_start');
-        if (LAWN && LAWN.st === 'won') { LAWN.t++; if (MI) MI.st = 'wave'; if (LAWN.t === 2) story('l7_win'); if (LAWN.t === 4) onEnd('complete', 0, { ...runStats(), toys: LAWN.got }); return; }
+        if (LAWN && LAWN.st === 'won') { LAWN.t++; if (MI) MI.st = 'wave'; if (LAWN.t === 2) story('l7_win'); if (LAWN.t === 4) onEnd('complete', H.coins, { ...runStats(), toys: LAWN.got }); return; }
         if (LAWN && LAWN.st === 'lost') { LAWN.t++; if (MI) MI.st = 'idle';
           if (LAWN.t === 2) { const sr = window.EH_LANG === 'sr';
             EH_DIALOGUE.l7_lost = [{ who: 'misha', mood: 'laughing', text: sr ? `Ha! Moja kosačica je pokupila ${LAWN.mowed} igračaka. Sad su konfete!` : `Ha! My mower got ${LAWN.mowed} toys. They're confetti now!` },
@@ -380,7 +380,7 @@ function GameView({ level = 'l1', paused, runId, onHud, onEnd, onStory, heroes =
               story('l5_lost'); }
             if (TIMER.t === 152) onEnd('retry');
             return; }
-          else if (TIMER.st === 'won') { TIMER.t++; if (MN) MN.st = 'yawn'; if (TIMER.t === 2) story(LV.cat ? 'l6_win' : MN ? 'l8_win' : 'l5_win'); if (TIMER.t === 4) onEnd('complete', 0, { ...runStats(), toys: TOYS.filter(x => x.got === true).length }); return; }
+          else if (TIMER.st === 'won') { TIMER.t++; if (MN) MN.st = 'yawn'; if (TIMER.t === 2) story(LV.cat ? 'l6_win' : MN ? 'l8_win' : 'l5_win'); if (TIMER.t === 4) onEnd('complete', H.coins, { ...runStats(), toys: TOYS.filter(x => x.got === true).length }); return; }
         }
         const HR = ROSTER[H.hero], PW = EH_POWER[HR.el];
         // ---- hero input ----

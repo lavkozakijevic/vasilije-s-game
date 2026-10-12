@@ -48,6 +48,12 @@ row(6, 54, [41, 42]); row(7, 54, [43, 44]); row(8, 54, [45, 46]); spot('spot2', 
 for r in (5, 6, 7, 8): put(ground, r, 57, [32, 30, 31, 30][r - 5])
 beam(3, 58, 62); spot('spot3', 61, 3)
 put(decor, 8, 59, 79); put(decor, 8, 61, 80); ent('enemy_rat', 'rat', 60 * 32, 257)
+
+# coins and gems (all coins + all 3 gems in one play of every level unlocks Baba Vera); r = the row whose top they rest on
+def coin(c, r): ent('item_coin', 'coin', c * 32 + 8, r * 32 - 20, 16, 16)
+def gem(c, r): ent('item_gem', 'gem', c * 32 + 8, r * 32 - 22, 16, 16)
+for c, r in [(14, 6), (17, 6), (23, 6), (28, 4), (31, 4), (35, 9), (38, 9), (41, 7), (45, 7), (48, 3), (51, 3), (55, 6), (57, 5), (59, 3), (8, 9), (25, 9), (50, 9)]: coin(c, r)
+gem(52, 3); gem(62, 3); gem(33, 4)
 flat = lambda layer: [v for row_ in layer for v in row_]
 m = dict(compressionlevel=-1, height=H, width=W, infinite=False, orientation='orthogonal', renderorder='right-down', tilewidth=32, tileheight=32, type='map', version='1.10', tiledversion='1.10.2',
          nextlayerid=10, nextobjectid=len(ents) + 1, tilesets=[dict(firstgid=1, source='../tilesets/attic/tileset_attic.tsj')], layers=[])

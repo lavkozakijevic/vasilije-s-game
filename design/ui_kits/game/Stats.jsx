@@ -7,8 +7,8 @@ const EH_PLAYERS = [
   { id: 'vasilije', name: 'Vasilije', sprite: 'vasilije', key: 3 },
   { id: 'dimitrije', name: 'Dimitrije', sprite: 'dimitrije', key: 4 },
 ];
-const EH_STAT_LEVELS = ['l1', 'l2', 'l3', 'l4'];   // the levels that count for Vera (all coins + all gems in one play each)
-const EH_BOARD_LEVELS = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8'];   // shown on the leaderboard (5-8 have no coins or gems: best time only)
+const EH_STAT_LEVELS = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8'];   // the levels that count for Vera (all coins + all gems in one play each)
+const EH_BOARD_LEVELS = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8'];   // shown on the leaderboard (coins · gems, best time)
 
 // ---- storage (this browser for now): { players: { kosta: { l1: { coins, coinTotal, gems, gemTotal, time, full } } } }
 const EH_STORE = {
@@ -104,7 +104,7 @@ function Leaderboard({ onBack }) {
       <table style={{ position: 'absolute', left: 40, right: 40, top: 120, width: 1200, borderCollapse: 'collapse', background: 'rgba(20,16,28,.88)', border: '4px solid var(--eh-ink)' }}>
         <thead><tr>
           <th style={{ ...cell, width: 200 }}></th>
-          {EH_BOARD_LEVELS.map((l, i) => <th key={l} style={{ ...cell, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1}<div style={{ fontSize: 10, color: 'var(--eh-stone)', marginTop: 4 }}>{i < 4 ? `${T('COINS')} · ${T('GEMS')}` : T('TIME')}</div></th>)}
+          {EH_BOARD_LEVELS.map((l, i) => <th key={l} style={{ ...cell, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1}<div style={{ fontSize: 10, color: 'var(--eh-stone)', marginTop: 4 }}>{`${T('COINS')} · ${T('GEMS')}`}</div></th>)}
           <th style={{ ...cell, color: 'var(--eh-gold)', width: 150 }}>BABA VERA</th>
         </tr></thead>
         <tbody>{EH_PLAYERS.map(p => { const P = s.players[p.id] || {}, perfect = EH_STAT_LEVELS.filter(l => P[l] && P[l].full).length;
@@ -113,11 +113,11 @@ function Leaderboard({ onBack }) {
             {EH_BOARD_LEVELS.map(l => { const r = P[l]; return <td key={l} style={cell}>{!r ? <span style={{ color: 'var(--eh-stone)' }}>—</span> : <>
               {r.coinTotal > 0 && <div>{r.coins}/{r.coinTotal} · {r.gems}/{r.gemTotal}{r.full ? ' ✓' : ''}</div>}
               <div style={{ marginTop: 4, color: fastest[l] === p.id ? 'var(--eh-gold)' : 'var(--eh-bone)' }}>{fastest[l] === p.id ? '🏆 ' : ''}{ehFmtTime(r.time)}</div></>}</td>; })}
-            <td style={{ ...cell, color: P.vera ? 'var(--eh-gold)' : 'var(--eh-stone)' }}>{P.vera ? '★ ' + T('UNLOCKED') : `${perfect}/4`}</td>
+            <td style={{ ...cell, color: P.vera ? 'var(--eh-gold)' : 'var(--eh-stone)' }}>{P.vera ? '★ ' + T('UNLOCKED') : `${perfect}/${EH_STAT_LEVELS.length}`}</td>
           </tr>); })}</tbody>
       </table>
       <div style={{ position: 'absolute', left: 40, right: 40, bottom: 92, fontFamily: 'var(--font-body)', fontSize: 20, color: 'var(--eh-bone)', textShadow: 'var(--text-outline)', textAlign: 'center' }}>
-        {T('✓ = every coin and gem in one play. Do that in all four levels to unlock Baba Vera as a hero.')}</div>
+        {T('✓ = every coin and gem in one play. Do that in all eight levels to unlock Baba Vera as a hero.')}</div>
       <div style={{ position: 'absolute', right: 40, top: 46, fontFamily: 'var(--font-ui)', fontSize: 13, color: cloud === 'online' ? 'var(--eh-leaf)' : 'var(--eh-stone)', textShadow: 'var(--text-outline)' }}>{T(cloud === 'online' ? '● ONLINE · SHARED' : cloud === 'local' ? '● THIS DEVICE ONLY' : cloud === 'syncing' ? '● CONNECTING…' : '● OFFLINE · THIS DEVICE')}</div>
       <div style={{ position: 'absolute', right: 32, bottom: 28 }}><PixelButton variant="secondary" onClick={onBack}>{T('Title')}</PixelButton></div>
       <div style={{ position: 'absolute', left: 32, bottom: 28, display: 'flex', gap: 12, alignItems: 'center' }}>

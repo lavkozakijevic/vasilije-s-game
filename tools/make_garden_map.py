@@ -35,6 +35,12 @@ row(8, 37, [42, 43]); put(decor, 7, 33, 68); put(decor, 8, 33, 69)
 row(4, 39, [29, 30, 31], fg); row(5, 39, [32, 33, 34], fg); row(6, 39, [35, 36, 37]); put(decor, 7, 40, 38); put(decor, 8, 40, 39)
 row(8, 43, [44, 45]); put(decor, 8, 46, 63); put(decor, 8, 50, 66)
 row(6, 51, [72, 73], decor_back); row(7, 51, [74, 75], decor_back); put(decor, 8, 54, 64)
+
+# coins and gems (all coins + all 3 gems in one play of every level unlocks Baba Vera); r = the row whose top they rest on
+def coin(c, r): ent('item_coin', 'coin', c * 32 + 8, r * 32 - 20, 16, 16)
+def gem(c, r): ent('item_gem', 'gem', c * 32 + 8, r * 32 - 22, 16, 16)
+for c, r in [(15, 6), (27, 7), (37, 8), (40, 6), (12, 8), (44, 8), (8, 9), (20, 9), (24, 9), (31, 9), (34, 9), (47, 9), (52, 9), (55, 9)]: coin(c, r)
+gem(14, 6); gem(41, 6); gem(22, 3)
 flat = lambda layer: [v for row_ in layer for v in row_]
 m = dict(compressionlevel=-1, height=H, width=W, infinite=False, orientation='orthogonal', renderorder='right-down', tilewidth=32, tileheight=32, type='map', version='1.10', tiledversion='1.10.2',
          nextlayerid=10, nextobjectid=len(ents) + 1, tilesets=[dict(firstgid=1, source='../tilesets/garden/tileset_garden.tsj')], layers=[])

@@ -61,8 +61,7 @@ function WorldMap({ mode, onPlay, onBack }) {
         <div style={{ fontSize: 12, color: 'var(--eh-gold)' }}>{T('LEVEL')} {i + 1} · {T(lv.star).toUpperCase()}</div>{(window.EH_LANG === 'sr' || lv.at) && <div style={{ fontSize: 14, marginTop: 2 }}>{T(lv.name).toUpperCase()}</div>}
         {mode === 'select' && open ? <div style={{ marginTop: 6 }}><PixelButton size="sm" onClick={() => onPlay(lv.id)}>{T(r.done ? 'Play again' : 'Play')}</PixelButton></div>
           : <div style={{ marginTop: 4, color: 'var(--eh-stone)' }}>{!lv.ready ? T('COMING SOON') : mode === 'select' ? (window.EH_LANG === 'sr' ? `PRVO PREĐI NIVO ${i}` : `FINISH LEVEL ${i} FIRST`) : ''}</div>}
-        {r.done && lv.at && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')}</div>}
-        {r.done && !lv.at && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')} · {T('COINS')} ×{String(r.coins).padStart(3, '0')} · {T('GEMS')} {r.gems}/{r.gemTotal}</div>}
+                {r.done && <div style={{ marginTop: 6, fontSize: 12 }}>{T('CLEARED')} · {T('COINS')} ×{String(r.coins).padStart(3, '0')} · {T('GEMS')} {r.gems}/{r.gemTotal}</div>}
       </div>
     );
   };

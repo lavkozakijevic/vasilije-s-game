@@ -76,6 +76,12 @@ coats(63 - 1)
 for c in (3, 7, 12, 20, 28, 32, 36, 43, 49, 54):                # ten more toys on the floor, out in the open (Marija's favourites)
     toy(c, 9)
 ent('marija_night', 'marija', 40 * 32, 257)
+
+# coins and gems (all coins + all 3 gems in one play of every level unlocks Baba Vera); r = the row whose top they rest on
+def coin(c, r): ent('item_coin', 'coin', c * 32 + 8, r * 32 - 20, 16, 16)
+def gem(c, r): ent('item_gem', 'gem', c * 32 + 8, r * 32 - 22, 16, 16)
+[coin(c, 9) for c in (5, 9, 17, 25, 31, 35, 41, 47, 51, 58)]; coin(15, 7); coin(24, 6); coin(39, 5); coin(35, 7)
+gem(52, 5); gem(58, 9); gem(20, 5)
 flat = lambda layer: [v for row_ in layer for v in row_]
 m = dict(compressionlevel=-1, height=H, width=W, infinite=False, orientation='orthogonal', renderorder='right-down', tilewidth=32, tileheight=32, type='map', version='1.10', tiledversion='1.10.2',
          nextlayerid=10, nextobjectid=len(ents) + 1, tilesets=[dict(firstgid=1, source='../tilesets/house_night/tileset_house_l8.tsj')], layers=[])

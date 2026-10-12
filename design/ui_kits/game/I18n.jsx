@@ -110,6 +110,7 @@ const EH_SR = {
   'In the morning, every toy was back in the toy box.': 'Ujutru je svaka igračka bila nazad u kutiji.',
   'Zzz… Aha… zzz…': 'Zzz… Aha… zzz…',
   '(whispering) Grandma Marija joins the team!': '(šapuću) Baka Marija je u timu!',
+  '✓ = every coin and gem in one play. Do that in all eight levels to unlock Baba Vera as a hero.': '✓ = svi novčići i dragulji u jednoj igri. Uradi to u svih osam nivoa i otključaćeš babu Veru kao heroja.',
   'Mishika in the Attic': 'Mišika na tavanu',
   "Time's up!": 'Vreme je isteklo!',
   'Mishika is still waiting. Try again!': 'Mišika još čeka. Probaj ponovo!',
